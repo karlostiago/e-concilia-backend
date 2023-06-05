@@ -6,6 +6,7 @@ plugins {
 
 group = 'com.ctsousa.econcilia'
 version = '0.2.1-SNAPSHOT'
+
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 
