@@ -2,7 +2,7 @@ package com.ctsousa.econcilia.model.dto;
 
 import java.util.List;
 
-public class OrdensDto {
+public class OrdensDTO {
 
-    private List<PedidoDto> ordensDto;
+    private List<PedidoDTO> ordensDto;
 }
