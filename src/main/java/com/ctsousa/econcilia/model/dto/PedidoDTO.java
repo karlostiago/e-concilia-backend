@@ -4,7 +4,7 @@ import org.hibernate.boot.Metadata;
 
 import java.time.ZonedDateTime;
 
-public class PedidoDto {
+public class PedidoDTO {
 
     private String id;
     private String code;

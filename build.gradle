@@ -5,8 +5,10 @@ plugins {
 }
 
 group = 'com.ctsousa.econcilia'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '16'
+version = 'SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 repositories {
 	mavenCentral()
