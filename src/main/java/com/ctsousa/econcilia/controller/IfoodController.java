@@ -1,7 +1,8 @@
 package com.ctsousa.econcilia.controller;
 
-import com.ctsousa.econcilia.model.token.AcessToken;
-import com.ctsousa.econcilia.model.Pedido;
+import com.ctsousa.econcilia.model.ifood.DetalhesPedido;
+import com.ctsousa.econcilia.model.ifood.token.TokenAcesso;
+import com.ctsousa.econcilia.model.ifood.Pedido;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +36,7 @@ public class IfoodController {
     public List<Pedido> getPedidos() throws JsonProcessingException {
         String urlIfoodOrdens = "https://merchant-api.ifood.com.br/order/v1.0";
 
-        String token = getAccessToken().getAccessToken();
+        String token = getTokenAcesso().getTokenAcesso();
 
 
         List<Pedido> ordens = webClient.get()
@@ -53,17 +54,34 @@ public class IfoodController {
         return "Hello, World!";
     }
 
-    public AcessToken getAccessToken(){
+    public TokenAcesso getTokenAcesso(){
         String urlAutenticationIfood = "https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token";
 
-        AcessToken acessToken = webClient.post()
+        TokenAcesso tokenAcesso = webClient.post()
                 .uri(urlAutenticationIfood + "?"+GRANT_TYPE+"="+"client_credentials"+"&"+CLIEN_ID+"="+"9312b324-4b36-451f-b0ce-7671b8641751"+"&"+CLIEN_SECRET+"="+"llrirsr9pyc9rcugny4amqkol3m6s68qtmihaeif0puf7z7t64uy9ajy8l52n0klf0ijzu0ksn7ohg9r586xyzius7f11pze1g0"+"&"+AUTHORIZATION_CODE+"="+"&"+AUTHORIZATION_CODE_VERIFIER+"="+"&"+REFRESH_TOKEN+"=")
                 .contentType(MediaType.valueOf("application/x-www-form-urlencoded"))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(AcessToken.class).block();
+                .bodyToMono(TokenAcesso.class).block();
 
-        return acessToken;
+        return tokenAcesso;
+
+    }
+
+    @GetMapping("/detalhes")
+    public DetalhesPedido getDetalhesPedido(String ordemId){
+        String urlIdPedido = "https://merchant-api.ifood.com.br/order/v1.0/orders/";
+
+        String token = getTokenAcesso().getTokenAcesso();
+
+        DetalhesPedido detalhesPedido = webClient.get()
+                .uri(urlIdPedido + ordemId)
+                .accept(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer "+token)
+                .retrieve()
+                .bodyToMono(DetalhesPedido.class).block();
+
+        return detalhesPedido;
 
     }
 

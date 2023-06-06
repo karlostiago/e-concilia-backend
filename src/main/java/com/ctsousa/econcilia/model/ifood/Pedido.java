@@ -1,4 +1,4 @@
-package com.ctsousa.econcilia.model;
+package com.ctsousa.econcilia.model.ifood;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,18 +17,18 @@ public class Pedido {
     private String id;
 
     @JsonProperty("code")
-    private String code;
+    private String codigo;
 
     @JsonProperty("fullCode")
-    private String fullCode;
+    private String codigoCompleto;
 
     @JsonProperty("orderId")
-    private String orderId;
+    private String ordemId;
 
     @JsonProperty("merchantId")
-    private String merchantId;
+    private String comercianteId;
 
     @JsonProperty("createdAt")
-    private ZonedDateTime createdAt;
+    private ZonedDateTime criadoEm;
 
 }
