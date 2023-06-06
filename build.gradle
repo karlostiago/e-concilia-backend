@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'com.ctsousa.econcilia'
-version = '0.2.1-SNAPSHOT'
+version = 'SNAPSHOT'
+
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 
@@ -28,15 +29,4 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
-}
-
-task stage(dependsOn: ['build', 'clean'])
-build.mustRunAfter clean
-
-jar {
-	manifest {
-		attributes(
-			'Main-Class': 'com.ctsousa.econcilia.ApplicationStarter'
-		)
-	}
 }
