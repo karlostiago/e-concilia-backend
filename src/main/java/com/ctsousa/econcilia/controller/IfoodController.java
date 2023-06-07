@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -36,13 +37,13 @@ public class IfoodController {
 
     @GetMapping("ordens")
     public List<Pedido> getPedidos() throws JsonProcessingException {
-        String urlIfoodOrdens = "https://merchant-api.ifood.com.br/order/v1.0";
+        String urlIfoodOrdens = "https://merchant-api.ifood.com.br/order/v1.0/events:polling";
 
         String token = getTokenAcesso().getTokenAcesso();
 
 
         List<Pedido> ordens = webClient.get()
-                .uri(urlIfoodOrdens + "/events:polling")
+                .uri(urlIfoodOrdens)
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
@@ -57,12 +58,12 @@ public class IfoodController {
 
     @GetMapping("/comerciantes")
     public List<Comerciante> getComerciantes() {
-        String urlIdPedido = "https://merchant-api.ifood.com.br/merchant/v1.0/merchants";
+        String urlComerciante = "https://merchant-api.ifood.com.br/merchant/v1.0/merchants";
 
         String token = getTokenAcesso().getTokenAcesso();
 
         List<Comerciante> comerciante = webClient.get()
-                .uri(urlIdPedido)
+                .uri(urlComerciante)
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
@@ -78,12 +79,18 @@ public class IfoodController {
 
     @GetMapping("/taxas_manutencao")
     public List<TaxasManutencao> getTaxasManutencao(String idComerciante, String periodo) {
-        String urlIdPedido = "https://merchant-api.ifood.com.br/financial/v2.0/merchants/";
+        String urlTaxasManutencao = "https://merchant-api.ifood.com.br/financial/v2.0/merchants/";
+        String endpoint = urlTaxasManutencao + idComerciante + "/maintenanceFees";
 
         String token = getTokenAcesso().getTokenAcesso();
 
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(endpoint)
+                .queryParam("periodId", periodo);
+
+        String url = uriBuilder.toUriString();
+
         List<TaxasManutencao> taxasManutencao = webClient.get()
-                .uri(urlIdPedido + idComerciante + "/maintenanceFees?periodId=" + periodo)
+                .uri(url)
                 .accept(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
@@ -121,8 +128,18 @@ public class IfoodController {
     public TokenAcesso getTokenAcesso() {
         String urlAutenticationIfood = "https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token";
 
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(urlAutenticationIfood)
+                .queryParam(GRANT_TYPE, "client_credentials")
+                .queryParam(CLIEN_ID, "9312b324-4b36-451f-b0ce-7671b8641751")
+                .queryParam(CLIEN_SECRET, "llrirsr9pyc9rcugny4amqkol3m6s68qtmihaeif0puf7z7t64uy9ajy8l52n0klf0ijzu0ksn7ohg9r586xyzius7f11pze1g0")
+                .queryParam(AUTHORIZATION_CODE, "")
+                .queryParam(AUTHORIZATION_CODE_VERIFIER, "")
+                .queryParam(REFRESH_TOKEN, "");
+
+        String url = uriBuilder.toUriString();
+
         TokenAcesso tokenAcesso = webClient.post()
-                .uri(urlAutenticationIfood + "?" + GRANT_TYPE + "=" + "client_credentials" + "&" + CLIEN_ID + "=" + "9312b324-4b36-451f-b0ce-7671b8641751" + "&" + CLIEN_SECRET + "=" + "llrirsr9pyc9rcugny4amqkol3m6s68qtmihaeif0puf7z7t64uy9ajy8l52n0klf0ijzu0ksn7ohg9r586xyzius7f11pze1g0" + "&" + AUTHORIZATION_CODE + "=" + "&" + AUTHORIZATION_CODE_VERIFIER + "=" + "&" + REFRESH_TOKEN + "=")
+                .uri(url)
                 .contentType(MediaType.valueOf("application/x-www-form-urlencoded"))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
