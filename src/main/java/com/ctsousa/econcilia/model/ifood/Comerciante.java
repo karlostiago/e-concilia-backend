@@ -8,9 +8,13 @@ import lombok.Setter;
 @Setter
 public class Comerciante {
 
+    @JsonProperty("id")
+    private String id;
+
     @JsonProperty("name")
     private String nome;
 
-    @JsonProperty("id")
-    private String id;
+    @JsonProperty("corporateName")
+    private String nomeCorporativo;
+
 }
