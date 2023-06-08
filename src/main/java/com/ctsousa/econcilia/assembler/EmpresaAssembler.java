@@ -1,6 +1,9 @@
 package com.ctsousa.econcilia.assembler;
 
-import com.ctsousa.econcilia.integration.receitaws.json.DadosCnpjJson;
+import com.ctsousa.econcilia.model.Contato;
+import com.ctsousa.econcilia.model.Empresa;
+import com.ctsousa.econcilia.model.Endereco;
+import com.ctsousa.econcilia.model.Estado;
 import com.ctsousa.econcilia.model.dto.ContatoDTO;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.model.dto.EnderecoDTO;
@@ -8,35 +11,60 @@ import com.ctsousa.econcilia.model.dto.EstadoDTO;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EmpresaAssembler implements JsonAssembler<EmpresaDTO, DadosCnpjJson> {
+public class EmpresaAssembler implements EntidadeAssembler<Empresa, EmpresaDTO>, DtoAssembler<Empresa, EmpresaDTO> {
 
     @Override
-    public EmpresaDTO paraDTO(DadosCnpjJson dadosCnpj) {
-        final EmpresaDTO empresaDTO = new EmpresaDTO();
+    public Empresa paraEntidade(EmpresaDTO empresaDTO) {
+        Empresa empresa = new Empresa();
+        empresa.setCnpj(empresaDTO.getCnpj());
+        empresa.setRazaoSocial(empresaDTO.getRazaoSocial());
+        empresa.setNomeFantasia(empresaDTO.getNomeFantasia());
 
-        if (dadosCnpj != null) {
-            empresaDTO.setCnpj(dadosCnpj.getCnpj());
-            empresaDTO.setNomeFantasia(dadosCnpj.getNomeFantasia());
-            empresaDTO.setRazaoSocial(dadosCnpj.getRazaoSocial());
+        Contato contato = new Contato();
+        contato.setCelular(empresaDTO.getContato().getCelular());
+        contato.setEmail(empresaDTO.getContato().getEmail());
+        contato.setTelefone(empresaDTO.getContato().getTelefone());
+        empresa.setContato(contato);
 
-            var endereco = new EnderecoDTO();
-            endereco.setLogradouro(dadosCnpj.getLogradouro());
-            endereco.setBairro(dadosCnpj.getBairro());
-            endereco.setCidade(dadosCnpj.getCidade());
-            endereco.setNumero(dadosCnpj.getNumero());
-            endereco.setCep(dadosCnpj.getCep());
+        Endereco endereco = new Endereco();
+        endereco.setCep(empresaDTO.getEndereco().getCep());
+        endereco.setComplemento(empresaDTO.getEndereco().getComplemento());
+        endereco.setNumero(empresaDTO.getEndereco().getNumero());
+        endereco.setLogradouro(empresaDTO.getEndereco().getLogradouro());
+        endereco.setCidade(empresaDTO.getEndereco().getCidade());
 
-            var contato = new ContatoDTO();
-            contato.setEmail(dadosCnpj.getEmail());
-            contato.setTelefone(dadosCnpj.getTelefone());
-            empresaDTO.setContato(contato);
+        Estado estado = new Estado();
+        estado.setUf(empresaDTO.getEndereco().getEstado().getUf());
+        endereco.setEstado(estado);
+        empresa.setEndereco(endereco);
 
-            var estado = new EstadoDTO();
-            estado.setUf(dadosCnpj.getUf());
-            endereco.setEstado(estado);
+        return empresa;
+    }
 
-            empresaDTO.setEndereco(endereco);
-        }
+    @Override
+    public EmpresaDTO paraDTO(Empresa empresa) {
+        EmpresaDTO empresaDTO = new EmpresaDTO();
+        empresaDTO.setCnpj(empresa.getCnpj());
+        empresaDTO.setRazaoSocial(empresa.getRazaoSocial());
+        empresaDTO.setNomeFantasia(empresa.getNomeFantasia());
+
+        ContatoDTO contatoDTO = new ContatoDTO();
+        contatoDTO.setCelular(empresa.getContato().getCelular());
+        contatoDTO.setEmail(empresa.getContato().getEmail());
+        contatoDTO.setTelefone(empresa.getContato().getTelefone());
+        empresaDTO.setContato(contatoDTO);
+
+        EnderecoDTO enderecoDTO = new EnderecoDTO();
+        enderecoDTO.setCep(empresa.getEndereco().getCep());
+        enderecoDTO.setComplemento(empresa.getEndereco().getComplemento());
+        enderecoDTO.setNumero(empresa.getEndereco().getNumero());
+        enderecoDTO.setLogradouro(empresa.getEndereco().getLogradouro());
+        enderecoDTO.setCidade(empresa.getEndereco().getCidade());
+
+        EstadoDTO estadoDTO = new EstadoDTO();
+        estadoDTO.setUf(empresa.getEndereco().getEstado().getUf());
+        enderecoDTO.setEstado(estadoDTO);
+        empresaDTO.setEndereco(enderecoDTO);
 
         return empresaDTO;
     }

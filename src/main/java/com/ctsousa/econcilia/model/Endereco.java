@@ -14,17 +14,18 @@ import java.io.Serializable;
 @Embeddable
 public class Endereco implements Serializable {
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String logradouro;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String numero;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String cep;
 
     private String complemento;
 
+    @Column(length = 100)
     private String cidade;
 
     @Embedded

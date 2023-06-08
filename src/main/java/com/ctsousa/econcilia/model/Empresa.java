@@ -14,13 +14,13 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = false)
 public class Empresa extends Entidade {
 
-    @Column(name = "razao_social", nullable = false)
+    @Column(name = "razao_social", nullable = false, length = 100)
     private String razaoSocial;
 
-    @Column(name = "nome_fantasia", nullable = false)
+    @Column(name = "nome_fantasia", nullable = false, length = 100)
     private String nomeFantasia;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 14)
     private String cnpj;
 
     @Embedded

@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Embeddable
 public class Estado implements Serializable {
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2)
     private String uf;
 
     public String getUf() {

@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.resource;
 
+import com.ctsousa.econcilia.assembler.CnpjAssembler;
 import com.ctsousa.econcilia.assembler.EmpresaAssembler;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.service.CnpjService;
@@ -12,16 +13,16 @@ public class CnpjResource {
 
     private final CnpjService cnpjService;
 
-    private final EmpresaAssembler empresaAssembler;
+    private final CnpjAssembler cnpjAssembler;
 
-    public CnpjResource(CnpjService cnpjService, EmpresaAssembler empresaAssembler) {
+    public CnpjResource(CnpjService cnpjService, CnpjAssembler cnpjAssembler) {
         this.cnpjService = cnpjService;
-        this.empresaAssembler = empresaAssembler;
+        this.cnpjAssembler = cnpjAssembler;
     }
 
     @GetMapping("{cnpj}")
     public ResponseEntity<EmpresaDTO> porCnpj (@PathVariable String cnpj) {
         var dadosCnpj = cnpjService.buscarCNPJ(cnpj);
-        return ResponseEntity.ok(empresaAssembler.paraDTO(dadosCnpj));
+        return ResponseEntity.ok(cnpjAssembler.paraDTO(dadosCnpj));
     }
 }
