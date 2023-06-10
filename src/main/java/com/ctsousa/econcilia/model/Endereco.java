@@ -1,6 +1,5 @@
 package com.ctsousa.econcilia.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,6 +26,9 @@ public class Endereco implements Serializable {
 
     @Column(length = 100)
     private String cidade;
+
+    @Column(length = 100)
+    private String bairro;
 
     @Embedded
     private Estado estado;

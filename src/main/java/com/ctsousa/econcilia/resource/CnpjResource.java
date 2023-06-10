@@ -1,7 +1,6 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.assembler.CnpjAssembler;
-import com.ctsousa.econcilia.assembler.EmpresaAssembler;
+import com.ctsousa.econcilia.assembler.impl.CnpjAssemblerImpl;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.service.CnpjService;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +12,9 @@ public class CnpjResource {
 
     private final CnpjService cnpjService;
 
-    private final CnpjAssembler cnpjAssembler;
+    private final CnpjAssemblerImpl cnpjAssembler;
 
-    public CnpjResource(CnpjService cnpjService, CnpjAssembler cnpjAssembler) {
+    public CnpjResource(CnpjService cnpjService, CnpjAssemblerImpl cnpjAssembler) {
         this.cnpjService = cnpjService;
         this.cnpjAssembler = cnpjAssembler;
     }
