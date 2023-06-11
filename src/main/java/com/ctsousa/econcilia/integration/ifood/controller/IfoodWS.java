@@ -52,7 +52,7 @@ public class IfoodWS {
 
     @GetMapping("/taxas_manutencao")
     public List<TaxasManutencao> getTaxasManutencao(String idComerciante, String periodo) {
-        return ifoodApiComQueryParams(URL_FINANCEIRO + "{idComerciante}/maintenanceFees", idComerciante, periodo, List.class);
+        return ifoodApiComParametros(URL_FINANCEIRO + "{idComerciante}/maintenanceFees", idComerciante, periodo, List.class);
     }
 
     @GetMapping("/detalhes_pedido")
@@ -72,7 +72,7 @@ public class IfoodWS {
                 .block();
     }
 
-    private <T> T ifoodApiComQueryParams(String url, String idComerciante, String periodo, Class<T> responseType) {
+    private <T> T ifoodApiComParametros(String url, String idComerciante, String periodo, Class<T> responseType) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("periodId", periodo);
 
