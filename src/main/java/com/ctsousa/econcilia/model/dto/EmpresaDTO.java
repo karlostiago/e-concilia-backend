@@ -11,6 +11,8 @@ import java.io.Serializable;
 @Setter
 public class EmpresaDTO implements Serializable {
 
+    private Long id;
+
     @NotEmpty(message = "Campo razão social é obrigatório.")
     private String razaoSocial;
 

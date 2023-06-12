@@ -23,7 +23,7 @@ public class EmpresaServiceImpl implements EmpresaService {
 
     @Override
     public Empresa salvar(final Empresa empresa) {
-        if (empresaRepository.existsByCnpj(empresa.getCnpj())) {
+        if (empresaRepository.existsByCnpj(somenteNumero(empresa.getCnpj()))) {
             throw new EmpresaExisteException(empresa.getCnpj());
         }
 
@@ -41,5 +41,11 @@ public class EmpresaServiceImpl implements EmpresaService {
         }
 
         return empresaRepository.findAll();
+    }
+
+    @Override
+    public void deletar(Long id) {
+        var empresa = empresaRepository.findById(id);
+        empresa.ifPresent(empresaRepository::delete);
     }
 }

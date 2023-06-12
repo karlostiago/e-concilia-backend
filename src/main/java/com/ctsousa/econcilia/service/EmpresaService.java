@@ -10,5 +10,7 @@ public interface EmpresaService {
 
     Empresa salvar (final Empresa empresa);
 
-    List<Empresa> pesquisar(String razaoSocial, String cnpj);
+    List<Empresa> pesquisar (String razaoSocial, String cnpj);
+
+    void deletar (Long id);
 }

@@ -52,6 +52,7 @@ public class EmpresaAssemblerImpl implements EntidadeAssembler<Empresa, EmpresaD
     @Override
     public EmpresaDTO paraDTO(Empresa empresa) {
         EmpresaDTO empresaDTO = new EmpresaDTO();
+        empresaDTO.setId(empresa.getId());
         empresaDTO.setCnpj(empresa.getCnpj());
         empresaDTO.setRazaoSocial(empresa.getRazaoSocial());
         empresaDTO.setNomeFantasia(empresa.getNomeFantasia());

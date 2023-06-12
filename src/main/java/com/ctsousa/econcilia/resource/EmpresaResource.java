@@ -29,8 +29,13 @@ public class EmpresaResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<EmpresaDTO>> listar(@RequestParam( required = false ) String razaoSocial, @RequestParam (required = false) String cnpj) {
+    public ResponseEntity<List<EmpresaDTO>> listar (@RequestParam( required = false ) String razaoSocial, @RequestParam (required = false) String cnpj) {
         var empresas = this.empresaService.pesquisar(razaoSocial, cnpj);
         return ResponseEntity.ok(empresaAssembler.paraLista(empresas));
+    }
+
+    @DeleteMapping("{id}")
+    public void deletar (@PathVariable Long id) {
+        this.empresaService.deletar(id);
     }
 }
