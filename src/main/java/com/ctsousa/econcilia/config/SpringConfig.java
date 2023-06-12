@@ -3,6 +3,7 @@ package com.ctsousa.econcilia.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class SpringConfig {
@@ -10,5 +11,10 @@ public class SpringConfig {
     @Bean
     public RestTemplate getRestTemplate() {
         return  new RestTemplate();
+    }
+
+    @Bean
+    public WebClient webClient() {
+        return WebClient.builder().build();
     }
 }
