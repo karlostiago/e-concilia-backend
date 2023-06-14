@@ -7,6 +7,7 @@ import com.ctsousa.econcilia.integration.ifood.model.TaxasManutencao;
 import com.ctsousa.econcilia.integration.ifood.model.token.TokenAcesso;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,11 @@ public class IfoodWS {
     private static final String URL_ORDENS_DETAILHES = "https://merchant-api.ifood.com.br/order/v1.0/orders/";
     private static final String URL_AUTENTICACAO = "https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token";
 
+    @Value("${ifood.clientid}")
+    private String clienId;
+
+    @Value("${ifood.clientsecret}")
+    private String clienSecret;
     private final WebClient webClient;
 
     @Autowired
@@ -84,8 +90,8 @@ public class IfoodWS {
     public TokenAcesso getTokenAcesso() {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(URL_AUTENTICACAO)
                 .queryParam(GRANT_TYPE, "client_credentials")
-                .queryParam(CLIEN_ID, "9312b324-4b36-451f-b0ce-7671b8641751")
-                .queryParam(CLIEN_SECRET, "llrirsr9pyc9rcugny4amqkol3m6s68qtmihaeif0puf7z7t64uy9ajy8l52n0klf0ijzu0ksn7ohg9r586xyzius7f11pze1g0")
+                .queryParam(CLIEN_ID, clienId)
+                .queryParam(CLIEN_SECRET, clienSecret)
                 .queryParam(AUTHORIZATION_CODE, "")
                 .queryParam(AUTHORIZATION_CODE_VERIFIER, "")
                 .queryParam(REFRESH_TOKEN, "");
