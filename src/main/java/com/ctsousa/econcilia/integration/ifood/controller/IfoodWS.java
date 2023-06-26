@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -47,22 +48,26 @@ public class IfoodWS {
     }
 
     @GetMapping("ordens")
-    public List<Pedido> getPedidos() throws JsonProcessingException {
+    public List<Pedido> getPedidos(@RequestBody(required = false) String id,@RequestBody(required = false) String secret) throws JsonProcessingException {
+        verificaIdSecret(id,secret);
         return ifoodApi(URL_ORDENS, List.class);
     }
 
     @GetMapping("/comerciantes")
-    public List<Comerciante> getComerciantes() {
+    public List<Comerciante> getComerciantes(@RequestBody(required = false) String id,@RequestBody(required = false) String secret) {
+        verificaIdSecret(id,secret);
         return ifoodApi(URL_COMERCIANTE, List.class);
     }
 
     @GetMapping("/taxas_manutencao")
-    public List<TaxasManutencao> getTaxasManutencao(String idComerciante, String periodo) {
+    public List<TaxasManutencao> getTaxasManutencao(@RequestBody(required = false) String id,@RequestBody(required = false) String secret, String idComerciante, String periodo) {
+        verificaIdSecret(id,secret);
         return ifoodApiComParametros(URL_FINANCEIRO + "{idComerciante}/maintenanceFees", idComerciante, periodo, List.class);
     }
 
     @GetMapping("/detalhes_pedido")
-    public DetalhesPedido getDetalhesPedido(String ordemId) {
+    public DetalhesPedido getDetalhesPedido(@RequestBody(required = false) String id,@RequestBody(required = false) String secret, String ordemId) {
+        verificaIdSecret(id,secret);
         return ifoodApi(URL_ORDENS_DETAILHES + ordemId, DetalhesPedido.class);
     }
 
@@ -107,5 +112,13 @@ public class IfoodWS {
                 .block();
 
         return tokenAcesso;
+    }
+    private void verificaIdSecret(String id, String secret) {
+        if (id != null) {
+            clienId = id;
+        }
+        if (secret != null) {
+            clienSecret = secret;
+        }
     }
 }
