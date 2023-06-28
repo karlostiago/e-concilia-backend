@@ -1,4 +1,4 @@
-package com.ctsousa.econcilia.integration.ifood.controller;
+package com.ctsousa.econcilia.integration.ifood.resource;
 
 import com.ctsousa.econcilia.integration.ifood.model.Comerciante;
 import com.ctsousa.econcilia.integration.ifood.model.DetalhesPedido;
@@ -21,41 +21,45 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ifood")
-public class IfoodWS {
+public class IfoodResource {
 
-    private String GRANT_TYPE = "grantType";
-    private String CLIENT_ID = "clientId";
-    private String CLIENT_SECRET = "clientSecret";
-    private String AUTHORIZATION_CODE = "authorizationCode";
-    private String AUTHORIZATION_CODE_VERIFIER = "authorizationCodeVerifier";
-    private String REFRESH_TOKEN = "refreshToken";
+    private final String GRANT_TYPE = "grantType";
+    private final String CLIENT_ID = "clientId";
+    private final String CLIENT_SECRET = "clientSecret";
+    private final String AUTHORIZATION_CODE = "authorizationCode";
+    private final String AUTHORIZATION_CODE_VERIFIER = "authorizationCodeVerifier";
+    private final String REFRESH_TOKEN = "refreshToken";
 
-    @Value("${ifood.client-id}")
+    @Value("${ifood.credencial.client-id}")
     private String clientId;
 
-    @Value("${ifood.client-secret}")
+    @Value("${ifood.credencial.client-secret}")
     private String clientSecret;
 
-    @Value("${urls.url-ordens}")
+    @Value("${ifood.hosts.url-ordens}")
     private String urlOrdens;
 
-    @Value("${urls.url-comerciantes}")
+    @Value("${ifood.hosts.url-comerciantes}")
     private String urlComerciantes;
 
-    @Value("${urls.url-financeiro}")
+    @Value("${ifood.hosts.url-financeiro}")
     private String urlFinanceiro;
 
-    @Value("${urls.url-ordens-detalhes}")
+    @Value("${ifood.hosts.url-ordens-detalhes}")
     private String urlOrdensDetalhes;
 
-    @Value("${urls.url-autenticacao}")
+    @Value("${ifood.hosts.url-autenticacao}")
     private String urlAutenticacao;
 
     private final WebClient webClient;
 
-    @Autowired
-    public IfoodWS(WebClient webClient) {
+    public IfoodResource(WebClient webClient) {
         this.webClient = webClient;
+    }
+
+    @GetMapping("/test")
+    public void test () {
+        System.out.println("");
     }
 
     @GetMapping("ordens")
