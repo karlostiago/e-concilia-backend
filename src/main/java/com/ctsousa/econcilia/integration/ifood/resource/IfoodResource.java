@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -51,6 +48,9 @@ public class IfoodResource {
     @Value("${ifood.resources.autenticacao}")
     private String urlAutenticacao;
 
+    private String idCliente;
+    private String secretCliente;
+
     private final WebClient webClient;
 
     public IfoodResource(WebClient webClient) {
@@ -58,25 +58,25 @@ public class IfoodResource {
     }
 
     @GetMapping("ordens")
-    public List<Pedido> getPedidos(@RequestBody(required = false) String id,@RequestBody(required = false) String secret) throws JsonProcessingException {
+    public List<Pedido> getPedidos(@RequestParam(required = false) String id,@RequestParam(required = false) String secret) throws JsonProcessingException {
         verificaIdSecret(id,secret);
         return ifoodApi(urlOrdens, List.class);
     }
 
     @GetMapping("/comerciantes")
-    public List<Comerciante> getComerciantes(@RequestBody(required = false) String id,@RequestBody(required = false) String secret) {
+    public List<Comerciante> getComerciantes(@RequestParam(required = false) String id, @RequestParam(required = false) String secret) {
         verificaIdSecret(id,secret);
         return ifoodApi(urlComerciantes, List.class);
     }
 
     @GetMapping("/taxas_manutencao")
-    public List<TaxasManutencao> getTaxasManutencao(@RequestBody(required = false) String id,@RequestBody(required = false) String secret, String idComerciante, String periodo) {
+    public List<TaxasManutencao> getTaxasManutencao(@RequestParam(required = false) String id,@RequestParam(required = false) String secret, String idComerciante, String periodo) {
         verificaIdSecret(id,secret);
         return ifoodApiComParametros(urlFinanceiro+ "{idComerciante}/maintenanceFees", idComerciante, periodo, List.class);
     }
 
     @GetMapping("/detalhes_pedido")
-    public DetalhesPedido getDetalhesPedido(@RequestBody(required = false) String id,@RequestBody(required = false) String secret, String ordemId) {
+    public DetalhesPedido getDetalhesPedido(@RequestParam(required = false) String id,@RequestParam(required = false) String secret, String ordemId) {
         verificaIdSecret(id,secret);
         return ifoodApi(urlOrdensDetalhes + ordemId, DetalhesPedido.class);
     }
@@ -105,8 +105,8 @@ public class IfoodResource {
     public TokenAcesso getTokenAcesso() {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(urlAutenticacao)
                 .queryParam(GRANT_TYPE, "client_credentials")
-                .queryParam(CLIENT_ID, clientId)
-                .queryParam(CLIENT_SECRET, clientSecret)
+                .queryParam(CLIENT_ID, idCliente)
+                .queryParam(CLIENT_SECRET, secretCliente)
                 .queryParam(AUTHORIZATION_CODE, "")
                 .queryParam(AUTHORIZATION_CODE_VERIFIER, "")
                 .queryParam(REFRESH_TOKEN, "");
@@ -124,11 +124,12 @@ public class IfoodResource {
         return tokenAcesso;
     }
     private void verificaIdSecret(String id, String secret) {
-        if (id != null) {
-            clientId = id;
-        }
-        if (secret != null) {
-            clientSecret = secret;
+        if (id != null & secret != null) {
+             idCliente = id;
+            secretCliente = secret;
+        }else {
+            idCliente = clientId;
+            secretCliente = clientSecret;
         }
     }
 }
