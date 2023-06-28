@@ -22,24 +22,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/ifood")
 public class IfoodWS {
-    private static final String GRANT_TYPE = "grantType";
-    private static final String CLIEN_ID = "clientId";
-    private static final String CLIEN_SECRET = "clientSecret";
-    private static final String AUTHORIZATION_CODE = "authorizationCode";
-    private static final String AUTHORIZATION_CODE_VERIFIER = "authorizationCodeVerifier";
-    private static final String REFRESH_TOKEN = "refreshToken";
 
-    private static final String URL_ORDENS = "https://merchant-api.ifood.com.br/order/v1.0/events:polling";
-    private static final String URL_COMERCIANTE = "https://merchant-api.ifood.com.br/merchant/v1.0/merchants";
-    private static final String URL_FINANCEIRO = "https://merchant-api.ifood.com.br/financial/v2.0/merchants/";
-    private static final String URL_ORDENS_DETAILHES = "https://merchant-api.ifood.com.br/order/v1.0/orders/";
-    private static final String URL_AUTENTICACAO = "https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token";
+    private String GRANT_TYPE = "grantType";
+    private String CLIENT_ID = "clientId";
+    private String CLIENT_SECRET = "clientSecret";
+    private String AUTHORIZATION_CODE = "authorizationCode";
+    private String AUTHORIZATION_CODE_VERIFIER = "authorizationCodeVerifier";
+    private String REFRESH_TOKEN = "refreshToken";
 
-    @Value("${ifood.clientid}")
-    private String clienId;
+    @Value("${ifood.client-id}")
+    private String clientId;
 
-    @Value("${ifood.clientsecret}")
-    private String clienSecret;
+    @Value("${ifood.client-secret}")
+    private String clientSecret;
+
+    @Value("${urls.url-ordens}")
+    private String urlOrdens;
+
+    @Value("${urls.url-comerciantes}")
+    private String urlComerciantes;
+
+    @Value("${urls.url-financeiro}")
+    private String urlFinanceiro;
+
+    @Value("${urls.url-ordens-detalhes}")
+    private String urlOrdensDetalhes;
+
+    @Value("${urls.url-autenticacao}")
+    private String urlAutenticacao;
+
     private final WebClient webClient;
 
     @Autowired
@@ -50,25 +61,25 @@ public class IfoodWS {
     @GetMapping("ordens")
     public List<Pedido> getPedidos(@RequestBody(required = false) String id,@RequestBody(required = false) String secret) throws JsonProcessingException {
         verificaIdSecret(id,secret);
-        return ifoodApi(URL_ORDENS, List.class);
+        return ifoodApi(urlOrdens, List.class);
     }
 
     @GetMapping("/comerciantes")
     public List<Comerciante> getComerciantes(@RequestBody(required = false) String id,@RequestBody(required = false) String secret) {
         verificaIdSecret(id,secret);
-        return ifoodApi(URL_COMERCIANTE, List.class);
+        return ifoodApi(urlComerciantes, List.class);
     }
 
     @GetMapping("/taxas_manutencao")
     public List<TaxasManutencao> getTaxasManutencao(@RequestBody(required = false) String id,@RequestBody(required = false) String secret, String idComerciante, String periodo) {
         verificaIdSecret(id,secret);
-        return ifoodApiComParametros(URL_FINANCEIRO + "{idComerciante}/maintenanceFees", idComerciante, periodo, List.class);
+        return ifoodApiComParametros(urlFinanceiro+ "{idComerciante}/maintenanceFees", idComerciante, periodo, List.class);
     }
 
     @GetMapping("/detalhes_pedido")
     public DetalhesPedido getDetalhesPedido(@RequestBody(required = false) String id,@RequestBody(required = false) String secret, String ordemId) {
         verificaIdSecret(id,secret);
-        return ifoodApi(URL_ORDENS_DETAILHES + ordemId, DetalhesPedido.class);
+        return ifoodApi(urlOrdensDetalhes + ordemId, DetalhesPedido.class);
     }
 
     private <T> T ifoodApi(String url, Class<T> responseType) {
@@ -93,10 +104,10 @@ public class IfoodWS {
     }
 
     public TokenAcesso getTokenAcesso() {
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(URL_AUTENTICACAO)
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(urlAutenticacao)
                 .queryParam(GRANT_TYPE, "client_credentials")
-                .queryParam(CLIEN_ID, clienId)
-                .queryParam(CLIEN_SECRET, clienSecret)
+                .queryParam(CLIENT_ID, clientId)
+                .queryParam(CLIENT_SECRET, clientSecret)
                 .queryParam(AUTHORIZATION_CODE, "")
                 .queryParam(AUTHORIZATION_CODE_VERIFIER, "")
                 .queryParam(REFRESH_TOKEN, "");
@@ -115,10 +126,10 @@ public class IfoodWS {
     }
     private void verificaIdSecret(String id, String secret) {
         if (id != null) {
-            clienId = id;
+            clientId = id;
         }
         if (secret != null) {
-            clienSecret = secret;
+            clientSecret = secret;
         }
     }
 }
