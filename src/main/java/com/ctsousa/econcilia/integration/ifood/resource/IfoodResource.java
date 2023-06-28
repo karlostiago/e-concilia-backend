@@ -36,30 +36,25 @@ public class IfoodResource {
     @Value("${ifood.credencial.client-secret}")
     private String clientSecret;
 
-    @Value("${ifood.hosts.url-ordens}")
+    @Value("${ifood.resources.ordens}")
     private String urlOrdens;
 
-    @Value("${ifood.hosts.url-comerciantes}")
+    @Value("${ifood.resources.comerciantes}")
     private String urlComerciantes;
 
-    @Value("${ifood.hosts.url-financeiro}")
+    @Value("${ifood.resources.financeiro}")
     private String urlFinanceiro;
 
-    @Value("${ifood.hosts.url-ordens-detalhes}")
+    @Value("${ifood.resources.ordens-detalhes}")
     private String urlOrdensDetalhes;
 
-    @Value("${ifood.hosts.url-autenticacao}")
+    @Value("${ifood.resources.autenticacao}")
     private String urlAutenticacao;
 
     private final WebClient webClient;
 
     public IfoodResource(WebClient webClient) {
         this.webClient = webClient;
-    }
-
-    @GetMapping("/test")
-    public void test () {
-        System.out.println("");
     }
 
     @GetMapping("ordens")
