@@ -42,12 +42,10 @@ public class EmpresaResource {
         var empresa = this.empresaService.atualizar(id, empresaDTO);
         return ResponseEntity.ok(empresaAssembler.paraDTO(empresa));
     }
-
     @PatchMapping("/{id}/ativar")
     public ResponseEntity<EmpresaDTO> ativar (@PathVariable Long id) {
         return ResponseEntity.ok(empresaAssembler.paraDTO(empresaService.ativar(id)));
     }
-
     @PatchMapping("/{id}/desativar")
     public ResponseEntity<EmpresaDTO> desativar (@PathVariable Long id) {
         return ResponseEntity.ok(empresaAssembler.paraDTO(empresaService.desativar(id)));
