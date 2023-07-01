@@ -1,36 +1,22 @@
 package com.ctsousa.econcilia.model.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
+@Getter
+@Setter
 public class ContatoDTO implements Serializable {
 
+    @Email
+    @NotEmpty(message = "Campo e-mail é obrigatório.")
     private String email;
 
     private String telefone;
 
+    @NotEmpty(message = "Campo telefone celular é obrigatório.")
     private String celular;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getCelular() {
-        return celular;
-    }
-
-    public void setCelular(String celular) {
-        this.celular = celular;
-    }
 }

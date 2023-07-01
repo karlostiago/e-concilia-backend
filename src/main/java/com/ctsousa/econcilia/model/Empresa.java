@@ -1,12 +1,13 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.util.StringUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+import static com.ctsousa.econcilia.util.StringUtil.somenteNumero;
 
 @Data
 @Entity
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = false)
 public class Empresa extends Entidade {
 
+    @NotNull
     @Column(name = "razao_social", nullable = false, length = 100)
     private String razaoSocial;
 
@@ -28,6 +30,18 @@ public class Empresa extends Entidade {
 
     @Embedded
     private Contato contato;
+
+    @Column(columnDefinition = "default false")
+    private boolean ativo;
+
+    @PreUpdate
+    @PrePersist
+    public void pre () {
+        setCnpj(somenteNumero(getCnpj()));
+        getEndereco().setCep(somenteNumero(getEndereco().getCep()));
+        getContato().setTelefone(somenteNumero(getContato().getTelefone()));
+        getContato().setCelular(somenteNumero(getContato().getCelular()));
+    }
 }
 
 

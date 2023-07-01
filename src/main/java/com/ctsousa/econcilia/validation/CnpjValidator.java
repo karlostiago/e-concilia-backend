@@ -1,5 +1,7 @@
 package com.ctsousa.econcilia.validation;
 
+import com.ctsousa.econcilia.exceptions.CnpjException;
+
 public class CnpjValidator {
 
     private final String cnpj;
@@ -16,7 +18,7 @@ public class CnpjValidator {
         final var digitoExtraido = this.cnpj.substring(this.cnpj.length() -2);
 
         if (!digitoCalculado.equals(digitoExtraido)) {
-            throw new RuntimeException("Cnpj inválido.");
+            throw new CnpjException(this.cnpj);
         }
     }
 
