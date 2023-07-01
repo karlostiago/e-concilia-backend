@@ -25,6 +25,13 @@ spring:
             "[hibernate.generate_statistics]": false
             "[hibernate.connection.provider_disables_autocommit]": true
 
-    ifood:
-        clientid: ${ifood.clientid}
-        clientsecret: ${ifood.clientsecret}
+ifood:
+    credencial:
+        client-id: ${ifood.clientid}
+        client-secret: ${ifood.clientsecret}
+    resources:
+        ordens: https://merchant-api.ifood.com.br/order/v1.0/events:polling
+        comerciantes: https://merchant-api.ifood.com.br/merchant/v1.0/merchants
+        financeiro: https://merchant-api.ifood.com.br/financial/v2.0/merchants/
+        ordens-detalhes: https://merchant-api.ifood.com.br/order/v1.0/orders/
+        autenticacao: https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token
