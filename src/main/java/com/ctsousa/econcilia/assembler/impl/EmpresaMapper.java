@@ -1,8 +1,8 @@
 package com.ctsousa.econcilia.assembler.impl;
 
-import com.ctsousa.econcilia.assembler.ColecaoAssembler;
-import com.ctsousa.econcilia.assembler.DtoAssembler;
-import com.ctsousa.econcilia.assembler.EntidadeAssembler;
+import com.ctsousa.econcilia.assembler.ColecaoMapper;
+import com.ctsousa.econcilia.assembler.DtoMapper;
+import com.ctsousa.econcilia.assembler.EntidadeMapper;
 import com.ctsousa.econcilia.model.Contato;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Endereco;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class EmpresaAssemblerImpl implements EntidadeAssembler<Empresa, EmpresaDTO>, DtoAssembler<Empresa, EmpresaDTO>, ColecaoAssembler<Empresa, EmpresaDTO> {
+public class EmpresaMapper implements EntidadeMapper<Empresa, EmpresaDTO>, DtoMapper<Empresa, EmpresaDTO>, ColecaoMapper<Empresa, EmpresaDTO> {
 
     @Override
     public Empresa paraEntidade(EmpresaDTO empresaDTO) {
