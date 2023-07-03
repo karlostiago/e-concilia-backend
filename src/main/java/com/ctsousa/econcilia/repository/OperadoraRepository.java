@@ -15,7 +15,7 @@ public interface OperadoraRepository extends JpaRepository<Operadora, Long> {
     boolean existsByDescricao(String descricao);
 
     @Query(value = "SELECT op FROM Operadora op INNER JOIN FETCH op.taxas WHERE op.id = :id")
-    Operadora porID(Long id);
+    Operadora porID(@Param(value = "id") Long id);
 
     @Query(value = "SELECT DISTINCT op FROM Operadora op INNER JOIN FETCH op.taxas WHERE op.descricao LIKE %:descricao%")
     List<Operadora> porDescricao(@Param(value = "descricao") String descricao);
