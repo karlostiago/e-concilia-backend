@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.assembler.impl;
 
-import com.ctsousa.econcilia.assembler.DtoAssembler;
+import com.ctsousa.econcilia.assembler.DtoMapper;
 import com.ctsousa.econcilia.integration.receitaws.json.DadosCnpjJson;
 import com.ctsousa.econcilia.model.dto.ContatoDTO;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
@@ -9,7 +9,7 @@ import com.ctsousa.econcilia.model.dto.EstadoDTO;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CnpjAssemblerImpl implements DtoAssembler<DadosCnpjJson, EmpresaDTO> {
+public class CnpjMapper implements DtoMapper<DadosCnpjJson, EmpresaDTO> {
 
     @Override
     public EmpresaDTO paraDTO(DadosCnpjJson dadosCnpj) {

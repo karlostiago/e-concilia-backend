@@ -2,7 +2,7 @@ package com.ctsousa.econcilia.assembler;
 
 import java.util.List;
 
-public interface ColecaoAssembler<T, D> {
+public interface ColecaoMapper<T, D> {
 
     List<D> paraLista (List<T> entidade);
 }

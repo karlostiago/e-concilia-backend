@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.assembler;
 
-public interface DtoAssembler<T, D>{
+public interface DtoMapper<T, D>{
 
     D paraDTO (T entidade);
 }

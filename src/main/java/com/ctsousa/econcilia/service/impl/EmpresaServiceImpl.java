@@ -16,9 +16,7 @@ import static com.ctsousa.econcilia.util.StringUtil.somenteNumero;
 
 @Component
 public class EmpresaServiceImpl implements EmpresaService {
-
     private final EmpresaRepository empresaRepository;
-
     EmpresaServiceImpl(EmpresaRepository empresaRepository) {
         this.empresaRepository = empresaRepository;
     }
