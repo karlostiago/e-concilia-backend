@@ -7,6 +7,6 @@ CREATE TABLE `taxa` (
   `ativo` tinyint(1) NOT NULL DEFAULT '0',
   `operadora_id` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_operadora_id` (`operadora_id`),
-  CONSTRAINT `fk_operadora_id` FOREIGN KEY (`operadora_id`) REFERENCES `operadora` (`id`)
+  KEY `fk_taxa_operadora_id` (`operadora_id`),
+  CONSTRAINT `fk_taxa_operadora_id` FOREIGN KEY (`operadora_id`) REFERENCES `operadora` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
