@@ -19,6 +19,7 @@ public class OperadoraMapper implements EntidadeMapper<Operadora, OperadoraDTO>,
     @Override
     public Operadora paraEntidade(OperadoraDTO dto) {
         Operadora operadora = new Operadora();
+        operadora.setId(dto.getId());
         operadora.setDescricao(dto.getDescricao());
         operadora.setAtivo(dto.getAtivo());
 

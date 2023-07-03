@@ -22,6 +22,7 @@ public class EmpresaMapper implements EntidadeMapper<Empresa, EmpresaDTO>, DtoMa
     @Override
     public Empresa paraEntidade(EmpresaDTO empresaDTO) {
         Empresa empresa = new Empresa();
+        empresa.setId(empresaDTO.getId());
         empresa.setCnpj(empresaDTO.getCnpj());
         empresa.setRazaoSocial(empresaDTO.getRazaoSocial());
         empresa.setNomeFantasia(empresaDTO.getNomeFantasia());

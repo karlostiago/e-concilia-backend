@@ -12,17 +12,24 @@ import java.io.Serializable;
 @Setter
 @Embeddable
 public class Endereco implements Serializable {
+
     @Column(nullable = false, length = 100)
     private String logradouro;
+
     @Column(nullable = false, length = 50)
     private String numero;
+
     @Column(nullable = false, length = 20)
     private String cep;
+
     private String complemento;
+
     @Column(length = 100)
     private String cidade;
+
     @Column(length = 100)
     private String bairro;
+
     @Embedded
     private Estado estado;
 }
