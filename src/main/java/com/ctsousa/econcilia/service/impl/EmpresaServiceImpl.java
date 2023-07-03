@@ -20,6 +20,7 @@ public class EmpresaServiceImpl implements EmpresaService {
     EmpresaServiceImpl(EmpresaRepository empresaRepository) {
         this.empresaRepository = empresaRepository;
     }
+
     @Override
     public Empresa salvar(final Empresa empresa) {
         if (empresaRepository.existsByCnpj(somenteNumero(empresa.getCnpj()))) {
@@ -28,6 +29,7 @@ public class EmpresaServiceImpl implements EmpresaService {
 
         return empresaRepository.save(empresa);
     }
+
     @Override
     public List<Empresa> pesquisar(final String razaoSocial, final String cnpj) {
         if (null != razaoSocial && !razaoSocial.isEmpty()) {
@@ -40,22 +42,26 @@ public class EmpresaServiceImpl implements EmpresaService {
 
         return empresaRepository.findAll();
     }
+
     @Override
     public void deletar(Long id) {
         var empresa = empresaRepository.findById(id);
         empresa.ifPresent(empresaRepository::delete);
     }
+
     @Override
     public Empresa pesquisarPor(Long id) {
         return empresaRepository.findById(id)
                 .orElseThrow(() -> new EmpresaNaoEncontradaException(id));
     }
+
     @Override
     public Empresa atualizar(Long id, EmpresaDTO empresaDTO) {
         Empresa empresa = this.pesquisarPor(id);
         BeanUtils.copyProperties(empresaDTO, empresa, "id");
         return empresaRepository.save(empresa);
     }
+
     @Override
     public Empresa ativar(Long id) {
         Empresa empresa = this.pesquisarPor(id);

@@ -8,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -16,8 +17,12 @@ public class TaxaDTO implements Serializable {
     private String descricao;
     @NotNull(message = "Campo valor é obrigatório.")
     private BigDecimal valor;
+    @NotNull(message = "Campo entra em vigor é obrigatório.")
+    private LocalDate entraEmVigor;
+    @NotNull(message = "Campo válido até é obrigatório.")
+    private LocalDate validoAte;
     @JsonIgnore
     private OperadoraDTO operadora;
-
     private Boolean ativo;
+    private Long expiraEm;
 }
