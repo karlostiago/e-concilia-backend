@@ -69,8 +69,12 @@ public class OperadoraServiceImpl implements OperadoraService  {
 
     @Override
     public void deletar(Long id) {
-        var operadora = operadoraRepository.findById(id);
-        operadora.ifPresent(operadoraRepository::delete);
+        try {
+            var operadora = operadoraRepository.findById(id);
+            operadora.ifPresent(operadoraRepository::delete);
+        } catch (Exception e) {
+            throw new NotificacaoException("Operadora não pode ser excluída, pois já está associada a um contrado.");
+        }
     }
 
     private void validar (final Operadora operadora) {

@@ -1,7 +1,6 @@
 package com.ctsousa.econcilia.service.impl;
 
-import com.ctsousa.econcilia.exceptions.EmpresaExisteException;
-import com.ctsousa.econcilia.exceptions.EmpresaNaoEncontradaException;
+import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.repository.EmpresaRepository;
@@ -17,6 +16,7 @@ import static com.ctsousa.econcilia.util.StringUtil.somenteNumero;
 @Component
 public class EmpresaServiceImpl implements EmpresaService {
     private final EmpresaRepository empresaRepository;
+
     EmpresaServiceImpl(EmpresaRepository empresaRepository) {
         this.empresaRepository = empresaRepository;
     }
@@ -24,7 +24,7 @@ public class EmpresaServiceImpl implements EmpresaService {
     @Override
     public Empresa salvar(final Empresa empresa) {
         if (empresaRepository.existsByCnpj(somenteNumero(empresa.getCnpj()))) {
-            throw new EmpresaExisteException(empresa.getCnpj());
+            throw new NotificacaoException(String.format("Já existe uma empresa com o cnpj %s cadastrado.", empresa.getCnpj()));
         }
 
         return empresaRepository.save(empresa);
@@ -52,7 +52,7 @@ public class EmpresaServiceImpl implements EmpresaService {
     @Override
     public Empresa pesquisarPor(Long id) {
         return empresaRepository.findById(id)
-                .orElseThrow(() -> new EmpresaNaoEncontradaException(id));
+                .orElseThrow(() -> new NotificacaoException(String.format("Empresa com id %d não encontrado", id)));
     }
 
     @Override

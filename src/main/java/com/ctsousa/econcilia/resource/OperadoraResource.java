@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.resource;
 
 import com.ctsousa.econcilia.assembler.impl.OperadoraMapper;
+import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.model.dto.OperadoraDTO;
 import com.ctsousa.econcilia.service.OperadoraService;
