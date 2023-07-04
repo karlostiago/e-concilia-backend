@@ -14,18 +14,20 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestControllerAdvice
 public class NotificaoExcepitonHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler( { NotificacaoException.class } )
-    public ResponseEntity<Error> handleNotificacaoException (NotificacaoException ex) {
-        return ResponseEntity.badRequest().body(ErrorBuilder.builder()
+    public ResponseEntity<List<Error>> handleNotificacaoException (NotificacaoException ex) {
+        List<Error> erros = List.of((ErrorBuilder.builder()
                 .comStatus(HttpStatus.BAD_REQUEST)
                 .comMensagem(ex.getMessage())
                 .comDetalhe(ex)
-                .build());
+                .build()));
+        return ResponseEntity.badRequest().body(erros);
     }
 
     @Override
