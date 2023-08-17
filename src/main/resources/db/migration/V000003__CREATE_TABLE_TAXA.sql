@@ -5,8 +5,8 @@ CREATE TABLE `taxa` (
   `entra_em_vigor` date NOT NULL,
   `valido_ate` date NOT NULL,
   `ativo` tinyint(1) NOT NULL DEFAULT '0',
-  `operadora_id` bigint DEFAULT NULL,
+  `contrato_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_taxa_operadora_id` (`operadora_id`),
-  CONSTRAINT `fk_taxa_operadora_id` FOREIGN KEY (`operadora_id`) REFERENCES `operadora` (`id`)
+  KEY `fk_taxa_contrato_id` (`contrato_id`),
+  CONSTRAINT `fk_taxa_contrato_id` FOREIGN KEY (`contrato_id`) REFERENCES `contrato` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

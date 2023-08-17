@@ -39,7 +39,7 @@ public class EmpresaResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<EmpresaDTO> buscarPorId (@PathVariable Long id) {
-        var empresa = this.empresaService.pesquisarPor(id);
+        var empresa = this.empresaService.pesquisarPorId(id);
         return ResponseEntity.ok(empresaMapper.paraDTO(empresa));
     }
 

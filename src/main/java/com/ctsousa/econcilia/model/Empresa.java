@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
 import static com.ctsousa.econcilia.util.StringUtil.somenteNumero;
 
 @Getter
@@ -33,10 +34,19 @@ public class Empresa extends Entidade {
     @Column(columnDefinition = "default false")
     private boolean ativo;
 
+    public Empresa() { }
+
+    public Empresa(final Long id) {
+        setId(id);
+    }
+
     @PreUpdate
     @PrePersist
-    public void pre () {
+    public void init () {
         setCnpj(somenteNumero(getCnpj()));
+        setRazaoSocial(maiuscula(getRazaoSocial()));
+        setNomeFantasia(maiuscula(getNomeFantasia()));
+
         getEndereco().setCep(somenteNumero(getEndereco().getCep()));
         getContato().setTelefone(somenteNumero(getContato().getTelefone()));
         getContato().setCelular(somenteNumero(getContato().getCelular()));

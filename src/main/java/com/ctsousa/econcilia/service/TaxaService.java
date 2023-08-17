@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.service;
 
+import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.model.dto.TaxaDTO;
 import org.springframework.stereotype.Service;
@@ -10,11 +11,17 @@ import java.util.List;
 @Service
 public interface TaxaService {
 
-    void validar (TaxaDTO taxaDTO);
+    void validar (Taxa taxa);
 
     Long calcularTempoExpiracao(LocalDate dataInicial, LocalDate dataFinal);
 
     void verificaDuplicidade(List<Taxa> taxas);
 
     void validaEntraEmVigor(List<Taxa> taxas);
+
+    List<Taxa> buscarPorContrato(final Long contratoId);
+
+    List<Taxa> buscarPorOperadora(final Long operadoraId);
+
+    List<Taxa> buscarTodos();
 }

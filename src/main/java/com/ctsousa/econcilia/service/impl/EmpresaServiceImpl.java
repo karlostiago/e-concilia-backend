@@ -45,26 +45,26 @@ public class EmpresaServiceImpl implements EmpresaService {
 
     @Override
     public void deletar(Long id) {
-        var empresa = empresaRepository.findById(id);
-        empresa.ifPresent(empresaRepository::delete);
+        var empresa = pesquisarPorId(id);
+        empresaRepository.delete(empresa);
     }
 
     @Override
-    public Empresa pesquisarPor(Long id) {
+    public Empresa pesquisarPorId(Long id) {
         return empresaRepository.findById(id)
                 .orElseThrow(() -> new NotificacaoException(String.format("Empresa com id %d não encontrado", id)));
     }
 
     @Override
     public Empresa atualizar(Long id, EmpresaDTO empresaDTO) {
-        Empresa empresa = this.pesquisarPor(id);
+        Empresa empresa = pesquisarPorId(id);
         BeanUtils.copyProperties(empresaDTO, empresa, "id");
         return empresaRepository.save(empresa);
     }
 
     @Override
     public Empresa ativar(Long id) {
-        Empresa empresa = this.pesquisarPor(id);
+        Empresa empresa = this.pesquisarPorId(id);
         empresa.setAtivo(true);
         empresaRepository.save(empresa);
         return empresa;
@@ -72,7 +72,7 @@ public class EmpresaServiceImpl implements EmpresaService {
 
     @Override
     public Empresa desativar(Long id) {
-        Empresa empresa = this.pesquisarPor(id);
+        Empresa empresa = this.pesquisarPorId(id);
         empresa.setAtivo(false);
         empresaRepository.save(empresa);
         return empresa;

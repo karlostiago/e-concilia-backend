@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
+import static com.ctsousa.econcilia.util.StringUtil.somenteNumero;
+
 @Getter
 @Setter
 @Entity
@@ -32,8 +35,8 @@ public class Taxa extends Entidade {
     private LocalDate validoAte;
 
     @ManyToOne
-    @JoinColumn(name = "operadora_id")
-    private Operadora operadora;
+    @JoinColumn(name = "contrato_id")
+    private Contrato contrato;
 
     @Column(name = "ativo", nullable = false, columnDefinition = "boolean default false ")
     private Boolean ativo;
@@ -41,5 +44,11 @@ public class Taxa extends Entidade {
     @Transient
     public Long expiraEm() {
         return ChronoUnit.DAYS.between(entraEmVigor, validoAte);
+    }
+
+    @PreUpdate
+    @PrePersist
+    public void init() {
+        setDescricao(maiuscula(getDescricao()));
     }
 }

@@ -5,9 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
 
 @Getter
 @Setter
@@ -19,21 +18,19 @@ public class Operadora extends Entidade {
     @Column(name = "descricao", nullable = false, length = 100, unique = true)
     private String descricao;
 
-    @OneToMany(mappedBy = "operadora", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Taxa> taxas = new ArrayList<>();
-
     @Column(name = "ativo", nullable = false, columnDefinition = "boolean default false ")
     private Boolean ativo;
 
-    public void adicionaTaxa(Taxa taxa) {
-        taxa.setOperadora(this);
-        taxa.setAtivo(this.getAtivo());
+    public Operadora() { }
 
-        this.taxas.add(taxa);
+    public Operadora(Long id) {
+        setId(id);
     }
 
-    public List<Taxa> getTaxas() {
-        return Collections.unmodifiableList(taxas);
+    @PrePersist
+    @PreUpdate
+    public void init() {
+        this.descricao = maiuscula(this.descricao);
     }
 }
 

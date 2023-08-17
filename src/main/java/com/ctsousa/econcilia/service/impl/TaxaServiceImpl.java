@@ -2,7 +2,7 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Taxa;
-import com.ctsousa.econcilia.model.dto.TaxaDTO;
+import com.ctsousa.econcilia.repository.TaxaRepository;
 import com.ctsousa.econcilia.service.TaxaService;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +13,20 @@ import java.util.Map;
 
 @Component
 public class TaxaServiceImpl implements TaxaService {
+
+    private final TaxaRepository taxaRepository;
+
+    public TaxaServiceImpl(TaxaRepository taxaRepository) {
+        this.taxaRepository = taxaRepository;
+    }
+
     @Override
-    public void validar(TaxaDTO taxaDTO) {
-        if (taxaDTO.getEntraEmVigor().isAfter(taxaDTO.getValidoAte())) {
+    public void validar(Taxa taxa) {
+        if (taxa.getEntraEmVigor().isBefore(LocalDate.now())) {
+            throw new NotificacaoException("O campo entrar em vigor não pode ser menor que a data atual.");
+        }
+
+        if (taxa.getEntraEmVigor().isAfter(taxa.getValidoAte())) {
             throw new NotificacaoException("O campo entrar em vigor não pode ser maior que o campo válido até.");
         }
     }
@@ -46,5 +57,38 @@ public class TaxaServiceImpl implements TaxaService {
                 throw new NotificacaoException("A taxa não pode entrar em vigor, pois está maior que o período de validade.");
             }
         }
+    }
+
+    @Override
+    public List<Taxa> buscarPorContrato(final Long contratoId) {
+        List<Taxa> taxas = taxaRepository.findByContrato(contratoId);
+
+        if (taxas.isEmpty()) {
+            throw new NotificacaoException("Não foi encontrada nenhuma taxa para o contrato de número " + contratoId);
+        }
+
+        return taxas;
+    }
+
+    @Override
+    public List<Taxa> buscarPorOperadora(Long operadoraId) {
+        List<Taxa> taxas = taxaRepository.findByOperadora(operadoraId);
+
+        if (taxas.isEmpty()) {
+            throw new NotificacaoException("Não foi encontrada nenhuma taxa para o operadora com id: " + operadoraId);
+        }
+
+        return taxas;
+    }
+
+    @Override
+    public List<Taxa> buscarTodos() {
+        List<Taxa> taxas = taxaRepository.findByAll();
+
+        if (taxas.isEmpty()) {
+            throw new NotificacaoException("Não foi encontrada nenhuma taxa");
+        }
+
+        return taxas;
     }
 }

@@ -2,14 +2,13 @@ package com.ctsousa.econcilia.resource;
 
 import com.ctsousa.econcilia.assembler.impl.ContratoMapper;
 import com.ctsousa.econcilia.model.dto.ContratoDTO;
+import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.service.ContratoService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/contratos")
@@ -26,6 +25,29 @@ public class ContratoResource {
     @PostMapping
     public ResponseEntity<ContratoDTO> cadastrar (@RequestBody @Valid ContratoDTO contratoDTO) {
         var contrato = contratoService.salvar(contratoMapper.paraEntidade(contratoDTO));
+        return ResponseEntity.ok(contratoMapper.paraDTO(contrato));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ContratoDTO>> listar (@RequestParam( required = false ) Long empresaId, @RequestParam (required = false) Long operadoraId) {
+        var contratos = this.contratoService.pesquisar(empresaId, operadoraId);
+        return ResponseEntity.ok(contratoMapper.paraLista(contratos));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ContratoDTO> buscarPorId (@PathVariable Long id) {
+        var contrato = this.contratoService.pesquisarPorId(id);
+        return ResponseEntity.ok(contratoMapper.paraDTO(contrato));
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletar (@PathVariable Long id) {
+        this.contratoService.deletar(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ContratoDTO> atualizar (@PathVariable Long id, @RequestBody @Valid ContratoDTO contratoDTO) {
+        var contrato = this.contratoService.atualizar(id, contratoDTO);
         return ResponseEntity.ok(contratoMapper.paraDTO(contrato));
     }
 }
