@@ -53,4 +53,14 @@ public class TaxaResource {
 
         return ResponseEntity.ok(taxasDTO);
     }
+
+    @PatchMapping("/{id}/ativar")
+    public ResponseEntity<TaxaDTO> ativar (@PathVariable Long id) {
+        return ResponseEntity.ok(taxaMapper.paraDTO(taxaService.ativar(id)));
+    }
+
+    @PatchMapping("/{id}/desativar")
+    public ResponseEntity<TaxaDTO> desativar (@PathVariable Long id) {
+        return ResponseEntity.ok(taxaMapper.paraDTO(taxaService.desativar(id)));
+    }
 }

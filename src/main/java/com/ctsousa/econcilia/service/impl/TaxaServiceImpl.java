@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.repository.TaxaRepository;
 import com.ctsousa.econcilia.service.TaxaService;
@@ -91,4 +92,29 @@ public class TaxaServiceImpl implements TaxaService {
 
         return taxas;
     }
+
+    @Override
+    public Taxa pesquisarPorId(Long id) {
+        return taxaRepository.porId(id)
+                .orElseThrow(() -> new NotificacaoException(String.format("Taxa com id %d não encontrado", id)));
+    }
+
+    @Override
+    public Taxa ativar(Long id) {
+        Taxa taxa = this.pesquisarPorId(id);
+        taxa.setAtivo(true);
+        taxaRepository.save(taxa);
+
+        return taxa;
+    }
+
+    @Override
+    public Taxa desativar(Long id) {
+        Taxa taxa = this.pesquisarPorId(id);
+        taxa.setAtivo(false);
+        taxaRepository.save(taxa);
+
+        return taxa;
+    }
+
 }

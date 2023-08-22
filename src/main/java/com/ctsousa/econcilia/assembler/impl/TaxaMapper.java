@@ -19,6 +19,7 @@ public class TaxaMapper implements EntidadeMapper<Taxa, TaxaDTO>, DtoMapper<Taxa
     @Override
     public Taxa paraEntidade(TaxaDTO taxaDTO) {
         Taxa taxa = new Taxa();
+        taxa.setId(taxaDTO.getId());
         taxa.setDescricao(taxaDTO.getDescricao());
         taxa.setValor(taxaDTO.getValor());
         taxa.setValidoAte(taxaDTO.getValidoAte());
@@ -30,6 +31,7 @@ public class TaxaMapper implements EntidadeMapper<Taxa, TaxaDTO>, DtoMapper<Taxa
     @Override
     public TaxaDTO paraDTO(Taxa taxa) {
         TaxaDTO taxaDTO = new TaxaDTO();
+        taxaDTO.setId(taxa.getId());
         taxaDTO.setDescricao(taxa.getDescricao());
         taxaDTO.setValor(taxa.getValor());
         taxaDTO.setValidoAte(taxa.getValidoAte());

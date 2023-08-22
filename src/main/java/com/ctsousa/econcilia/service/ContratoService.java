@@ -1,9 +1,7 @@
 package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.model.Contrato;
-import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.dto.ContratoDTO;
-import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,4 +18,8 @@ public interface ContratoService {
     Contrato atualizar (Long id, ContratoDTO contratoDTO);
 
     Contrato pesquisarPorId (Long id);
+
+    Contrato ativar (Long id);
+
+    Contrato desativar (Long id);
 }

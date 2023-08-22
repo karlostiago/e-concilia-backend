@@ -3,6 +3,7 @@ package com.ctsousa.econcilia.resource;
 import com.ctsousa.econcilia.assembler.impl.ContratoMapper;
 import com.ctsousa.econcilia.model.dto.ContratoDTO;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
+import com.ctsousa.econcilia.model.dto.TaxaDTO;
 import com.ctsousa.econcilia.service.ContratoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +50,15 @@ public class ContratoResource {
     public ResponseEntity<ContratoDTO> atualizar (@PathVariable Long id, @RequestBody @Valid ContratoDTO contratoDTO) {
         var contrato = this.contratoService.atualizar(id, contratoDTO);
         return ResponseEntity.ok(contratoMapper.paraDTO(contrato));
+    }
+
+    @PatchMapping("/{id}/ativar")
+    public ResponseEntity<ContratoDTO> ativar (@PathVariable Long id) {
+        return ResponseEntity.ok(contratoMapper.paraDTO(contratoService.ativar(id)));
+    }
+
+    @PatchMapping("/{id}/desativar")
+    public ResponseEntity<ContratoDTO> desativar (@PathVariable Long id) {
+        return ResponseEntity.ok(contratoMapper.paraDTO(contratoService.desativar(id)));
     }
 }

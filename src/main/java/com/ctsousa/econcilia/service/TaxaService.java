@@ -1,8 +1,6 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Taxa;
-import com.ctsousa.econcilia.model.dto.TaxaDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,4 +22,10 @@ public interface TaxaService {
     List<Taxa> buscarPorOperadora(final Long operadoraId);
 
     List<Taxa> buscarTodos();
+
+    Taxa ativar (Long id);
+
+    Taxa desativar (Long id);
+
+    Taxa pesquisarPorId (Long id);
 }

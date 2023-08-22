@@ -87,6 +87,26 @@ public class ContratoServiceImpl implements ContratoService {
         return contrato;
     }
 
+    @Override
+    public Contrato ativar(Long id) {
+        Contrato contrato = this.pesquisarPorId(id);
+        contrato.setAtivo(true);
+        contrato.getTaxas().forEach(taxa -> taxa.setAtivo(contrato.getAtivo()));
+        contratoRepository.save(contrato);
+
+        return contrato;
+    }
+
+    @Override
+    public Contrato desativar(Long id) {
+        Contrato contrato = this.pesquisarPorId(id);
+        contrato.setAtivo(false);
+        contrato.getTaxas().forEach(taxa -> taxa.setAtivo(contrato.getAtivo()));
+        contratoRepository.save(contrato);
+
+        return contrato;
+    }
+
     private void validaTaxas(final List<Taxa> taxas) {
         taxaService.verificaDuplicidade(taxas);
         taxaService.validaEntraEmVigor(taxas);

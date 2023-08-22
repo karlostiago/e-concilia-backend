@@ -14,6 +14,8 @@ import java.time.LocalDate;
 @Setter
 public class TaxaDTO implements Serializable {
 
+    private Long id;
+
     @NotEmpty(message = "Campo nome é obrigatório.")
     private String descricao;
 
