@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface ContratoRepository extends JpaRepository<Contrato, Long> {
 
-    @Query(value = "SELECT c FROM Contrato c INNER JOIN FETCH c.empresa INNER JOIN FETCH c.operadora INNER JOIN FETCH c.taxas WHERE c.id = :id")
+    @Query(value = "SELECT c FROM Contrato c INNER JOIN FETCH c.empresa INNER JOIN FETCH c.operadora LEFT JOIN FETCH c.taxas WHERE c.id = :id")
     Optional<Contrato> porID(@Param(value = "id") Long id);
 
     @Query(value = "SELECT c FROM Contrato c INNER JOIN FETCH c.empresa INNER JOIN FETCH c.operadora WHERE c.operadora = :operadora")
