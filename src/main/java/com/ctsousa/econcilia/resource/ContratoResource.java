@@ -2,14 +2,12 @@ package com.ctsousa.econcilia.resource;
 
 import com.ctsousa.econcilia.assembler.impl.ContratoMapper;
 import com.ctsousa.econcilia.model.dto.ContratoDTO;
-import com.ctsousa.econcilia.model.dto.EmpresaDTO;
-import com.ctsousa.econcilia.model.dto.TaxaDTO;
 import com.ctsousa.econcilia.service.ContratoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/contratos")
