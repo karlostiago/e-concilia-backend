@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.assembler.impl.TaxaMapper;
+import com.ctsousa.econcilia.mapper.TaxaMapper;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.model.dto.TaxaDTO;
 import com.ctsousa.econcilia.service.TaxaService;

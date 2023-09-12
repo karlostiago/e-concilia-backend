@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.service.impl;
 
-import com.ctsousa.econcilia.assembler.impl.ContratoMapper;
+import com.ctsousa.econcilia.mapper.ContratoMapper;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Empresa;

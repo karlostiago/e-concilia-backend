@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.assembler.impl.CnpjMapper;
+import com.ctsousa.econcilia.mapper.CnpjMapper;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.service.CnpjService;
 import org.springframework.http.ResponseEntity;

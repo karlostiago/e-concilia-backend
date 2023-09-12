@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.assembler.impl.EmpresaMapper;
+import com.ctsousa.econcilia.mapper.EmpresaMapper;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.service.EmpresaService;
 import org.springframework.http.ResponseEntity;
