@@ -43,7 +43,7 @@ public class CorsConfig implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, getOrigemPermitida(request));
+        response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "https://e-concilia.herokuapp.com");
         response.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS, CREDENTIALS);
 
         if(OPTIONS.equals(request.getMethod()) && temOriginPermitida(request)) {
