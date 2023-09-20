@@ -3,6 +3,7 @@ package com.ctsousa.econcilia.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -24,4 +25,8 @@ public class Venda {
     private Pagamento pagamento;
 
     private Cobranca cobranca;
+
+    private Boolean conciliado;
+
+    private BigDecimal diferenca;
 }

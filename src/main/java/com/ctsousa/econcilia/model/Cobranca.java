@@ -23,6 +23,8 @@ public class Cobranca {
 
     private BigDecimal taxaAdquirente;
 
+    private BigDecimal taxaAdquirenteAplicada = new BigDecimal("0.0");
+
     private BigDecimal comissaoEntrega;
 
     private BigDecimal taxaComissao;

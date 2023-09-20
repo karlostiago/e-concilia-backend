@@ -83,6 +83,17 @@ public class TaxaServiceImpl implements TaxaService {
     }
 
     @Override
+    public List<Taxa> buscarPorEmpresa(Long empresaId) {
+        List<Taxa> taxas = taxaRepository.findByEmpresa(empresaId);
+
+        if (taxas.isEmpty()) {
+            throw new NotificacaoException("Não foi encontrada nenhuma taxa para a empresa " + empresaId);
+        }
+
+        return taxas;
+    }
+
+    @Override
     public List<Taxa> buscarTodos() {
         List<Taxa> taxas = taxaRepository.findByAll();
 
@@ -116,5 +127,4 @@ public class TaxaServiceImpl implements TaxaService {
 
         return taxa;
     }
-
 }

@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.resource;
 
 import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.service.ConciliadorIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +19,17 @@ public class ConciliadorIfoodResource {
 
     private final IntegracaoService integracaoService;
 
-    public ConciliadorIfoodResource(IntegracaoService integracaoService) {
+    private final ConciliadorIfoodService conciliadorIfoodService;
+
+    public ConciliadorIfoodResource(IntegracaoService integracaoService, ConciliadorIfoodService conciliadorIfoodService) {
         this.integracaoService = integracaoService;
+        this.conciliadorIfoodService = conciliadorIfoodService;
     }
 
     @GetMapping
     public ResponseEntity<List<Venda>> vendas(@RequestParam(name = "lojaId") final String lojaId, @RequestParam(name = "dtInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial, @RequestParam(name = "dtFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal) {
-        return ResponseEntity.ok(integracaoService.pesquisarVendasIfood(lojaId, dtInicial, dtFinal));
+        List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, dtInicial, dtFinal);
+        vendas = conciliadorIfoodService.conciliarTaxas(vendas, lojaId);
+        return ResponseEntity.ok(vendas);
     }
 }

@@ -21,6 +21,8 @@ public interface TaxaService {
 
     List<Taxa> buscarPorOperadora(final Long operadoraId);
 
+    List<Taxa> buscarPorEmpresa(final Long empresaId);
+
     List<Taxa> buscarTodos();
 
     Taxa ativar (Long id);

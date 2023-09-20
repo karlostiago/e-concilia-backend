@@ -20,6 +20,9 @@ public interface TaxaRepository extends JpaRepository<Taxa, Long> {
     @Query(value = "SELECT t FROM Taxa t INNER JOIN FETCH t.contrato c INNER JOIN FETCH c.empresa INNER JOIN c.operadora o WHERE o.id = :operadoraId")
     List<Taxa> findByOperadora(@Param(value = "operadoraId") Long operadoraId);
 
+    @Query(value = "SELECT t FROM Taxa t INNER JOIN t.contrato c INNER JOIN c.empresa e INNER JOIN c.operadora o WHERE e.id = :empresaId")
+    List<Taxa> findByEmpresa(@Param(value = "empresaId") Long empresaId);
+
     @Query(value = "SELECT t FROM Taxa t INNER JOIN FETCH t.contrato c INNER JOIN FETCH c.empresa INNER JOIN c.operadora o WHERE 1 = 1")
     List<Taxa> findByAll();
 

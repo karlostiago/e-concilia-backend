@@ -15,6 +15,8 @@ import com.ctsousa.econcilia.service.IntegracaoService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,13 @@ public class IntegracaoServiceImpl implements IntegracaoService {
 
     @Override
     public List<Venda> pesquisarVendasIfood(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+
+        long dias = ChronoUnit.DAYS.between(dtInicial, dtFinal);
+
+        if (dias > 90) {
+            throw new NotificacaoException("O período não pode ser maior que 90 dias");
+        }
+
         List<Sale> sales = ifoodGateway.findSalesBy(codigoIntegracao, dtInicial, dtFinal);
 
         if (sales.isEmpty()) {
