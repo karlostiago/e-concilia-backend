@@ -67,7 +67,9 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     private void calcularTaxaAdquirenteAplicada(final Venda venda, final Taxa taxa) {
         var desconto = venda.getCobranca().getBeneficioComercio();
         var vTotalLiquido = venda.getCobranca().getGmv().add(desconto);
-        var vTotal = vTotalLiquido.multiply(taxa.getValor()).divide(new BigDecimal("100"), RoundingMode.HALF_UP);
+        var vTotal = vTotalLiquido.multiply(taxa.getValor()).divide(new BigDecimal("100"), RoundingMode.HALF_UP)
+                .setScale(2, RoundingMode.HALF_UP);
+
         venda.getCobranca().setTaxaAdquirenteAplicada(vTotal);
     }
 

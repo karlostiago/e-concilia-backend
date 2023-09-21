@@ -1,7 +1,6 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
-import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.repository.TaxaRepository;
 import com.ctsousa.econcilia.service.TaxaService;

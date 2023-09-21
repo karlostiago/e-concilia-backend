@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -40,7 +41,7 @@ public class TaxaResource {
     public ResponseEntity<List<TaxaDTO>> buscarPorOperadora (@PathVariable Long operadoraId) {
         List<Taxa> taxas = taxaService.buscarPorOperadora(operadoraId);
         List<TaxaDTO> taxasDTO = taxaMapper.paraLista(taxas);
-        taxasDTO.forEach(taxaDTO -> taxaDTO.setExpiraEm(taxaService.calcularTempoExpiracao(taxaDTO.getEntraEmVigor(), taxaDTO.getValidoAte())));
+        taxasDTO.forEach(taxaDTO -> taxaDTO.setExpiraEm(taxaService.calcularTempoExpiracao(LocalDate.now(), taxaDTO.getValidoAte())));
 
         return ResponseEntity.ok(taxasDTO);
     }
@@ -49,7 +50,7 @@ public class TaxaResource {
     public ResponseEntity<List<TaxaDTO>> listar () {
         List<Taxa> taxas = taxaService.buscarTodos();
         List<TaxaDTO> taxasDTO = taxaMapper.paraLista(taxas);
-        taxasDTO.forEach(taxaDTO -> taxaDTO.setExpiraEm(taxaService.calcularTempoExpiracao(taxaDTO.getEntraEmVigor(), taxaDTO.getValidoAte())));
+        taxasDTO.forEach(taxaDTO -> taxaDTO.setExpiraEm(taxaService.calcularTempoExpiracao(LocalDate.now(), taxaDTO.getValidoAte())));
 
         return ResponseEntity.ok(taxasDTO);
     }

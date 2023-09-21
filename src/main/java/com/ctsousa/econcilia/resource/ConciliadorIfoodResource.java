@@ -27,8 +27,13 @@ public class ConciliadorIfoodResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<Venda>> vendas(@RequestParam(name = "lojaId") final String lojaId, @RequestParam(name = "dtInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial, @RequestParam(name = "dtFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal) {
-        List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, dtInicial, dtFinal);
+    public ResponseEntity<List<Venda>> vendas(@RequestParam(name = "lojaId") final String lojaId,
+                                              @RequestParam(name = "dtInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial,
+                                              @RequestParam(name = "dtFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal,
+                                              @RequestParam(name  = "metodoPagamento", required = false) final String metodoPagamento,
+                                              @RequestParam(name  = "bandeira", required = false) final String bandeira) {
+
+        List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, metodoPagamento, bandeira, dtInicial, dtFinal);
         vendas = conciliadorIfoodService.conciliarTaxas(vendas, lojaId);
         return ResponseEntity.ok(vendas);
     }

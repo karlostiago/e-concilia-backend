@@ -12,6 +12,7 @@ import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
 import com.ctsousa.econcilia.repository.IntegracaoRepository;
 import com.ctsousa.econcilia.service.IntegracaoService;
+import com.ctsousa.econcilia.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -19,6 +20,8 @@ import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
 
 @Component
 public class IntegracaoServiceImpl implements IntegracaoService {
@@ -39,7 +42,7 @@ public class IntegracaoServiceImpl implements IntegracaoService {
     }
 
     @Override
-    public List<Venda> pesquisarVendasIfood(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+    public List<Venda> pesquisarVendasIfood(String codigoIntegracao, String metodoPagamento, String bandeira, LocalDate dtInicial, LocalDate dtFinal) {
 
         long dias = ChronoUnit.DAYS.between(dtInicial, dtFinal);
 
@@ -53,7 +56,8 @@ public class IntegracaoServiceImpl implements IntegracaoService {
             return new ArrayList<>();
         }
 
-        return mapper.paraLista(sales);
+        List<Venda> vendas = mapper.paraLista(sales);
+        return filtrarVendas(vendas, metodoPagamento, bandeira);
     }
 
     @Override
@@ -124,5 +128,33 @@ public class IntegracaoServiceImpl implements IntegracaoService {
     public Integracao pesquisarPorCodigoIntegracao(String codigoIntegracao) {
         return integracaoRepository.findByCodigoIntegracao(codigoIntegracao)
                 .orElseThrow(() -> new NotificacaoException(String.format("Integração com código integração %s não encontrado", codigoIntegracao)));
+    }
+
+    private List<Venda> filtrarVendas(final List<Venda> vendas, final String metodoPagamento, final String bandeira) {
+        List<Venda> vendasFiltradas = new ArrayList<>(vendas);
+
+        if (metodoPagamento != null && !metodoPagamento.isEmpty() && !"undefined".equalsIgnoreCase(metodoPagamento)
+            && bandeira != null && !bandeira.isEmpty() && !"undefined".equalsIgnoreCase(bandeira)) {
+            vendasFiltradas = vendas.stream().filter(venda -> {
+                        var mPagamento = venda.getPagamento().getMetodo().toUpperCase();
+                        var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
+                        return descBandeira.contains(bandeira.toUpperCase())
+                                && mPagamento.equalsIgnoreCase(metodoPagamento);
+                    })
+                    .toList();
+        }
+        else if (metodoPagamento != null && !metodoPagamento.isEmpty() && !"undefined".equalsIgnoreCase(metodoPagamento)) {
+            vendasFiltradas = vendas.stream().filter(venda -> venda.getPagamento().getMetodo().equalsIgnoreCase(metodoPagamento))
+                    .toList();
+        }
+        else if (bandeira != null && !bandeira.isEmpty() && !"undefined".equalsIgnoreCase(bandeira)) {
+            vendasFiltradas = vendas.stream().filter(venda -> {
+                        var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
+                        return descBandeira.contains(bandeira.toUpperCase());
+                    })
+                    .toList();
+        }
+
+        return vendasFiltradas;
     }
 }
