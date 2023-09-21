@@ -57,7 +57,7 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
 
     private Taxa buscarTaxa(final List<Taxa> taxas, final String tipoPagamento) {
         for (Taxa taxa : taxas) {
-            if (taxa.getDescricao().contains(tipoPagamento)) {
+            if (taxa.getDescricao().contains(tipoPagamento) && taxa.getAtivo()) {
                 return taxa;
             }
         }
