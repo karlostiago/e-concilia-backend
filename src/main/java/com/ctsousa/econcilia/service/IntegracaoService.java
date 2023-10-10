@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.service;
 
+import com.ctsousa.econcilia.model.AjusteVenda;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
@@ -24,4 +25,6 @@ public interface IntegracaoService {
     Integracao pesquisarPorCodigoIntegracao(final String codigoIntegracao);
 
     List<Venda> pesquisarVendasIfood(final String codigoIntegracao, final String metodoPagamento, final String bandeira, LocalDate dtInicial, LocalDate dtFinal);
+
+    List<AjusteVenda> pesquisarAjusteVendasIfood(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
 }

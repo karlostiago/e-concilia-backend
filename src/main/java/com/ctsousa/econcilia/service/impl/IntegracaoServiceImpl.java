@@ -3,28 +3,25 @@ package com.ctsousa.econcilia.service.impl;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.integration.ifood.IfoodGateway;
 import com.ctsousa.econcilia.integration.ifood.entity.Sale;
+import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
+import com.ctsousa.econcilia.mapper.AjusteVendaMapper;
 import com.ctsousa.econcilia.mapper.IntegracaoMapper;
 import com.ctsousa.econcilia.mapper.VendaMapper;
-import com.ctsousa.econcilia.model.Empresa;
-import com.ctsousa.econcilia.model.Integracao;
-import com.ctsousa.econcilia.model.Operadora;
-import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
 import com.ctsousa.econcilia.repository.IntegracaoRepository;
 import com.ctsousa.econcilia.service.IntegracaoService;
-import com.ctsousa.econcilia.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
-
 @Component
 public class IntegracaoServiceImpl implements IntegracaoService {
+
+    private static final String UNDEFINED = "undefined";
 
     private final IntegracaoRepository integracaoRepository;
 
@@ -32,23 +29,22 @@ public class IntegracaoServiceImpl implements IntegracaoService {
 
     private final IfoodGateway ifoodGateway;
 
-    private final VendaMapper mapper;
+    private final VendaMapper vendaMapper;
 
-    public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway, VendaMapper mapper) {
+    private final AjusteVendaMapper ajusteVendaMapper;
+
+    public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway, VendaMapper vendaMapper, AjusteVendaMapper ajusteVendaMapper) {
         this.integracaoRepository = integracaoRepository;
         this.integracaoMapper = integracaoMapper;
         this.ifoodGateway = ifoodGateway;
-        this.mapper = mapper;
+        this.vendaMapper = vendaMapper;
+        this.ajusteVendaMapper = ajusteVendaMapper;
     }
 
     @Override
     public List<Venda> pesquisarVendasIfood(String codigoIntegracao, String metodoPagamento, String bandeira, LocalDate dtInicial, LocalDate dtFinal) {
 
-        long dias = ChronoUnit.DAYS.between(dtInicial, dtFinal);
-
-        if (dias > 90) {
-            throw new NotificacaoException("O período não pode ser maior que 90 dias");
-        }
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
 
         List<Sale> sales = ifoodGateway.findSalesBy(codigoIntegracao, dtInicial, dtFinal);
 
@@ -56,8 +52,21 @@ public class IntegracaoServiceImpl implements IntegracaoService {
             return new ArrayList<>();
         }
 
-        List<Venda> vendas = mapper.paraLista(sales);
+        List<Venda> vendas = vendaMapper.paraLista(sales);
         return filtrarVendas(vendas, metodoPagamento, bandeira);
+    }
+
+    @Override
+    public List<AjusteVenda> pesquisarAjusteVendasIfood(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
+
+        List<SaleAdjustment> saleAdjustments = ifoodGateway.findSaleAdjustmentBy(codigoIntegracao, dtInicial, dtFinal);
+
+        if (saleAdjustments.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return ajusteVendaMapper.paraLista(saleAdjustments);
     }
 
     @Override
@@ -133,8 +142,8 @@ public class IntegracaoServiceImpl implements IntegracaoService {
     private List<Venda> filtrarVendas(final List<Venda> vendas, final String metodoPagamento, final String bandeira) {
         List<Venda> vendasFiltradas = new ArrayList<>(vendas);
 
-        if (metodoPagamento != null && !metodoPagamento.isEmpty() && !"undefined".equalsIgnoreCase(metodoPagamento)
-            && bandeira != null && !bandeira.isEmpty() && !"undefined".equalsIgnoreCase(bandeira)) {
+        if (metodoPagamento != null && !metodoPagamento.isEmpty() && !UNDEFINED.equalsIgnoreCase(metodoPagamento)
+            && bandeira != null && !bandeira.isEmpty() && !UNDEFINED.equalsIgnoreCase(bandeira)) {
             vendasFiltradas = vendas.stream().filter(venda -> {
                         var mPagamento = venda.getPagamento().getMetodo().toUpperCase();
                         var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
@@ -143,11 +152,11 @@ public class IntegracaoServiceImpl implements IntegracaoService {
                     })
                     .toList();
         }
-        else if (metodoPagamento != null && !metodoPagamento.isEmpty() && !"undefined".equalsIgnoreCase(metodoPagamento)) {
+        else if (metodoPagamento != null && !metodoPagamento.isEmpty() && !UNDEFINED.equalsIgnoreCase(metodoPagamento)) {
             vendasFiltradas = vendas.stream().filter(venda -> venda.getPagamento().getMetodo().equalsIgnoreCase(metodoPagamento))
                     .toList();
         }
-        else if (bandeira != null && !bandeira.isEmpty() && !"undefined".equalsIgnoreCase(bandeira)) {
+        else if (bandeira != null && !bandeira.isEmpty() && !UNDEFINED.equalsIgnoreCase(bandeira)) {
             vendasFiltradas = vendas.stream().filter(venda -> {
                         var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
                         return descBandeira.contains(bandeira.toUpperCase());
@@ -156,5 +165,13 @@ public class IntegracaoServiceImpl implements IntegracaoService {
         }
 
         return vendasFiltradas;
+    }
+
+    private void validaPeriodoMaior90Dias(final LocalDate dtInicial, final LocalDate dtFinal) {
+        long dias = ChronoUnit.DAYS.between(dtInicial, dtFinal);
+
+        if (dias > 90) {
+            throw new NotificacaoException("O período não pode ser maior que 90 dias");
+        }
     }
 }

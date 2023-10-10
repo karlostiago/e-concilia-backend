@@ -1,18 +1,21 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.MetodoPagamento;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.dto.ResumoFinanceiroDTO;
+import com.ctsousa.econcilia.model.dto.TotalizadorDTO;
 import com.ctsousa.econcilia.service.ConciliadorIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import com.ctsousa.econcilia.service.TaxaService;
-import com.ctsousa.econcilia.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,9 +58,53 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         return vendas;
     }
 
+    @Override
+    public TotalizadorDTO totalizar(List<Venda> vendas) {
+        TotalizadorDTO totalizadorDTO = new TotalizadorDTO();
+
+        for (Venda venda : vendas) {
+            var totalPedido = venda.getCobranca().getTotalItensPedido();
+            var totalTaxaEntrega = venda.getCobranca().getTaxaEntrega();
+            var totalTaxaPraticada = Math.abs(venda.getCobranca().getTaxaAdquirente().doubleValue());
+            var totalTaxaAplicada = venda.getCobranca().getTaxaAdquirenteAplicada();
+            var totalDiferenca = venda.getDiferenca();
+
+            totalizadorDTO.setTotalValorPedido(totalizadorDTO.getTotalValorPedido().add(totalPedido));
+            totalizadorDTO.setTotalTaxaEntrega(totalizadorDTO.getTotalTaxaEntrega().add(totalTaxaEntrega));
+            totalizadorDTO.setTotalTaxaAquisicaoPraticada(totalizadorDTO.getTotalTaxaAquisicaoPraticada().add(BigDecimal.valueOf(totalTaxaPraticada)));
+            totalizadorDTO.setTotalTaxaAquisicaoAplicada(totalizadorDTO.getTotalTaxaAquisicaoAplicada().add(totalTaxaAplicada));
+            totalizadorDTO.setTotalDiferenca(totalizadorDTO.getTotalDiferenca().add(totalDiferenca));
+        }
+
+        return totalizadorDTO;
+    }
+
+    @Override
+    public ResumoFinanceiroDTO calcularResumoFinanceiro(List<Venda> vendas) {
+        Map<String, BigDecimal> totalPorMetodoPagamento = new HashMap<>();
+
+        for (Venda venda : vendas) {
+            String metodoPagamento = venda.getPagamento().getMetodo();
+            BigDecimal total = totalPorMetodoPagamento.getOrDefault(metodoPagamento, new BigDecimal("0.0"));
+            total = total.add(venda.getCobranca().getTotalItensPedido());
+            totalPorMetodoPagamento.put(metodoPagamento, total);
+        }
+
+        ResumoFinanceiroDTO resumoFinanceiroDTO = new ResumoFinanceiroDTO();
+        resumoFinanceiroDTO.setTotalCredito(totalPorMetodoPagamento.getOrDefault(MetodoPagamento.CREDIT.getDescricao(), new BigDecimal("0.0")));
+        resumoFinanceiroDTO.setTotalDebito(totalPorMetodoPagamento.getOrDefault(MetodoPagamento.DEBIT.getDescricao(), new BigDecimal("0.0")));
+        resumoFinanceiroDTO.setTotalPix(totalPorMetodoPagamento.getOrDefault(MetodoPagamento.PIX.getDescricao(), new BigDecimal("0.0")));
+        resumoFinanceiroDTO.setTotalVoucher(totalPorMetodoPagamento.getOrDefault(MetodoPagamento.MEAL_VOUCHER.getDescricao(), new BigDecimal("0.0")));
+        resumoFinanceiroDTO.setTotalBankPay(totalPorMetodoPagamento.getOrDefault(MetodoPagamento.BANK_PAY.getDescricao(), new BigDecimal("0.0")));
+        resumoFinanceiroDTO.setTotalDinheiro(totalPorMetodoPagamento.getOrDefault(MetodoPagamento.CASH.getDescricao(), new BigDecimal("0.0")));
+        resumoFinanceiroDTO.setTotalOutros(totalPorMetodoPagamento.getOrDefault(MetodoPagamento.OUTROS.getDescricao(), new BigDecimal("0.0")));
+
+        return resumoFinanceiroDTO;
+    }
+
     private Taxa buscarTaxa(final List<Taxa> taxas, final String tipoPagamento) {
         for (Taxa taxa : taxas) {
-            if (taxa.getDescricao().contains(tipoPagamento) && taxa.getAtivo()) {
+            if (taxa.getDescricao().contains(tipoPagamento) && Boolean.TRUE.equals(taxa.getAtivo())) {
                 return taxa;
             }
         }

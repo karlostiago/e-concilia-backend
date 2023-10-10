@@ -25,7 +25,7 @@ public class ContratoMapper implements EntidadeMapper<Contrato, ContratoDTO>, Dt
     public List<ContratoDTO> paraLista(List<Contrato> contratos) {
         return contratos.stream()
                 .map(this::paraDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

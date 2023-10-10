@@ -1,14 +1,10 @@
 package com.ctsousa.econcilia.mapper;
 
-import com.ctsousa.econcilia.mapper.ColecaoMapper;
-import com.ctsousa.econcilia.mapper.DtoMapper;
-import com.ctsousa.econcilia.mapper.EntidadeMapper;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.dto.OperadoraDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class OperadoraMapper implements EntidadeMapper<Operadora, OperadoraDTO>, DtoMapper<Operadora, OperadoraDTO>, ColecaoMapper<Operadora, OperadoraDTO> {
@@ -33,6 +29,6 @@ public class OperadoraMapper implements EntidadeMapper<Operadora, OperadoraDTO>,
     public List<OperadoraDTO> paraLista(List<Operadora> operadoras) {
         return operadoras.stream()
                 .map(this::paraDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

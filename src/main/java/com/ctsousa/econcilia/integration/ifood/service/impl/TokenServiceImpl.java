@@ -18,8 +18,8 @@ import java.util.Date;
 @Component
 public class TokenServiceImpl extends AbstractIfoodService implements TokenService {
 
-    private final static long EXPIRA_EM_3H = 10800L;
-    private final static long MIL_MILISSEGUNDOS = 1000L;
+    private static final long EXPIRA_EM_3H = 10800L;
+    private static final long MIL_MILISSEGUNDOS = 1000L;
 
     @Value("${ifood.credencial.client-id}")
     private String clientId;

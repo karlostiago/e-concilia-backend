@@ -7,11 +7,11 @@ public abstract class AbstractIfoodService {
 
     protected final RestTemplate restTemplate = new RestTemplate();
 
-    protected final String GRANT_TYPE = "grantType";
+    protected static final String GRANT_TYPE = "grantType";
 
-    protected final String CLIENT_ID = "clientId";
+    protected static final String CLIENT_ID = "clientId";
 
-    protected final String CLIENT_SECRET = "clientSecret";
+    protected static final String CLIENT_SECRET = "clientSecret";
 
     public abstract String pathBase();
 

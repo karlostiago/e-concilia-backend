@@ -1,14 +1,10 @@
 package com.ctsousa.econcilia.mapper;
 
-import com.ctsousa.econcilia.mapper.ColecaoMapper;
-import com.ctsousa.econcilia.mapper.DtoMapper;
-import com.ctsousa.econcilia.mapper.EntidadeMapper;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.model.dto.TaxaDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class TaxaMapper implements EntidadeMapper<Taxa, TaxaDTO>, DtoMapper<Taxa, TaxaDTO>, ColecaoMapper<Taxa, TaxaDTO> {
@@ -42,6 +38,6 @@ public class TaxaMapper implements EntidadeMapper<Taxa, TaxaDTO>, DtoMapper<Taxa
     public List<TaxaDTO> paraLista(List<Taxa> taxas) {
         return taxas.stream()
                 .map(this::paraDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -1,8 +1,5 @@
 package com.ctsousa.econcilia.mapper;
 
-import com.ctsousa.econcilia.mapper.ColecaoMapper;
-import com.ctsousa.econcilia.mapper.DtoMapper;
-import com.ctsousa.econcilia.mapper.EntidadeMapper;
 import com.ctsousa.econcilia.model.Contato;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Endereco;
@@ -14,7 +11,6 @@ import com.ctsousa.econcilia.model.dto.EstadoDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class EmpresaMapper implements EntidadeMapper<Empresa, EmpresaDTO>, DtoMapper<Empresa, EmpresaDTO>, ColecaoMapper<Empresa, EmpresaDTO> {
@@ -65,13 +61,7 @@ public class EmpresaMapper implements EntidadeMapper<Empresa, EmpresaDTO>, DtoMa
         contatoDTO.setTelefone(empresa.getContato().getTelefone());
         empresaDTO.setContato(contatoDTO);
 
-        EnderecoDTO enderecoDTO = new EnderecoDTO();
-        enderecoDTO.setCep(empresa.getEndereco().getCep());
-        enderecoDTO.setComplemento(empresa.getEndereco().getComplemento());
-        enderecoDTO.setNumero(empresa.getEndereco().getNumero());
-        enderecoDTO.setLogradouro(empresa.getEndereco().getLogradouro());
-        enderecoDTO.setCidade(empresa.getEndereco().getCidade());
-        enderecoDTO.setBairro(empresa.getEndereco().getBairro());
+        EnderecoDTO enderecoDTO = getEnderecoDTO(empresa);
 
         EstadoDTO estadoDTO = new EstadoDTO();
         estadoDTO.setUf(empresa.getEndereco().getEstado().getUf());
@@ -85,6 +75,17 @@ public class EmpresaMapper implements EntidadeMapper<Empresa, EmpresaDTO>, DtoMa
     public List<EmpresaDTO> paraLista(List<Empresa> empresas) {
         return empresas.stream()
                 .map(this::paraDTO)
-                .collect(Collectors.toList());
+                .toList();
+    }
+
+    private EnderecoDTO getEnderecoDTO(Empresa empresa) {
+        EnderecoDTO enderecoDTO = new EnderecoDTO();
+        enderecoDTO.setCep(empresa.getEndereco().getCep());
+        enderecoDTO.setComplemento(empresa.getEndereco().getComplemento());
+        enderecoDTO.setNumero(empresa.getEndereco().getNumero());
+        enderecoDTO.setLogradouro(empresa.getEndereco().getLogradouro());
+        enderecoDTO.setCidade(empresa.getEndereco().getCidade());
+        enderecoDTO.setBairro(empresa.getEndereco().getBairro());
+        return enderecoDTO;
     }
 }

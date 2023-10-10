@@ -5,7 +5,6 @@ import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class IntegracaoMapper implements EntidadeMapper<Integracao, IntegracaoDTO>, DtoMapper<Integracao, IntegracaoDTO>, ColecaoMapper<Integracao, IntegracaoDTO> {
@@ -23,7 +22,7 @@ public class IntegracaoMapper implements EntidadeMapper<Integracao, IntegracaoDT
     public List<IntegracaoDTO> paraLista(List<Integracao> list) {
         return list.stream()
                 .map(this::paraDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

@@ -15,7 +15,9 @@ public enum MetodoPagamento {
 
     CASH("Dinheiro"),
 
-    BANK_PAY("Bank pay");
+    BANK_PAY("Bank pay"),
+
+    OUTROS(" - ");
 
     private final String descricao;
 

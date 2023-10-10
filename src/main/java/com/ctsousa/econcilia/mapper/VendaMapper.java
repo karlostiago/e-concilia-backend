@@ -16,7 +16,7 @@ public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, 
     public List<Venda> paraLista(List<Sale> sales) {
         return sales.stream()
                 .map(this::paraDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

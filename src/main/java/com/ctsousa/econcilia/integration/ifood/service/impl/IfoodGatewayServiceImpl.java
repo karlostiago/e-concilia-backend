@@ -4,6 +4,7 @@ import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.integration.ifood.IfoodGateway;
 import com.ctsousa.econcilia.integration.ifood.entity.Merchant;
 import com.ctsousa.econcilia.integration.ifood.entity.Sale;
+import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
 import com.ctsousa.econcilia.integration.ifood.entity.Token;
 import com.ctsousa.econcilia.integration.ifood.service.FinancialService;
 import com.ctsousa.econcilia.integration.ifood.service.MerchantService;
@@ -51,6 +52,15 @@ public class IfoodGatewayServiceImpl implements IfoodGateway {
         }
 
         return financialService.sales(token.getAccessToken(), uuid, startDate, endDate);
+    }
+
+    @Override
+    public List<SaleAdjustment> findSaleAdjustmentBy(String uuid, LocalDate startDate, LocalDate endDate) {
+        if (isTokenNaoValido()) {
+            gerarToken();
+        }
+
+        return financialService.salesAdjustments(token.getAccessToken(), uuid, startDate, endDate);
     }
 
     private boolean isTokenNaoValido() {
