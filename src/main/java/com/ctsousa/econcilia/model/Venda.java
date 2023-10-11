@@ -22,7 +22,7 @@ public class Venda {
 
     private String modeloNegocio;
 
-    private Pagamento pagamento;
+    private VendaPagamento pagamento;
 
     private Cobranca cobranca;
 

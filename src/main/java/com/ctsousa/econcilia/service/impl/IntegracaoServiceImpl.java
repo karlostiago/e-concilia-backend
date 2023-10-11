@@ -2,10 +2,12 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.integration.ifood.IfoodGateway;
+import com.ctsousa.econcilia.integration.ifood.entity.Payment;
 import com.ctsousa.econcilia.integration.ifood.entity.Sale;
 import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
 import com.ctsousa.econcilia.mapper.AjusteVendaMapper;
 import com.ctsousa.econcilia.mapper.IntegracaoMapper;
+import com.ctsousa.econcilia.mapper.PagamentoMapper;
 import com.ctsousa.econcilia.mapper.VendaMapper;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
@@ -33,12 +35,15 @@ public class IntegracaoServiceImpl implements IntegracaoService {
 
     private final AjusteVendaMapper ajusteVendaMapper;
 
-    public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway, VendaMapper vendaMapper, AjusteVendaMapper ajusteVendaMapper) {
+    private final PagamentoMapper pagamentoMapper;
+
+    public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway, VendaMapper vendaMapper, AjusteVendaMapper ajusteVendaMapper, PagamentoMapper pagamentoMapper) {
         this.integracaoRepository = integracaoRepository;
         this.integracaoMapper = integracaoMapper;
         this.ifoodGateway = ifoodGateway;
         this.vendaMapper = vendaMapper;
         this.ajusteVendaMapper = ajusteVendaMapper;
+        this.pagamentoMapper = pagamentoMapper;
     }
 
     @Override
@@ -67,6 +72,19 @@ public class IntegracaoServiceImpl implements IntegracaoService {
         }
 
         return ajusteVendaMapper.paraLista(saleAdjustments);
+    }
+
+    @Override
+    public List<Pagamento> pesquisarPagamentos(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
+
+        List<Payment> payments = ifoodGateway.findPaymentBy(codigoIntegracao, dtInicial, dtFinal);
+
+        if (payments.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return pagamentoMapper.paraLista(payments);
     }
 
     @Override

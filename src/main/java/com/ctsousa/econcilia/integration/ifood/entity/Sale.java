@@ -23,7 +23,7 @@ public class Sale {
 
     private String businessModelOrder;
 
-    private Payment payment;
+    private SalePayment payment;
 
     private Billing billing;
 }

@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.integration.ifood.service.impl;
 
 import com.ctsousa.econcilia.integration.ifood.AbstractIfoodService;
+import com.ctsousa.econcilia.integration.ifood.entity.Payment;
 import com.ctsousa.econcilia.integration.ifood.entity.Sale;
 import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
 import com.ctsousa.econcilia.integration.ifood.service.FinancialService;
@@ -47,6 +48,40 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
 
         ParameterizedTypeReference<List<SaleAdjustment>> responseType = new ParameterizedTypeReference<>() { };
 
+        var response = restTemplate.exchange(
+                path,
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders(token)),
+                responseType
+        );
+
+        return response.getBody();
+    }
+
+    @Override
+    public List<Payment> payments(String token, String uuid, LocalDate startDate, LocalDate endDate) {
+
+        log.info("Buscando pagamentos no periodo de {} até {}", startDate, endDate);
+
+        String path = pathBase().concat("/").concat(uuid).concat("/payments?").concat("beginExpectedExecutionDate=" + startDate)
+                .concat("&endExpectedExecutionDate=" + endDate);
+
+        ParameterizedTypeReference<List<Payment>> responseType = new ParameterizedTypeReference<>() { };
+        /*
+        var response = restTemplate.exchange(
+                path,
+                HttpMethod.GET,
+                new HttpEntity<>(getHttpHeaders(token)),
+                responseType
+        );
+
+        return response.getBody();
+
+         */
+        return requestProcess(path, token, responseType);
+    }
+
+    private <T> List <T> requestProcess(final String path, final String token, ParameterizedTypeReference<List<T>> responseType) {
         var response = restTemplate.exchange(
                 path,
                 HttpMethod.GET,

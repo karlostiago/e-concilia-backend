@@ -1,7 +1,6 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.model.AjusteVenda;
-import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.ConciliadorDTO;
 import com.ctsousa.econcilia.model.dto.ResumoFinanceiroDTO;
 import com.ctsousa.econcilia.model.dto.TotalizadorDTO;
@@ -11,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -36,6 +36,7 @@ public class ConciliadorIfoodResource {
 
         List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, metodoPagamento, bandeira, dtInicial, dtFinal);
 //        List<AjusteVenda> ajusteVendas = integracaoService.pesquisarAjusteVendasIfood(lojaId, dtInicial, dtFinal);
+//        List<Pagamento> pagamentos = integracaoService.pesquisarPagamentos(lojaId, dtInicial, dtFinal);
 
         vendas = conciliadorIfoodService.conciliarTaxas(vendas, lojaId);
 
