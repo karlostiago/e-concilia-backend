@@ -13,6 +13,7 @@ import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
 import com.ctsousa.econcilia.repository.IntegracaoRepository;
 import com.ctsousa.econcilia.service.IntegracaoService;
+import com.ctsousa.econcilia.filtro.VendaFiltro;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -158,31 +159,11 @@ public class IntegracaoServiceImpl implements IntegracaoService {
     }
 
     private List<Venda> filtrarVendas(final List<Venda> vendas, final String metodoPagamento, final String bandeira) {
-        List<Venda> vendasFiltradas = new ArrayList<>(vendas);
-
-        if (metodoPagamento != null && !metodoPagamento.isEmpty() && !UNDEFINED.equalsIgnoreCase(metodoPagamento)
-            && bandeira != null && !bandeira.isEmpty() && !UNDEFINED.equalsIgnoreCase(bandeira)) {
-            vendasFiltradas = vendas.stream().filter(venda -> {
-                        var mPagamento = venda.getPagamento().getMetodo().toUpperCase();
-                        var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
-                        return descBandeira.contains(bandeira.toUpperCase())
-                                && mPagamento.equalsIgnoreCase(metodoPagamento);
-                    })
-                    .toList();
-        }
-        else if (metodoPagamento != null && !metodoPagamento.isEmpty() && !UNDEFINED.equalsIgnoreCase(metodoPagamento)) {
-            vendasFiltradas = vendas.stream().filter(venda -> venda.getPagamento().getMetodo().equalsIgnoreCase(metodoPagamento))
-                    .toList();
-        }
-        else if (bandeira != null && !bandeira.isEmpty() && !UNDEFINED.equalsIgnoreCase(bandeira)) {
-            vendasFiltradas = vendas.stream().filter(venda -> {
-                        var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
-                        return descBandeira.contains(bandeira.toUpperCase());
-                    })
-                    .toList();
-        }
-
-        return vendasFiltradas;
+        return new VendaFiltro(vendas, bandeira, metodoPagamento)
+                .porBandeira()
+                .porMetodoPagamento()
+                .porMetodoPagamentoBandeira()
+                .getVendasFiltradas();
     }
 
     private void validaPeriodoMaior90Dias(final LocalDate dtInicial, final LocalDate dtFinal) {

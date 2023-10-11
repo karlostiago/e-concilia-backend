@@ -2,6 +2,8 @@ package com.ctsousa.econcilia.util;
 
 public final class StringUtil {
 
+    private static final String UNDEFINED = "undefined";
+
     private StringUtil () { }
 
     public static String somenteNumero(final String str) {
@@ -16,5 +18,13 @@ public final class StringUtil {
             return null;
         }
         return str.toUpperCase();
+    }
+
+    public static Boolean temValor(final String str) {
+        return str != null && !str.isEmpty() && !UNDEFINED.equalsIgnoreCase(str);
+    }
+
+    public static Boolean naoTemValor(final String str) {
+        return !temValor(str);
     }
 }
