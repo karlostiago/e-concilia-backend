@@ -28,14 +28,7 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
 
         ParameterizedTypeReference<List<Sale>> responseType = new ParameterizedTypeReference<>() { };
 
-        var response = restTemplate.exchange(
-            path,
-            HttpMethod.GET,
-            new HttpEntity<>(getHttpHeaders(token)),
-            responseType
-        );
-
-        return response.getBody();
+        return requestProcess(path, token, responseType);
     }
 
     @Override
@@ -48,14 +41,7 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
 
         ParameterizedTypeReference<List<SaleAdjustment>> responseType = new ParameterizedTypeReference<>() { };
 
-        var response = restTemplate.exchange(
-                path,
-                HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders(token)),
-                responseType
-        );
-
-        return response.getBody();
+        return requestProcess(path, token, responseType);
     }
 
     @Override
@@ -67,17 +53,7 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
                 .concat("&endExpectedExecutionDate=" + endDate);
 
         ParameterizedTypeReference<List<Payment>> responseType = new ParameterizedTypeReference<>() { };
-        /*
-        var response = restTemplate.exchange(
-                path,
-                HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders(token)),
-                responseType
-        );
 
-        return response.getBody();
-
-         */
         return requestProcess(path, token, responseType);
     }
 
