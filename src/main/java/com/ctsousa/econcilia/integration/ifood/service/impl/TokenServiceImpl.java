@@ -19,6 +19,7 @@ import java.util.Date;
 public class TokenServiceImpl extends AbstractIfoodService implements TokenService {
 
     private static final long EXPIRA_EM_3H = 10800L;
+
     private static final long MIL_MILISSEGUNDOS = 1000L;
 
     @Value("${ifood.credencial.client-id}")

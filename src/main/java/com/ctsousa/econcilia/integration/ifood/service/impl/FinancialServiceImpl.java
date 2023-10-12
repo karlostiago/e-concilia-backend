@@ -1,14 +1,10 @@
 package com.ctsousa.econcilia.integration.ifood.service.impl;
 
 import com.ctsousa.econcilia.integration.ifood.AbstractIfoodService;
-import com.ctsousa.econcilia.integration.ifood.entity.Payment;
-import com.ctsousa.econcilia.integration.ifood.entity.Sale;
-import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
+import com.ctsousa.econcilia.integration.ifood.entity.*;
 import com.ctsousa.econcilia.integration.ifood.service.FinancialService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -17,6 +13,44 @@ import java.util.List;
 @Slf4j
 @Component
 public class FinancialServiceImpl extends AbstractIfoodService implements FinancialService {
+
+    @Override
+    public List<ChargeCancellation> chargeCancellations(String token, String uuid, LocalDate startDate, LocalDate endDate) {
+
+        log.info("Buscando cancelamentos de cobrança no período de {} até {}", startDate, endDate);
+
+        String path = pathBase().concat("/").concat(uuid).concat("/chargeCancellations?").concat("transactionDateBegin=" + startDate)
+                .concat("&transactionDateEnd=" + endDate);
+
+        ParameterizedTypeReference<List<ChargeCancellation>> responseType = new ParameterizedTypeReference<>() { };
+
+        return requestProcess(path, token, responseType);
+    }
+
+    @Override
+    public List<Period> periods(String token, String uuid, LocalDate competence) {
+
+        log.info("Buscando os períodos da competência {}", competence);
+
+        String path = pathBase().concat("/").concat(uuid).concat("/periods?").concat("competence=" + competence);
+
+        ParameterizedTypeReference<List<Period>> responseType = new ParameterizedTypeReference<>() { };
+
+        return requestProcess(path, token, responseType);
+    }
+
+    @Override
+    public List<Cancellation> cancellations(String token, String uuid, LocalDate startDate, LocalDate endDate) {
+
+        log.info("Buscando cancelamentos no período de {} até {}", startDate, endDate);
+
+        String path = pathBase().concat("/").concat(uuid).concat("/cancellations?").concat("beginCancellationDate=" + startDate)
+                .concat("&endCancellationDate=" + endDate);
+
+        ParameterizedTypeReference<List<Cancellation>> responseType = new ParameterizedTypeReference<>() { };
+
+        return requestProcess(path, token, responseType);
+    }
 
     @Override
     public List<Sale> sales(String token, String uuid, LocalDate startDate, LocalDate endDate) {
@@ -55,17 +89,6 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
         ParameterizedTypeReference<List<Payment>> responseType = new ParameterizedTypeReference<>() { };
 
         return requestProcess(path, token, responseType);
-    }
-
-    private <T> List <T> requestProcess(final String path, final String token, ParameterizedTypeReference<List<T>> responseType) {
-        var response = restTemplate.exchange(
-                path,
-                HttpMethod.GET,
-                new HttpEntity<>(getHttpHeaders(token)),
-                responseType
-        );
-
-        return response.getBody();
     }
 
     @Override

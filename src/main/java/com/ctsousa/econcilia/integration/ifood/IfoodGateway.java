@@ -1,8 +1,6 @@
 package com.ctsousa.econcilia.integration.ifood;
 
-import com.ctsousa.econcilia.integration.ifood.entity.Payment;
-import com.ctsousa.econcilia.integration.ifood.entity.Sale;
-import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
+import com.ctsousa.econcilia.integration.ifood.entity.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,4 +14,8 @@ public interface IfoodGateway {
     List<SaleAdjustment> findSaleAdjustmentBy(final String uuid, LocalDate startDate, LocalDate endDate);
 
     List<Payment> findPaymentBy(final String uuid, LocalDate startDate, LocalDate endDate);
+
+    List<Cancellation> findCancellationBy(final String uuid, LocalDate startDate, LocalDate endDate);
+
+    List<ChargeCancellation> findChargeCancellationBy(final String uuid, LocalDate startDate, LocalDate endDate);
 }

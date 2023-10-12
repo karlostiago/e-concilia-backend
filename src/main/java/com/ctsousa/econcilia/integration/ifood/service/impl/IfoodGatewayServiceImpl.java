@@ -69,6 +69,25 @@ public class IfoodGatewayServiceImpl implements IfoodGateway {
         return financialService.payments(token.getAccessToken(), uuid, startDate, endDate);
     }
 
+    @Override
+    public List<Cancellation> findCancellationBy(String uuid, LocalDate startDate, LocalDate endDate) {
+
+        if (isTokenNaoValido()) {
+            gerarToken();
+        }
+
+        return financialService.cancellations(token.getAccessToken(), uuid, startDate, endDate);
+    }
+
+    @Override
+    public List<ChargeCancellation> findChargeCancellationBy(String uuid, LocalDate startDate, LocalDate endDate) {
+        if (isTokenNaoValido()) {
+            gerarToken();
+        }
+
+        return financialService.chargeCancellations(token.getAccessToken(), uuid, startDate, endDate);
+    }
+
     private boolean isTokenNaoValido() {
         return !tokenService.isValido();
     }

@@ -1,9 +1,6 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.model.AjusteVenda;
-import com.ctsousa.econcilia.model.Integracao;
-import com.ctsousa.econcilia.model.Pagamento;
-import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
 import org.springframework.stereotype.Service;
 
@@ -30,4 +27,8 @@ public interface IntegracaoService {
     List<AjusteVenda> pesquisarAjusteVendasIfood(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
 
     List<Pagamento> pesquisarPagamentos(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+
+    List<Cancelamento> pesquisarCancelamentos(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+
+    List<CobrancaCancelada> pesquisarCobrancaCanceladas(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
 }

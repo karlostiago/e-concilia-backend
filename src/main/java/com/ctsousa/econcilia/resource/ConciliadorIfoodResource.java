@@ -1,6 +1,9 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.model.*;
+import com.ctsousa.econcilia.integration.ifood.entity.ChargeCancellation;
+import com.ctsousa.econcilia.model.CobrancaCancelada;
+import com.ctsousa.econcilia.model.Integracao;
+import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.ConciliadorDTO;
 import com.ctsousa.econcilia.model.dto.ResumoFinanceiroDTO;
 import com.ctsousa.econcilia.model.dto.TotalizadorDTO;
@@ -8,9 +11,11 @@ import com.ctsousa.econcilia.service.ConciliadorIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -37,6 +42,8 @@ public class ConciliadorIfoodResource {
         List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, metodoPagamento, bandeira, dtInicial, dtFinal);
 //        List<AjusteVenda> ajusteVendas = integracaoService.pesquisarAjusteVendasIfood(lojaId, dtInicial, dtFinal);
 //        List<Pagamento> pagamentos = integracaoService.pesquisarPagamentos(lojaId, dtInicial, dtFinal);
+//        List<Cancelamento> cancelamentos = integracaoService.pesquisarCancelamentos(lojaId, dtInicial, dtFinal);
+//        List<CobrancaCancelada> cobrancaCanceladas = integracaoService.pesquisarCobrancaCanceladas(lojaId, dtInicial, dtFinal);
 
         vendas = conciliadorIfoodService.conciliarTaxas(vendas, lojaId);
 

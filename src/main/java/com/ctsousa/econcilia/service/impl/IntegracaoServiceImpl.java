@@ -2,13 +2,8 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.integration.ifood.IfoodGateway;
-import com.ctsousa.econcilia.integration.ifood.entity.Payment;
-import com.ctsousa.econcilia.integration.ifood.entity.Sale;
-import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
-import com.ctsousa.econcilia.mapper.AjusteVendaMapper;
-import com.ctsousa.econcilia.mapper.IntegracaoMapper;
-import com.ctsousa.econcilia.mapper.PagamentoMapper;
-import com.ctsousa.econcilia.mapper.VendaMapper;
+import com.ctsousa.econcilia.integration.ifood.entity.*;
+import com.ctsousa.econcilia.mapper.*;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
 import com.ctsousa.econcilia.repository.IntegracaoRepository;
@@ -38,13 +33,47 @@ public class IntegracaoServiceImpl implements IntegracaoService {
 
     private final PagamentoMapper pagamentoMapper;
 
-    public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway, VendaMapper vendaMapper, AjusteVendaMapper ajusteVendaMapper, PagamentoMapper pagamentoMapper) {
+    private final CancelamentoMapper cancelamentoMapper;
+
+    private final CobrancaCanceladaMapper cobrancaCanceladaMapper;
+
+    public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway, VendaMapper vendaMapper, AjusteVendaMapper ajusteVendaMapper, PagamentoMapper pagamentoMapper, CancelamentoMapper cancelamentoMapper, CobrancaCanceladaMapper cobrancaCanceladaMapper) {
         this.integracaoRepository = integracaoRepository;
         this.integracaoMapper = integracaoMapper;
         this.ifoodGateway = ifoodGateway;
         this.vendaMapper = vendaMapper;
         this.ajusteVendaMapper = ajusteVendaMapper;
         this.pagamentoMapper = pagamentoMapper;
+        this.cancelamentoMapper = cancelamentoMapper;
+        this.cobrancaCanceladaMapper = cobrancaCanceladaMapper;
+    }
+
+    @Override
+    public List<CobrancaCancelada> pesquisarCobrancaCanceladas(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
+
+        List<ChargeCancellation> chargeCancellations = ifoodGateway.findChargeCancellationBy(codigoIntegracao, dtInicial, dtFinal);
+
+        if (chargeCancellations.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return cobrancaCanceladaMapper.paraLista(chargeCancellations);
+    }
+
+    @Override
+    public List<Cancelamento> pesquisarCancelamentos(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
+
+        List<Cancellation> cancellations = ifoodGateway.findCancellationBy(codigoIntegracao, dtInicial, dtFinal);
+
+        if (cancellations.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return cancelamentoMapper.paraLista(cancellations);
     }
 
     @Override

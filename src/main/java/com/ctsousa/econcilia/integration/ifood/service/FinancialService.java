@@ -1,8 +1,6 @@
 package com.ctsousa.econcilia.integration.ifood.service;
 
-import com.ctsousa.econcilia.integration.ifood.entity.Payment;
-import com.ctsousa.econcilia.integration.ifood.entity.Sale;
-import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
+import com.ctsousa.econcilia.integration.ifood.entity.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,4 +14,10 @@ public interface FinancialService {
     List<SaleAdjustment> salesAdjustments(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
 
     List<Payment> payments(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
+
+    List<Cancellation> cancellations(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
+
+    List<Period> periods(final String token, final String uuid, final LocalDate competence);
+
+    List<ChargeCancellation> chargeCancellations(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
 }
