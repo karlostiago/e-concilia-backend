@@ -8,5 +8,5 @@ import java.time.LocalDate;
 @Service
 public interface DashboadService {
 
-    DashboardDTO carregarInformacoes(final String lojaId, final LocalDate dtInicial, final LocalDate dtFinal);
+    DashboardDTO carregarInformacoes(final Long empresaId, final LocalDate dtInicial, final LocalDate dtFinal);
 }
