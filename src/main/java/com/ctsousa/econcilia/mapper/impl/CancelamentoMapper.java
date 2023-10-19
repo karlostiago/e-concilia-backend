@@ -1,6 +1,8 @@
-package com.ctsousa.econcilia.mapper;
+package com.ctsousa.econcilia.mapper.impl;
 
 import com.ctsousa.econcilia.integration.ifood.entity.Cancellation;
+import com.ctsousa.econcilia.mapper.ColecaoMapper;
+import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.model.Cancelamento;
 import org.springframework.stereotype.Component;
 

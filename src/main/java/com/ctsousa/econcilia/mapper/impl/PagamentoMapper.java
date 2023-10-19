@@ -1,6 +1,8 @@
-package com.ctsousa.econcilia.mapper;
+package com.ctsousa.econcilia.mapper.impl;
 
 import com.ctsousa.econcilia.integration.ifood.entity.Payment;
+import com.ctsousa.econcilia.mapper.ColecaoMapper;
+import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.model.Pagamento;
 import org.springframework.stereotype.Component;
 

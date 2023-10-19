@@ -30,6 +30,42 @@ public class IfoodGatewayServiceImpl implements IfoodGateway {
     }
 
     @Override
+    public List<MaintenanceFee> findMaintanenceFees(String uuid, LocalDate startDate, LocalDate endDate) {
+        if (isTokenNaoValido()) {
+            gerarToken();
+        }
+
+        return financialService.maintenanceFees(token.getAccessToken(), uuid, startDate, endDate);
+    }
+
+    @Override
+    public List<Occurrence> findOccurences(String uuid, LocalDate startDate, LocalDate endDate) {
+        if (isTokenNaoValido()) {
+            gerarToken();
+        }
+
+        return financialService.occurrences(token.getAccessToken(), uuid, startDate, endDate);
+    }
+
+    @Override
+    public List<ReceivableRecord> findReceivables(String uuid, LocalDate startDate, LocalDate endDate) {
+        if (isTokenNaoValido()) {
+            gerarToken();
+        }
+
+        return financialService.receivableRecords(token.getAccessToken(), uuid, startDate, endDate);
+    }
+
+    @Override
+    public List<IncomeTaxe> findIncomeTaxes(String uuid, LocalDate startDate, LocalDate endDate) {
+        if (isTokenNaoValido()) {
+            gerarToken();
+        }
+
+        return financialService.incomeTaxes(token.getAccessToken(), uuid, startDate, endDate);
+    }
+
+    @Override
     public void verifyMerchantById(String uuid) {
         if (isTokenNaoValido()) {
             gerarToken();

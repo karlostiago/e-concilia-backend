@@ -1,4 +1,4 @@
-package com.ctsousa.econcilia.mapper;
+package com.ctsousa.econcilia.mapper.impl;
 
 import com.ctsousa.econcilia.integration.receitaws.json.DadosCnpjJson;
 import com.ctsousa.econcilia.mapper.DtoMapper;

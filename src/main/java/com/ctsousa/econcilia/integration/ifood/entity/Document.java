@@ -10,4 +10,6 @@ public class Document {
     private String type;
 
     private String number;
+
+    private String documentHolderName;
 }

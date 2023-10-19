@@ -1,5 +1,8 @@
-package com.ctsousa.econcilia.mapper;
+package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.mapper.ColecaoMapper;
+import com.ctsousa.econcilia.mapper.DtoMapper;
+import com.ctsousa.econcilia.mapper.EntidadeMapper;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.model.dto.TaxaDTO;
 import org.springframework.stereotype.Component;

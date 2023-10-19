@@ -14,13 +14,69 @@ import java.util.List;
 @Component
 public class FinancialServiceImpl extends AbstractIfoodService implements FinancialService {
 
+    private static final String TRANSACTION_DATE_BEGIN = "transactionDateBegin";
+
+    private static final String TRANSACTION_DATE_END = "transactionDateEnd";
+
+    @Override
+    public List<ReceivableRecord> receivableRecords(String token, String uuid, LocalDate startDate, LocalDate endDate) {
+
+        log.info("Buscando registros de contas a receber no período de {} até {}", startDate, endDate);
+
+        String path = pathBase().concat("/").concat(uuid).concat("/receivableRecords?").concat("beginReceivableDate=" + startDate)
+                .concat("&endReceivableDate=" + endDate);
+
+        ParameterizedTypeReference<List<ReceivableRecord>> responseType = new ParameterizedTypeReference<>() { };
+
+        return requestProcess(path, token, responseType);
+    }
+
+    @Override
+    public List<Occurrence> occurrences(String token, String uuid, LocalDate startDate, LocalDate endDate) {
+
+        log.info("Buscando ocorrências no período de {} até {}", startDate, endDate);
+
+        String path = pathBase().concat("/").concat(uuid).concat("/occurrences?").concat(TRANSACTION_DATE_BEGIN + "=" + startDate)
+                .concat("&"+ TRANSACTION_DATE_END + "=" + endDate);
+
+        ParameterizedTypeReference<List<Occurrence>> responseType = new ParameterizedTypeReference<>() { };
+
+        return requestProcess(path, token, responseType);
+    }
+
+    @Override
+    public List<MaintenanceFee> maintenanceFees(String token, String uuid, LocalDate startDate, LocalDate endDate) {
+
+        log.info("Buscando taxa de manutenção no período de {} até {}", startDate, endDate);
+
+        String path = pathBase().concat("/").concat(uuid).concat("/maintenanceFees?").concat(TRANSACTION_DATE_BEGIN + "=" + startDate)
+                .concat("&"+ TRANSACTION_DATE_END + "=" + endDate);
+
+        ParameterizedTypeReference<List<MaintenanceFee>> responseType = new ParameterizedTypeReference<>() { };
+
+        return requestProcess(path, token, responseType);
+    }
+
+    @Override
+    public List<IncomeTaxe> incomeTaxes(String token, String uuid, LocalDate startDate, LocalDate endDate) {
+
+        log.info("Buscando imposto de renda no período de {} até {}", startDate, endDate);
+
+        String path = pathBase().concat("/").concat(uuid).concat("/incomeTaxes?").concat( TRANSACTION_DATE_BEGIN + "=" + startDate)
+                .concat("&"+ TRANSACTION_DATE_END +"=" + endDate);
+
+        ParameterizedTypeReference<List<IncomeTaxe>> responseType = new ParameterizedTypeReference<>() { };
+
+        return requestProcess(path, token, responseType);
+    }
+
     @Override
     public List<ChargeCancellation> chargeCancellations(String token, String uuid, LocalDate startDate, LocalDate endDate) {
 
         log.info("Buscando cancelamentos de cobrança no período de {} até {}", startDate, endDate);
 
-        String path = pathBase().concat("/").concat(uuid).concat("/chargeCancellations?").concat("transactionDateBegin=" + startDate)
-                .concat("&transactionDateEnd=" + endDate);
+        String path = pathBase().concat("/").concat(uuid).concat("/chargeCancellations?").concat(  TRANSACTION_DATE_BEGIN + "=" + startDate)
+                .concat("&"+ TRANSACTION_DATE_END +"=" + endDate);
 
         ParameterizedTypeReference<List<ChargeCancellation>> responseType = new ParameterizedTypeReference<>() { };
 

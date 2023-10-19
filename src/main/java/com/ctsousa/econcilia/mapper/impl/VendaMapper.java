@@ -1,6 +1,8 @@
-package com.ctsousa.econcilia.mapper;
+package com.ctsousa.econcilia.mapper.impl;
 
 import com.ctsousa.econcilia.integration.ifood.entity.Sale;
+import com.ctsousa.econcilia.mapper.ColecaoMapper;
+import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.model.Cobranca;
 import com.ctsousa.econcilia.model.VendaPagamento;
 import com.ctsousa.econcilia.model.Venda;

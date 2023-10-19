@@ -18,4 +18,12 @@ public interface IfoodGateway {
     List<Cancellation> findCancellationBy(final String uuid, LocalDate startDate, LocalDate endDate);
 
     List<ChargeCancellation> findChargeCancellationBy(final String uuid, LocalDate startDate, LocalDate endDate);
+
+    List<MaintenanceFee> findMaintanenceFees(final String uuid, LocalDate startDate, LocalDate endDate);
+
+    List<Occurrence> findOccurences(final String uuid, LocalDate startDate, LocalDate endDate);
+
+    List<ReceivableRecord> findReceivables(final String uuid, LocalDate startDate, LocalDate endDate);
+
+    List<IncomeTaxe> findIncomeTaxes(final String uuid, LocalDate startDate, LocalDate endDate);
 }

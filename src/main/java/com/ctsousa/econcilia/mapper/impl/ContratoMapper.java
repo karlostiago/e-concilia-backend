@@ -1,5 +1,8 @@
-package com.ctsousa.econcilia.mapper;
+package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.mapper.ColecaoMapper;
+import com.ctsousa.econcilia.mapper.DtoMapper;
+import com.ctsousa.econcilia.mapper.EntidadeMapper;
 import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.model.dto.ContratoDTO;
@@ -7,7 +10,6 @@ import com.ctsousa.econcilia.model.dto.TaxaDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class ContratoMapper implements EntidadeMapper<Contrato, ContratoDTO>, DtoMapper<Contrato, ContratoDTO>, ColecaoMapper<Contrato, ContratoDTO> {

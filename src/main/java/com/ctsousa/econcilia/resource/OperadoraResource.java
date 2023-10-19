@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.mapper.OperadoraMapper;
+import com.ctsousa.econcilia.mapper.impl.OperadoraMapper;
 import com.ctsousa.econcilia.model.dto.OperadoraDTO;
 import com.ctsousa.econcilia.service.OperadoraService;
 import org.springframework.http.ResponseEntity;

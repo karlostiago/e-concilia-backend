@@ -20,4 +20,12 @@ public interface FinancialService {
     List<Period> periods(final String token, final String uuid, final LocalDate competence);
 
     List<ChargeCancellation> chargeCancellations(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
+
+    List<IncomeTaxe> incomeTaxes(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
+
+    List<MaintenanceFee> maintenanceFees(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
+
+    List<Occurrence> occurrences(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
+
+    List<ReceivableRecord> receivableRecords(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
 }

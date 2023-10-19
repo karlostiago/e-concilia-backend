@@ -1,14 +1,14 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.filtro.VendaFiltro;
 import com.ctsousa.econcilia.integration.ifood.IfoodGateway;
 import com.ctsousa.econcilia.integration.ifood.entity.*;
-import com.ctsousa.econcilia.mapper.*;
+import com.ctsousa.econcilia.mapper.impl.*;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.IntegracaoDTO;
 import com.ctsousa.econcilia.repository.IntegracaoRepository;
 import com.ctsousa.econcilia.service.IntegracaoService;
-import com.ctsousa.econcilia.filtro.VendaFiltro;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -37,7 +37,15 @@ public class IntegracaoServiceImpl implements IntegracaoService {
 
     private final CobrancaCanceladaMapper cobrancaCanceladaMapper;
 
-    public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway, VendaMapper vendaMapper, AjusteVendaMapper ajusteVendaMapper, PagamentoMapper pagamentoMapper, CancelamentoMapper cancelamentoMapper, CobrancaCanceladaMapper cobrancaCanceladaMapper) {
+    private final ImpostoRendaMapper impostoRendaMapper;
+
+    private final OcorrenciaMapper ocorrenciaMapper;
+
+    private final RegistroContaReceberMapper registroContaReceberMapper;
+
+    private final TaxaManutencaoMapper taxaManutencaoMapper;
+
+    public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway, VendaMapper vendaMapper, AjusteVendaMapper ajusteVendaMapper, PagamentoMapper pagamentoMapper, CancelamentoMapper cancelamentoMapper, CobrancaCanceladaMapper cobrancaCanceladaMapper, ImpostoRendaMapper impostoRendaMapper, OcorrenciaMapper ocorrenciaMapper, RegistroContaReceberMapper registroContaReceberMapper, TaxaManutencaoMapper taxaManutencaoMapper) {
         this.integracaoRepository = integracaoRepository;
         this.integracaoMapper = integracaoMapper;
         this.ifoodGateway = ifoodGateway;
@@ -46,6 +54,66 @@ public class IntegracaoServiceImpl implements IntegracaoService {
         this.pagamentoMapper = pagamentoMapper;
         this.cancelamentoMapper = cancelamentoMapper;
         this.cobrancaCanceladaMapper = cobrancaCanceladaMapper;
+        this.impostoRendaMapper = impostoRendaMapper;
+        this.ocorrenciaMapper = ocorrenciaMapper;
+        this.registroContaReceberMapper = registroContaReceberMapper;
+        this.taxaManutencaoMapper = taxaManutencaoMapper;
+    }
+
+    @Override
+    public List<TaxaManutencao> pesquisarTaxasManutencao(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
+
+        List<MaintenanceFee> maintenanceFees = ifoodGateway.findMaintanenceFees(codigoIntegracao, dtInicial, dtFinal);
+
+        if (maintenanceFees.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return taxaManutencaoMapper.paraLista(maintenanceFees);
+    }
+
+    @Override
+    public List<ImpostoRenda> pesquisarImpostoRenda(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
+
+        List<IncomeTaxe> incomeTaxes = ifoodGateway.findIncomeTaxes(codigoIntegracao, dtInicial, dtFinal);
+
+        if (incomeTaxes.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return impostoRendaMapper.paraLista(incomeTaxes);
+    }
+
+    @Override
+    public List<RegistroContaReceber> pesquisarRegistroContaReceber(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
+
+        List<ReceivableRecord> receivableRecords = ifoodGateway.findReceivables(codigoIntegracao, dtInicial, dtFinal);
+
+        if (receivableRecords.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return registroContaReceberMapper.paraLista(receivableRecords);
+    }
+
+    @Override
+    public List<Ocorrencia> pesquisarOcorrencias(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
+
+        validaPeriodoMaior90Dias(dtInicial, dtFinal);
+
+        List<Occurrence> occurrences = ifoodGateway.findOccurences(codigoIntegracao, dtInicial, dtFinal);
+
+        if (occurrences.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return ocorrenciaMapper.paraLista(occurrences);
     }
 
     @Override
