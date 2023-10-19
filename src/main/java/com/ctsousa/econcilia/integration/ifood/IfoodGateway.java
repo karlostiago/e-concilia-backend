@@ -19,7 +19,7 @@ public interface IfoodGateway {
 
     List<ChargeCancellation> findChargeCancellationBy(final String uuid, LocalDate startDate, LocalDate endDate);
 
-    List<MaintenanceFee> findMaintanenceFees(final String uuid, LocalDate startDate, LocalDate endDate);
+    List<MaintenanceFee> findMaintenanceFees(final String uuid, LocalDate startDate, LocalDate endDate);
 
     List<Occurrence> findOccurences(final String uuid, LocalDate startDate, LocalDate endDate);
 

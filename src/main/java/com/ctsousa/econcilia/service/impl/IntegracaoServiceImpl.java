@@ -65,7 +65,7 @@ public class IntegracaoServiceImpl implements IntegracaoService {
 
         validaPeriodoMaior90Dias(dtInicial, dtFinal);
 
-        List<MaintenanceFee> maintenanceFees = ifoodGateway.findMaintanenceFees(codigoIntegracao, dtInicial, dtFinal);
+        List<MaintenanceFee> maintenanceFees = ifoodGateway.findMaintenanceFees(codigoIntegracao, dtInicial, dtFinal);
 
         if (maintenanceFees.isEmpty()) {
             return new ArrayList<>();

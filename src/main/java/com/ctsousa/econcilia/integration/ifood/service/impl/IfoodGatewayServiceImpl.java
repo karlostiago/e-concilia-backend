@@ -30,7 +30,7 @@ public class IfoodGatewayServiceImpl implements IfoodGateway {
     }
 
     @Override
-    public List<MaintenanceFee> findMaintanenceFees(String uuid, LocalDate startDate, LocalDate endDate) {
+    public List<MaintenanceFee> findMaintenanceFees(String uuid, LocalDate startDate, LocalDate endDate) {
         if (isTokenNaoValido()) {
             gerarToken();
         }
