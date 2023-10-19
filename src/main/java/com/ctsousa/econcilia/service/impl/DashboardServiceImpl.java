@@ -39,8 +39,8 @@ public class DashboardServiceImpl implements DashboadService {
             lojaId = integracoes.get(0).getCodigoIntegracao();
         }
 
-        List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, null, null, dtInicial.minusDays(1), dtFinal);
-        List<Cancelamento> cancelamentos = integracaoService.pesquisarCancelamentos(lojaId, dtInicial.minusDays(1), dtFinal);
+        List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, null, null, dtInicial, dtFinal);
+        List<Cancelamento> cancelamentos = integracaoService.pesquisarCancelamentos(lojaId, dtInicial, dtFinal);
 
         if (vendas.isEmpty()) {
             return getDashboardDTO();
