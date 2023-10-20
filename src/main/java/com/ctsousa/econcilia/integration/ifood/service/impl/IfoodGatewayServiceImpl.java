@@ -6,11 +6,14 @@ import com.ctsousa.econcilia.integration.ifood.entity.*;
 import com.ctsousa.econcilia.integration.ifood.service.FinancialService;
 import com.ctsousa.econcilia.integration.ifood.service.MerchantService;
 import com.ctsousa.econcilia.integration.ifood.service.TokenService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Component
 public class IfoodGatewayServiceImpl implements IfoodGateway {
 
@@ -71,9 +74,14 @@ public class IfoodGatewayServiceImpl implements IfoodGateway {
             gerarToken();
         }
 
-        Merchant merchant = merchantService.details(uuid, token.getAccessToken());
+        List<Merchant> merchants = merchantService.all(token.getAccessToken());
 
-        if (merchant == null) {
+        log.info("Quantidade de comerciarios permitidos ..:: " + merchants.size());
+
+        Optional<Merchant> merchant = merchants.stream().filter(m -> m.getId().equalsIgnoreCase(uuid))
+                .findFirst();
+
+        if (merchant.isEmpty()) {
             throw new NotificacaoException(String.format("Não existe nenhum merchant cadastrado com loja id %s na base do ifood.", uuid));
         }
     }
