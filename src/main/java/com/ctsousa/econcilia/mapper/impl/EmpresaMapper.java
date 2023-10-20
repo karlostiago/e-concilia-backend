@@ -33,13 +33,7 @@ public class EmpresaMapper implements EntidadeMapper<Empresa, EmpresaDTO>, DtoMa
         contato.setTelefone(empresaDTO.getContato().getTelefone());
         empresa.setContato(contato);
 
-        Endereco endereco = new Endereco();
-        endereco.setCep(empresaDTO.getEndereco().getCep());
-        endereco.setComplemento(empresaDTO.getEndereco().getComplemento());
-        endereco.setNumero(empresaDTO.getEndereco().getNumero());
-        endereco.setLogradouro(empresaDTO.getEndereco().getLogradouro());
-        endereco.setCidade(empresaDTO.getEndereco().getCidade());
-        endereco.setBairro(empresaDTO.getEndereco().getBairro());
+        Endereco endereco = getEndereco(empresaDTO);
 
         Estado estado = new Estado();
         estado.setUf(empresaDTO.getEndereco().getEstado().getUf());
@@ -79,6 +73,17 @@ public class EmpresaMapper implements EntidadeMapper<Empresa, EmpresaDTO>, DtoMa
         return empresas.stream()
                 .map(this::paraDTO)
                 .toList();
+    }
+
+    private Endereco getEndereco(EmpresaDTO empresaDTO) {
+        Endereco endereco = new Endereco();
+        endereco.setCep(empresaDTO.getEndereco().getCep());
+        endereco.setComplemento(empresaDTO.getEndereco().getComplemento());
+        endereco.setNumero(empresaDTO.getEndereco().getNumero());
+        endereco.setLogradouro(empresaDTO.getEndereco().getLogradouro());
+        endereco.setCidade(empresaDTO.getEndereco().getCidade());
+        endereco.setBairro(empresaDTO.getEndereco().getBairro());
+        return endereco;
     }
 
     private EnderecoDTO getEnderecoDTO(Empresa empresa) {
