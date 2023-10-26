@@ -1,6 +1,5 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.model.Cancelamento;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.ResumoFinanceiroDTO;
 import com.ctsousa.econcilia.model.dto.TotalizadorDTO;
@@ -13,7 +12,7 @@ public interface ConciliadorIfoodService {
 
     List<Venda> conciliarTaxas(final List<Venda> vendas, final String lojaId);
 
-    void calcularCancelamentos(final List<Venda> vendas, final String lojaId);
+    void aplicarCancelamento(final List<Venda> vendas, final String lojaId);
 
     TotalizadorDTO totalizar(List<Venda> vendas);
 

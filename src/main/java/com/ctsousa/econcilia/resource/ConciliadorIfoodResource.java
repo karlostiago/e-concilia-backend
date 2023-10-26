@@ -1,6 +1,5 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.integration.ifood.entity.ChargeCancellation;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.ConciliadorDTO;
 import com.ctsousa.econcilia.model.dto.ResumoFinanceiroDTO;
@@ -38,7 +37,7 @@ public class ConciliadorIfoodResource {
                                                  @RequestParam(name  = "bandeira", required = false) final String bandeira) {
 
         List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, metodoPagamento, bandeira, dtInicial, dtFinal);
-        conciliadorIfoodService.calcularCancelamentos(vendas, lojaId);
+        conciliadorIfoodService.aplicarCancelamento(vendas, lojaId);
         return ResponseEntity.ok(getConciliadorDTO(vendas));
     }
 

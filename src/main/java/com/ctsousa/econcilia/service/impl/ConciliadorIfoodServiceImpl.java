@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     }
 
     @Override
-    public void calcularCancelamentos(List<Venda> vendas, String lojaId) {
+    public void aplicarCancelamento(List<Venda> vendas, String lojaId) {
         if (vendas.isEmpty()) {
             return;
         }

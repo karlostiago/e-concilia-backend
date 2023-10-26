@@ -27,6 +27,26 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     @Override
+    public List<Venda> buscarVendasUltimos7Dias(Long empresaId) {
+        if (empresaId < 0) {
+            empresaId = null;
+        }
+
+        var dtInicial = LocalDate.now().minusDays(6);
+        var dtFinal = LocalDate.now();
+
+        List<Integracao> integracoes = integracaoService.pesquisar(empresaId, null, null);
+
+        List<Venda> vendas = new ArrayList<>();
+
+        for (Integracao integracao : integracoes) {
+            vendas.addAll(integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, dtInicial, dtFinal));
+        }
+
+        return vendas;
+    }
+
+    @Override
     public DashboardDTO carregarInformacoes(Long empresaId, LocalDate dtInicial, LocalDate dtFinal) {
 
         if (empresaId < 0) {
@@ -40,7 +60,6 @@ public class DashboardServiceImpl implements DashboadService {
 
         for (Integracao integracao : integracoes) {
             vendas.addAll(integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, dtInicial, dtFinal));
-//            cancelamentos.addAll(integracaoService.pesquisarCancelamentos(integracao.getCodigoIntegracao(), dtInicial, dtFinal));
         }
 
         if (vendas.isEmpty()) {
