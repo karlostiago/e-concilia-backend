@@ -15,7 +15,7 @@ public interface FinancialService {
 
     List<Payment> payments(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
 
-    List<Cancellation> cancellations(final String token, final String uuid, final LocalDate startDate, final LocalDate endDate);
+    List<Cancellation> cancellations(final String token, final String uuid, final String periodId);
 
     List<Period> periods(final String token, final String uuid, final LocalDate competence);
 

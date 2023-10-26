@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -32,15 +33,15 @@ public class DashboardServiceImpl implements DashboadService {
             empresaId = null;
         }
 
-        String lojaId = null;
         List<Integracao> integracoes = integracaoService.pesquisar(empresaId, null, null);
 
-        if (!integracoes.isEmpty()) {
-            lojaId = integracoes.get(0).getCodigoIntegracao();
-        }
+        List<Venda> vendas = new ArrayList<>();
+        List<Cancelamento> cancelamentos = new ArrayList<>();
 
-        List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, null, null, dtInicial, dtFinal);
-        List<Cancelamento> cancelamentos = integracaoService.pesquisarCancelamentos(lojaId, dtInicial, dtFinal);
+        for (Integracao integracao : integracoes) {
+            vendas.addAll(integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, dtInicial, dtFinal));
+//            cancelamentos.addAll(integracaoService.pesquisarCancelamentos(integracao.getCodigoIntegracao(), dtInicial, dtFinal));
+        }
 
         if (vendas.isEmpty()) {
             return getDashboardDTO();
@@ -56,7 +57,7 @@ public class DashboardServiceImpl implements DashboadService {
 
     private BigDecimal calcularValorBruto(List<Venda> vendas) {
         return vendas.stream()
-                .map(venda -> venda.getCobranca().getGmv())
+                .map(venda -> venda.getCobranca().getValorBruto())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 

@@ -11,6 +11,8 @@ public class Billing {
 
     private BigDecimal gmv;
 
+    private BigDecimal initialTotalBag;
+
     private BigDecimal totalBag;
 
     private BigDecimal deliveryFee;

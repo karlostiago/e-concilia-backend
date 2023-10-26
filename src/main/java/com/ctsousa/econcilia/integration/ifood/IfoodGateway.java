@@ -15,7 +15,7 @@ public interface IfoodGateway {
 
     List<Payment> findPaymentBy(final String uuid, LocalDate startDate, LocalDate endDate);
 
-    List<Cancellation> findCancellationBy(final String uuid, LocalDate startDate, LocalDate endDate);
+    List<Cancellation> findCancellationBy(final String uuid, final String periodId);
 
     List<ChargeCancellation> findChargeCancellationBy(final String uuid, LocalDate startDate, LocalDate endDate);
 

@@ -28,7 +28,7 @@ public interface IntegracaoService {
 
     List<Pagamento> pesquisarPagamentos(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
 
-    List<Cancelamento> pesquisarCancelamentos(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+    List<Cancelamento> pesquisarCancelamentos(final String codigoIntegracao, final String periodoId);
 
     List<CobrancaCancelada> pesquisarCobrancaCanceladas(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
 

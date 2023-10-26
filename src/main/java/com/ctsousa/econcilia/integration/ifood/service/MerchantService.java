@@ -8,7 +8,5 @@ import java.util.List;
 @Service
 public interface MerchantService {
 
-    Merchant details(final String uuid, final String token);
-
     List<Merchant> all(final String token);
 }

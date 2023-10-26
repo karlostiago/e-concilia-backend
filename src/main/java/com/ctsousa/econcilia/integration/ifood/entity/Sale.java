@@ -23,6 +23,8 @@ public class Sale {
 
     private String businessModelOrder;
 
+    private String periodId;
+
     private SalePayment payment;
 
     private Billing billing;

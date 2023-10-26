@@ -9,35 +9,56 @@ import java.math.BigDecimal;
 @Getter
 public class Cobranca {
 
-    private BigDecimal gmv;
+    private BigDecimal valorBruto = new BigDecimal("0.0");
 
-    private BigDecimal totalItensPedido;
+    private BigDecimal valorParcial = new BigDecimal("0.0");
 
-    private BigDecimal taxaEntrega;
+    private BigDecimal valorCancelado = new BigDecimal("0.0");
 
-    private BigDecimal beneficioOperadora;
+    private BigDecimal taxaEntrega = new BigDecimal("0.0");
 
-    private BigDecimal beneficioComercio;
+    private BigDecimal beneficioOperadora = new BigDecimal("0.0");
 
-    private BigDecimal comissao;
+    private BigDecimal beneficioComercio = new BigDecimal("0.0");
 
-    private BigDecimal taxaAdquirente;
+    private BigDecimal comissao = new BigDecimal("0.0");
+
+    private BigDecimal taxaAdquirente = new BigDecimal("0.0");
 
     private BigDecimal taxaAdquirenteAplicada = new BigDecimal("0.0");
 
-    private BigDecimal comissaoEntrega;
+    private BigDecimal comissaoEntrega = new BigDecimal("0.0");
 
-    private BigDecimal taxaComissao;
+    private BigDecimal taxaComissao = new BigDecimal("0.0");
 
-    private BigDecimal taxaComissaoAdquirente;
+    private BigDecimal taxaComissaoAdquirente = new BigDecimal("0.0");
 
-    private BigDecimal totalDebito;
+    private BigDecimal totalDebito = new BigDecimal("0.0");
 
-    private BigDecimal totalCredito;
+    private BigDecimal totalCredito = new BigDecimal("0.0");
 
-    private BigDecimal valorTaxaAntecipacao;
+    private BigDecimal valorTaxaAntecipacao = new BigDecimal("0.0");
 
-    private BigDecimal taxaAntecipacao;
+    private BigDecimal taxaAntecipacao = new BigDecimal("0.0");
 
-    private BigDecimal valorTotalTaxaPedido;
+    private BigDecimal taxaServico = new BigDecimal("0.0");
+
+    public BigDecimal getValorLiquido() {
+        return this.valorBruto
+                .subtract(getDesconto())
+                .subtract(this.valorCancelado)
+                .add(this.comissao)
+                .add(this.taxaAdquirente);
+    }
+
+    public BigDecimal getValorTotal() {
+        return this.valorBruto
+               .subtract(getDesconto())
+               .add(this.taxaServico);
+    }
+
+    private BigDecimal getDesconto() {
+        return this.beneficioOperadora
+                .add(this.beneficioComercio.multiply(BigDecimal.valueOf(-1D)));
+    }
 }

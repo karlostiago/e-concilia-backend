@@ -114,13 +114,13 @@ public class IfoodGatewayServiceImpl implements IfoodGateway {
     }
 
     @Override
-    public List<Cancellation> findCancellationBy(String uuid, LocalDate startDate, LocalDate endDate) {
+    public List<Cancellation> findCancellationBy(String uuid, String periodId) {
 
         if (isTokenNaoValido()) {
             gerarToken();
         }
 
-        return financialService.cancellations(token.getAccessToken(), uuid, startDate, endDate);
+        return financialService.cancellations(token.getAccessToken(), uuid, periodId);
     }
 
     @Override

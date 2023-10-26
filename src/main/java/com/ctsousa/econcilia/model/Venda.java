@@ -14,6 +14,8 @@ public class Venda {
 
     private String pedidoId;
 
+    private String periodoId;
+
     private LocalDate ultimaDataProcessamento;
 
     private String razaoSocial;

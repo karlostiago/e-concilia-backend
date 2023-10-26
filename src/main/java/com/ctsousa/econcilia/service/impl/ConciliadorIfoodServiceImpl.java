@@ -2,10 +2,7 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.enumaration.MetodoPagamento;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
-import com.ctsousa.econcilia.model.Empresa;
-import com.ctsousa.econcilia.model.Integracao;
-import com.ctsousa.econcilia.model.Taxa;
-import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.ResumoFinanceiroDTO;
 import com.ctsousa.econcilia.model.dto.TotalizadorDTO;
 import com.ctsousa.econcilia.service.ConciliadorIfoodService;
@@ -15,9 +12,11 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
 
@@ -34,6 +33,35 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     }
 
     @Override
+    public void calcularCancelamentos(List<Venda> vendas, String lojaId) {
+        if (vendas.isEmpty()) {
+            return;
+        }
+
+        Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
+            Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
+        ));
+
+        Map<String, List<Venda>> periodIdMap = vendas.stream().collect(Collectors.groupingBy(
+            Venda::getPeriodoId
+        ));
+
+        List<String> periodoIds = periodIdMap.keySet().stream().toList();
+
+        for (String periodId : periodoIds) {
+            List<Cancelamento> cancelamentos = integracaoService.pesquisarCancelamentos(lojaId, periodId);
+            if (!cancelamentos.isEmpty()) {
+                for (Cancelamento cancelamento : cancelamentos) {
+                    Venda venda = vendaMap.get(cancelamento.getPedidoId());
+                    if (venda != null) {
+                        venda.getCobranca().setValorCancelado(cancelamento.getValor().abs());
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public List<Venda> conciliarTaxas(List<Venda> vendas, final String lojaId) {
         Integracao integracao = integracaoService.pesquisarPorCodigoIntegracao(lojaId);
         Empresa empresa = null;
@@ -46,7 +74,7 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         List<Taxa> taxas = taxaService.buscarPorEmpresa(empresa.getId());
 
         for (Venda venda : vendas) {
-            var taxa = buscarTaxa(taxas, maiuscula(venda.getPagamento().getTipo()));
+            var taxa = buscarTaxaPagamento(taxas);
             if (taxa != null) {
                 calcularTaxaAdquirenteAplicada(venda, taxa);
             }
@@ -63,17 +91,25 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         TotalizadorDTO totalizadorDTO = new TotalizadorDTO();
 
         for (Venda venda : vendas) {
-            var totalPedido = venda.getCobranca().getTotalItensPedido();
-            var totalTaxaEntrega = venda.getCobranca().getTaxaEntrega();
-            var totalTaxaPraticada = Math.abs(venda.getCobranca().getTaxaAdquirente().doubleValue());
-            var totalTaxaAplicada = venda.getCobranca().getTaxaAdquirenteAplicada();
-            var totalDiferenca = venda.getDiferenca();
+            var totalValorBruto = venda.getCobranca().getValorBruto();
+            var totalValorLiquido = venda.getCobranca().getValorLiquido();
+            var totalValorPedido = venda.getCobranca().getValorTotal();
 
-            totalizadorDTO.setTotalValorPedido(totalizadorDTO.getTotalValorPedido().add(totalPedido));
-            totalizadorDTO.setTotalTaxaEntrega(totalizadorDTO.getTotalTaxaEntrega().add(totalTaxaEntrega));
-            totalizadorDTO.setTotalTaxaAquisicaoPraticada(totalizadorDTO.getTotalTaxaAquisicaoPraticada().add(BigDecimal.valueOf(totalTaxaPraticada)));
-            totalizadorDTO.setTotalTaxaAquisicaoAplicada(totalizadorDTO.getTotalTaxaAquisicaoAplicada().add(totalTaxaAplicada));
-            totalizadorDTO.setTotalDiferenca(totalizadorDTO.getTotalDiferenca().add(totalDiferenca));
+            totalizadorDTO.setTotalValorBruto(totalizadorDTO.getTotalValorBruto().add(totalValorBruto));
+            totalizadorDTO.setTotalValorLiquido(totalizadorDTO.getTotalValorLiquido().add(totalValorLiquido));
+            totalizadorDTO.setTotalValorPedido(totalizadorDTO.getTotalValorPedido().add(totalValorPedido));
+//            var totalPedido = venda.getCobranca().getValorParcial();
+//            var totalTaxaEntrega = venda.getCobranca().getTaxaEntrega();
+//            var totalTaxaPraticada = Math.abs(venda.getCobranca().getTaxaAdquirente().doubleValue());
+//            var totalTaxaAplicada = venda.getCobranca().getTaxaAdquirenteAplicada();
+//            var totalDiferenca = venda.getDiferenca();
+
+
+//            totalizadorDTO.setTotalValorPedido(totalizadorDTO.getTotalValorPedido().add(totalPedido));
+//            totalizadorDTO.setTotalTaxaEntrega(totalizadorDTO.getTotalTaxaEntrega().add(totalTaxaEntrega));
+//            totalizadorDTO.setTotalTaxaAquisicaoPraticada(totalizadorDTO.getTotalTaxaAquisicaoPraticada().add(BigDecimal.valueOf(totalTaxaPraticada)));
+//            totalizadorDTO.setTotalTaxaAquisicaoAplicada(totalizadorDTO.getTotalTaxaAquisicaoAplicada().add(totalTaxaAplicada));
+//            totalizadorDTO.setTotalDiferenca(totalizadorDTO.getTotalDiferenca().add(totalDiferenca));
         }
 
         return totalizadorDTO;
@@ -86,7 +122,7 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         for (Venda venda : vendas) {
             String metodoPagamento = venda.getPagamento().getMetodo();
             BigDecimal total = totalPorMetodoPagamento.getOrDefault(metodoPagamento, new BigDecimal("0.0"));
-            total = total.add(venda.getCobranca().getTotalItensPedido());
+            total = total.add(venda.getCobranca().getValorParcial());
             totalPorMetodoPagamento.put(metodoPagamento, total);
         }
 
@@ -111,9 +147,20 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         return null;
     }
 
+    private Taxa buscarTaxaPagamento(final List<Taxa> taxas) {
+        for (Taxa taxa : taxas) {
+            if (maiuscula(taxa.getDescricao()).contains("PAGAMENTO") && Boolean.TRUE.equals(taxa.getAtivo())) {
+                return taxa;
+            }
+        }
+        return null;
+    }
+
     private void calcularTaxaAdquirenteAplicada(final Venda venda, final Taxa taxa) {
+        if (naoDeveCalcularTaxa(venda)) return;
+
         var desconto = venda.getCobranca().getBeneficioComercio();
-        var vTotalLiquido = venda.getCobranca().getGmv().add(desconto);
+        var vTotalLiquido = venda.getCobranca().getValorBruto().add(desconto);
         var vTotal = vTotalLiquido.multiply(taxa.getValor()).divide(new BigDecimal("100"), RoundingMode.HALF_UP)
                 .setScale(2, RoundingMode.HALF_UP);
 
@@ -123,5 +170,9 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     private void calcularDiferenca(final Venda venda) {
         var diferenca = venda.getCobranca().getTaxaAdquirente().add(venda.getCobranca().getTaxaAdquirenteAplicada()).setScale(2, RoundingMode.HALF_UP);
         venda.setDiferenca(diferenca);
+    }
+
+    private boolean naoDeveCalcularTaxa(final Venda venda) {
+        return venda.getCobranca().getTaxaAdquirente().doubleValue() == 0D;
     }
 }

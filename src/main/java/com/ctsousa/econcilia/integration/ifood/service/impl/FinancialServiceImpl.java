@@ -96,12 +96,11 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
     }
 
     @Override
-    public List<Cancellation> cancellations(String token, String uuid, LocalDate startDate, LocalDate endDate) {
+    public List<Cancellation> cancellations(String token, String uuid, String periodId) {
 
-        log.info("Buscando cancelamentos no período de {} até {}", startDate, endDate);
+        log.info("Buscando cancelamentos pelo period id {}", periodId);
 
-        String path = pathBase().concat("/").concat(uuid).concat("/cancellations?").concat("beginCancellationDate=" + startDate)
-                .concat("&endCancellationDate=" + endDate);
+        String path = pathBase().concat("/").concat(uuid).concat("/cancellations?").concat("periodId=" + periodId);
 
         ParameterizedTypeReference<List<Cancellation>> responseType = new ParameterizedTypeReference<>() { };
 

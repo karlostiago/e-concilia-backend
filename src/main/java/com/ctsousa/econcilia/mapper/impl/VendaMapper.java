@@ -23,6 +23,7 @@ public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, 
     @Override
     public Venda paraDTO(Sale sale) {
         Venda venda = new Venda();
+        venda.setPeriodoId(sale.getPeriodId());
         venda.setDataPedido(sale.getOrderDate());
         venda.setPedidoId(sale.getOrderId());
         venda.setModeloNegocio(sale.getBusinessModelOrder());
@@ -47,8 +48,8 @@ public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, 
 
     private Cobranca getCobranca(final Sale sale) {
         Cobranca cobranca = new Cobranca();
-        cobranca.setGmv(sale.getBilling().getGmv());
-        cobranca.setTotalItensPedido(sale.getBilling().getTotalBag());
+        cobranca.setValorBruto(sale.getBilling().getGmv());
+        cobranca.setValorParcial(sale.getBilling().getTotalBag());
         cobranca.setTaxaEntrega(sale.getBilling().getDeliveryFee());
         cobranca.setBeneficioOperadora(sale.getBilling().getBenefitIfood());
         cobranca.setBeneficioComercio(sale.getBilling().getBenefitMerchant());
@@ -61,7 +62,7 @@ public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, 
         cobranca.setTotalCredito(sale.getBilling().getTotalCredit());
         cobranca.setValorTaxaAntecipacao(sale.getBilling().getAnticipationFee());
         cobranca.setTaxaAntecipacao(sale.getBilling().getAnticipationFeeRate());
-        cobranca.setValorTotalTaxaPedido(sale.getBilling().getSmallOrderFee());
+        cobranca.setTaxaServico(sale.getBilling().getSmallOrderFee());
         return cobranca;
     }
 }

@@ -38,16 +38,23 @@ public class ConciliadorIfoodResource {
                                                  @RequestParam(name  = "bandeira", required = false) final String bandeira) {
 
         List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, metodoPagamento, bandeira, dtInicial, dtFinal);
-        vendas = conciliadorIfoodService.conciliarTaxas(vendas, lojaId);
+        conciliadorIfoodService.calcularCancelamentos(vendas, lojaId);
+        return ResponseEntity.ok(getConciliadorDTO(vendas));
+    }
 
-        TotalizadorDTO totalizadorDTO = conciliadorIfoodService.totalizar(vendas);
-        ResumoFinanceiroDTO resumoFinanceiroDTO = conciliadorIfoodService.calcularResumoFinanceiro(vendas);
-
+    private ConciliadorDTO getConciliadorDTO(final List<Venda> vendas) {
         ConciliadorDTO conciliadorDTO = new ConciliadorDTO();
         conciliadorDTO.setVendas(vendas);
-        conciliadorDTO.setTotalizador(totalizadorDTO);
-        conciliadorDTO.setResumoFinanceiro(resumoFinanceiroDTO);
+        conciliadorDTO.setTotalizador(getTotalizadorDTO(vendas));
+        conciliadorDTO.setResumoFinanceiro(getResumoFinanceiroDTO(vendas));
+        return conciliadorDTO;
+    }
 
-        return ResponseEntity.ok(conciliadorDTO);
+    private TotalizadorDTO getTotalizadorDTO(final List<Venda> vendas) {
+        return conciliadorIfoodService.totalizar(vendas);
+    }
+
+    private ResumoFinanceiroDTO getResumoFinanceiroDTO(final List<Venda> vendas) {
+        return conciliadorIfoodService.calcularResumoFinanceiro(vendas);
     }
 }

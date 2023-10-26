@@ -35,8 +35,8 @@ public class AjusteVendaMapper implements DtoMapper<SaleAdjustment, AjusteVenda>
 
     private Cobranca getCobranca(final SaleAdjustment saleAdjustment) {
         Cobranca cobranca = new Cobranca();
-        cobranca.setGmv(saleAdjustment.getBilledOrderUpdate().getGmv());
-        cobranca.setTotalItensPedido(saleAdjustment.getBilledOrderUpdate().getTotalBag());
+        cobranca.setValorBruto(saleAdjustment.getBilledOrderUpdate().getGmv());
+        cobranca.setValorParcial(saleAdjustment.getBilledOrderUpdate().getTotalBag());
         cobranca.setTaxaEntrega(saleAdjustment.getBilledOrderUpdate().getDeliveryFee());
         cobranca.setBeneficioOperadora(saleAdjustment.getBilledOrderUpdate().getBenefitIfood());
         cobranca.setBeneficioComercio(saleAdjustment.getBilledOrderUpdate().getBenefitMerchant());
@@ -49,7 +49,7 @@ public class AjusteVendaMapper implements DtoMapper<SaleAdjustment, AjusteVenda>
         cobranca.setTotalCredito(saleAdjustment.getBilledOrderUpdate().getTotalCredit());
         cobranca.setValorTaxaAntecipacao(saleAdjustment.getBilledOrderUpdate().getAnticipationFee());
         cobranca.setTaxaAntecipacao(saleAdjustment.getBilledOrderUpdate().getAnticipationFeeRate());
-        cobranca.setValorTotalTaxaPedido(saleAdjustment.getBilledOrderUpdate().getSmallOrderFee());
+        cobranca.setTaxaServico(saleAdjustment.getBilledOrderUpdate().getSmallOrderFee());
         return cobranca;
     }
 }

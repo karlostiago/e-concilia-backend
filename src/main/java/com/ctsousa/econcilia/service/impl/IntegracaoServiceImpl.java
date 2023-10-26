@@ -131,11 +131,8 @@ public class IntegracaoServiceImpl implements IntegracaoService {
     }
 
     @Override
-    public List<Cancelamento> pesquisarCancelamentos(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
-
-        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-
-        List<Cancellation> cancellations = ifoodGateway.findCancellationBy(codigoIntegracao, dtInicial, dtFinal);
+    public List<Cancelamento> pesquisarCancelamentos(String codigoIntegracao, String periodoId) {
+        List<Cancellation> cancellations = ifoodGateway.findCancellationBy(codigoIntegracao, periodoId);
 
         if (cancellations.isEmpty()) {
             return new ArrayList<>();
