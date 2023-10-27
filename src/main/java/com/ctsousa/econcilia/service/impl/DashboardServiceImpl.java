@@ -32,7 +32,7 @@ public class DashboardServiceImpl implements DashboadService {
             empresaId = null;
         }
 
-        var dtInicial = LocalDate.now().minusDays(6);
+        var dtInicial = LocalDate.now().minusDays(7);
         var dtFinal = LocalDate.now();
 
         List<Integracao> integracoes = integracaoService.pesquisar(empresaId, null, null);
