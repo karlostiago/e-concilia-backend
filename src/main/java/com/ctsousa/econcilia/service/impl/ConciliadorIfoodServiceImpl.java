@@ -8,15 +8,12 @@ import com.ctsousa.econcilia.model.dto.TotalizadorDTO;
 import com.ctsousa.econcilia.service.ConciliadorIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import com.ctsousa.econcilia.service.TaxaService;
+import com.ctsousa.econcilia.service.VendaProcessadaService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
@@ -28,9 +25,12 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
 
     private final IntegracaoService integracaoService;
 
-    public ConciliadorIfoodServiceImpl(TaxaService taxaService, IntegracaoService integracaoService) {
+    private final VendaProcessadaService vendaProcessadaService;
+
+    public ConciliadorIfoodServiceImpl(TaxaService taxaService, IntegracaoService integracaoService, VendaProcessadaService vendaProcessadaService) {
         this.taxaService = taxaService;
         this.integracaoService = integracaoService;
+        this.vendaProcessadaService = vendaProcessadaService;
     }
 
     @Override
@@ -44,18 +44,21 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         ));
 
         Map<String, List<Venda>> periodIdMap = vendas.stream().collect(Collectors.groupingBy(
-            Venda::getPeriodoId
+            venda -> (venda.getPeriodoId() != null) ? venda.getPeriodoId() : "",
+            Collectors.toList()
         ));
 
         List<String> periodoIds = periodIdMap.keySet().stream().toList();
 
         for (String periodId : periodoIds) {
+            if (periodId.isEmpty()) continue;
+
             List<Cancelamento> cancelamentos = integracaoService.pesquisarCancelamentos(lojaId, periodId);
             if (!cancelamentos.isEmpty()) {
                 for (Cancelamento cancelamento : cancelamentos) {
                     Venda venda = vendaMap.get(cancelamento.getPedidoId());
                     if (venda != null) {
-                        venda.getCobranca().setValorCancelado(cancelamento.getValor().abs());
+                        venda.getCobranca().setValorCancelado(cancelamento.getValor());
                     }
                 }
             }
@@ -90,28 +93,12 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     @Override
     public TotalizadorDTO totalizar(List<Venda> vendas) {
         TotalizadorDTO totalizadorDTO = new TotalizadorDTO();
+        var vendaProcessada = vendaProcessadaService.processar(vendas);
 
-        for (Venda venda : vendas) {
-            var totalValorBruto = venda.getCobranca().getValorBruto();
-            var totalValorLiquido = venda.getCobranca().getValorLiquido();
-            var totalValorPedido = venda.getCobranca().getValorTotal();
-
-            totalizadorDTO.setTotalValorBruto(totalizadorDTO.getTotalValorBruto().add(totalValorBruto));
-            totalizadorDTO.setTotalValorLiquido(totalizadorDTO.getTotalValorLiquido().add(totalValorLiquido));
-            totalizadorDTO.setTotalValorPedido(totalizadorDTO.getTotalValorPedido().add(totalValorPedido));
-//            var totalPedido = venda.getCobranca().getValorParcial();
-//            var totalTaxaEntrega = venda.getCobranca().getTaxaEntrega();
-//            var totalTaxaPraticada = Math.abs(venda.getCobranca().getTaxaAdquirente().doubleValue());
-//            var totalTaxaAplicada = venda.getCobranca().getTaxaAdquirenteAplicada();
-//            var totalDiferenca = venda.getDiferenca();
-
-
-//            totalizadorDTO.setTotalValorPedido(totalizadorDTO.getTotalValorPedido().add(totalPedido));
-//            totalizadorDTO.setTotalTaxaEntrega(totalizadorDTO.getTotalTaxaEntrega().add(totalTaxaEntrega));
-//            totalizadorDTO.setTotalTaxaAquisicaoPraticada(totalizadorDTO.getTotalTaxaAquisicaoPraticada().add(BigDecimal.valueOf(totalTaxaPraticada)));
-//            totalizadorDTO.setTotalTaxaAquisicaoAplicada(totalizadorDTO.getTotalTaxaAquisicaoAplicada().add(totalTaxaAplicada));
-//            totalizadorDTO.setTotalDiferenca(totalizadorDTO.getTotalDiferenca().add(totalDiferenca));
-        }
+        totalizadorDTO.setTotalValorBruto(vendaProcessada.getTotalBruto());
+        totalizadorDTO.setTotalValorPedido(vendaProcessada.getTotalPedido());
+        totalizadorDTO.setTotalValorLiquido(vendaProcessada.getTotalLiquido());
+        totalizadorDTO.setTotalValorCancelado(vendaProcessada.getTotalCancelado());
 
         return totalizadorDTO;
     }

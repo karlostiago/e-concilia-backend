@@ -20,11 +20,20 @@ public class DashboardDTO {
 
     private BigDecimal valorCancelamento;
 
+    private BigDecimal valorRecebidoLoja;
+
+    private BigDecimal valorIncentivoPromocionalLoja;
+
+    private BigDecimal valorIncentivoPromocionalOperadora;
+
+    private BigDecimal valorTaxaEntrega;
+
+    /// remover
     private BigDecimal valorTaxas;
 
     private BigDecimal taxaMedia;
 
-    private BigDecimal valorRecebido;
+    private BigDecimal valorComissao;
 
-    private BigDecimal valorReceber;
+    private BigDecimal valorDesconto;
 }

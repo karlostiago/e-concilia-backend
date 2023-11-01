@@ -142,7 +142,7 @@ public class IntegracaoServiceImpl implements IntegracaoService {
     }
 
     @Override
-    public List<Venda> pesquisarVendasIfood(String codigoIntegracao, String metodoPagamento, String bandeira, LocalDate dtInicial, LocalDate dtFinal) {
+    public List<Venda> pesquisarVendasIfood(String codigoIntegracao, String metodoPagamento, String bandeira, String tipoRecebimento, LocalDate dtInicial, LocalDate dtFinal) {
 
         validaPeriodoMaior90Dias(dtInicial, dtFinal);
 
@@ -153,7 +153,7 @@ public class IntegracaoServiceImpl implements IntegracaoService {
         }
 
         List<Venda> vendas = vendaMapper.paraLista(sales);
-        return filtrarVendas(vendas, metodoPagamento, bandeira);
+        return filtrarVendas(vendas, metodoPagamento, bandeira, tipoRecebimento);
     }
 
     @Override
@@ -252,11 +252,12 @@ public class IntegracaoServiceImpl implements IntegracaoService {
                 .orElseThrow(() -> new NotificacaoException(String.format("Integração com código integração %s não encontrado", codigoIntegracao)));
     }
 
-    private List<Venda> filtrarVendas(final List<Venda> vendas, final String metodoPagamento, final String bandeira) {
-        return new VendaFiltro(vendas, bandeira, metodoPagamento)
+    private List<Venda> filtrarVendas(final List<Venda> vendas, final String metodoPagamento, final String bandeira, final String tipoRecebimento) {
+        return new VendaFiltro(vendas, bandeira, metodoPagamento, tipoRecebimento)
                 .porBandeira()
                 .porMetodoPagamento()
                 .porMetodoPagamentoBandeira()
+                .porTipoRecebimento()
                 .getVendasFiltradas();
     }
 

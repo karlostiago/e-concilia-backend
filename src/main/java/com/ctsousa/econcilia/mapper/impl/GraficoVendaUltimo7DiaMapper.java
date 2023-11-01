@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
+import static com.ctsousa.econcilia.util.DataUtil.mesAno;
+
 @Component
 public class GraficoVendaUltimo7DiaMapper {
 
@@ -56,12 +59,15 @@ public class GraficoVendaUltimo7DiaMapper {
     }
 
     private String formatarDataVenda(final LocalDate dataVenda) {
-        return dataVenda.getDayOfMonth() + "/" + dataVenda.getMonth().getValue();
+        return mesAno(dataVenda);
     }
 
     private BigDecimal somarVendas(final List<Venda> vendas) {
-        return vendas.stream()
+
+        List<BigDecimal> valores = vendas.stream()
                 .map(venda -> venda.getCobranca().getValorBruto())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .toList();
+
+        return somar(valores);
     }
 }

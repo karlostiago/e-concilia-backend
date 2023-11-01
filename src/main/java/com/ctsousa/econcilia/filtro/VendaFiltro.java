@@ -17,13 +17,16 @@ public class VendaFiltro {
 
     private final String metodoPagamento;
 
+    private final String tipoRecebimento;
+
     @Getter
     private List<Venda> vendasFiltradas;
 
-    public VendaFiltro(List<Venda> vendas, String bandeira, String metodoPagamento) {
+    public VendaFiltro(List<Venda> vendas, String bandeira, String metodoPagamento, String tipoRecebimento) {
         this.vendas = vendas;
         this.bandeira = bandeira;
         this.metodoPagamento = metodoPagamento;
+        this.tipoRecebimento = tipoRecebimento;
         this.vendasFiltradas = new ArrayList<>(vendas.size());
     }
 
@@ -57,6 +60,20 @@ public class VendaFiltro {
             .toList();
         } else if(naoTemValor(metodoPagamento) && naoTemValor(bandeira)) {
             vendasFiltradas.addAll(vendas);
+        }
+        return this;
+    }
+
+    public VendaFiltro porTipoRecebimento() {
+        if (Boolean.TRUE.equals(temValor(tipoRecebimento)) && "loja".equalsIgnoreCase(tipoRecebimento)) {
+            vendasFiltradas = vendasFiltradas.stream()
+                    .filter(venda -> "merchant".equalsIgnoreCase(venda.getPagamento().getResponsavel()))
+                    .toList();
+        }
+        else if (Boolean.TRUE.equals(temValor(tipoRecebimento)) && !"loja".equalsIgnoreCase(tipoRecebimento)) {
+            vendasFiltradas = vendasFiltradas.stream()
+                    .filter(venda -> !"merchant".equalsIgnoreCase(venda.getPagamento().getResponsavel()))
+                    .toList();
         }
         return this;
     }

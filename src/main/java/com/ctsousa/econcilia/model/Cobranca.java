@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Setter
 @Getter
@@ -43,22 +44,12 @@ public class Cobranca {
 
     private BigDecimal taxaServico = new BigDecimal("0.0");
 
-    public BigDecimal getValorLiquido() {
+    public BigDecimal getTotalTaxas() {
         return this.valorBruto
-                .subtract(getDesconto())
-                .subtract(this.valorCancelado)
-                .add(this.comissao)
-                .add(this.taxaAdquirente);
-    }
-
-    public BigDecimal getValorTotal() {
-        return this.valorBruto
-               .subtract(getDesconto())
-               .add(this.taxaServico);
-    }
-
-    private BigDecimal getDesconto() {
-        return this.beneficioOperadora
-                .add(this.beneficioComercio.multiply(BigDecimal.valueOf(-1D)));
+                .multiply(this.taxaComissao.multiply(BigDecimal.valueOf(100)))
+                .divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP)
+                .add(this.taxaServico)
+                .add(this.taxaAdquirente.multiply(BigDecimal.valueOf(-1D)))
+                .add(this.taxaAntecipacao);
     }
 }

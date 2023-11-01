@@ -22,7 +22,7 @@ public interface IntegracaoService {
 
     Integracao pesquisarPorCodigoIntegracao(final String codigoIntegracao);
 
-    List<Venda> pesquisarVendasIfood(final String codigoIntegracao, final String metodoPagamento, final String bandeira, LocalDate dtInicial, LocalDate dtFinal);
+    List<Venda> pesquisarVendasIfood(final String codigoIntegracao, final String metodoPagamento, final String bandeira, final String tipoRecebimento, final LocalDate dtInicial, final LocalDate dtFinal);
 
     List<AjusteVenda> pesquisarAjusteVendasIfood(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
 
