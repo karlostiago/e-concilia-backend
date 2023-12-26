@@ -8,6 +8,7 @@ import com.ctsousa.econcilia.service.UsuarioService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,12 +35,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<Usuario> pesquisar(String nomeCompleto, String email) {
-        if (null != nomeCompleto && !nomeCompleto.isEmpty()) {
+        if (null != nomeCompleto && !nomeCompleto.isEmpty() && !"null".equalsIgnoreCase(nomeCompleto)) {
             return usuarioRepository.porNomeCompleto(nomeCompleto);
         }
 
-        if (null != email && !email.isEmpty()) {
-            return Collections.singletonList(usuarioRepository.porEmail(email));
+        if (null != email && !email.isEmpty() && !"null".equalsIgnoreCase(email)) {
+            var usuario = usuarioRepository.porEmail(email);
+            return usuario == null ? new ArrayList<>() : Collections.singletonList(usuario);
         }
 
         return usuarioRepository.findAll();

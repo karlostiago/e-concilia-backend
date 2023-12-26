@@ -18,7 +18,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query(value = "SELECT u FROM Usuario u WHERE u.nomeCompleto LIKE %:nomeCompleto%")
     List<Usuario> porNomeCompleto(@Param(value = "nomeCompleto") String nomeCompleto);
 
-    @Query(value = "SELECT u FROM Usuario u WHERE u.email = :email")
+    @Query(value = "SELECT u FROM Usuario u WHERE u.email LIKE %:email%")
     Usuario porEmail(@Param(value = "email") String email);
 
     boolean existsByEmail(String email);
