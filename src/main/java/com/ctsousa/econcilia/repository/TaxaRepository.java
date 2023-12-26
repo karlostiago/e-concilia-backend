@@ -1,7 +1,5 @@
 package com.ctsousa.econcilia.repository;
 
-import com.ctsousa.econcilia.model.Contrato;
-import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
