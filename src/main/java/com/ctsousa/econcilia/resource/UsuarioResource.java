@@ -26,8 +26,8 @@ public class UsuarioResource {
     public ResponseEntity<UsuarioDTO> cadastrar (@RequestBody @Valid UsuarioDTO usuarioDTO) {
         usuarioService.confirmaEmail(usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
         usuarioService.confirmaSenha(usuarioDTO.getSenha(), usuarioDTO.getConfirmaSenha());
-        var contrato = usuarioService.salvar(usuarioMapper.paraEntidade(usuarioDTO));
-        return ResponseEntity.ok(usuarioMapper.paraDTO(contrato));
+        var usuario = usuarioService.salvar(usuarioMapper.paraEntidade(usuarioDTO));
+        return ResponseEntity.ok(usuarioMapper.paraDTO(usuario));
     }
 
     @GetMapping

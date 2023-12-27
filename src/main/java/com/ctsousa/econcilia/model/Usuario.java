@@ -28,6 +28,10 @@ public class Usuario extends Entidade {
     @Column(name = "senha", nullable = false)
     private String senha;
 
+    @NotNull
+    @Column(name = "lojas_permitidas", nullable = false)
+    private String lojasPermitidas;
+
     @PrePersist
     @PreUpdate
     public void init() {

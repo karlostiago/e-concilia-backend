@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +27,7 @@ public class UsuarioDTO implements Serializable {
     private String senha;
 
     private String confirmaSenha;
+
+    @NotEmpty(message = "Selecione ao menos uma loja.")
+    private List<EmpresaDTO> lojasPermitidas;
 }

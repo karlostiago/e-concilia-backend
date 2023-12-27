@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Component
 public class UsuarioServiceImpl implements UsuarioService {
@@ -58,7 +59,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         confirmaEmail(usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
         confirmaSenha(usuarioDTO.getSenha(), usuarioDTO.getConfirmaSenha());
 
+        StringJoiner joiner = new StringJoiner(",");
+        usuarioDTO.getLojasPermitidas().forEach(loja -> joiner.add(String.valueOf(loja.getId())));
+
         Usuario usuario = pesquisarPorId(id);
+        usuario.setLojasPermitidas(joiner.toString());
         BeanUtils.copyProperties(usuarioDTO, usuario, "id");
         return usuarioRepository.save(usuario);
     }
