@@ -9,4 +9,4 @@ CREATE TABLE `taxa` (
   PRIMARY KEY (`id`),
   KEY `fk_taxa_contrato_id` (`contrato_id`),
   CONSTRAINT `fk_taxa_contrato_id` FOREIGN KEY (`contrato_id`) REFERENCES `contrato` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
