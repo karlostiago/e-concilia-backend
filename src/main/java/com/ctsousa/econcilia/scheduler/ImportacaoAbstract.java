@@ -1,5 +1,7 @@
 package com.ctsousa.econcilia.scheduler;
 
+import com.ctsousa.econcilia.model.Importacao;
+import com.ctsousa.econcilia.service.ImportacaoService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,6 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ImportacaoAbstract {
+
+    private final ImportacaoService importacaoService;
+
+    protected Importacao importacao;
+
+    protected ImportacaoAbstract(ImportacaoService importacaoService) {
+        this.importacaoService = importacaoService;
+        this.buscarImportacao();
+    }
 
     // @TODO existe um erro no calculo de peridos.
     protected List<ImportacaoAbstract.Periodo> calcularPeriodo(final LocalDate periodoInicial, long totalDias) {
@@ -33,6 +44,13 @@ public abstract class ImportacaoAbstract {
     }
 
     public abstract TipoImportacao tipoImportacao();
+
+    private void buscarImportacao() {
+        importacao = importacaoService.buscarPorSituacaoAgendada()
+                .stream()
+                .filter(imp -> imp.getOperadora().getDescricao().equalsIgnoreCase(tipoImportacao().getDescricao()))
+                .findFirst().orElse(null);
+    }
 
     @Getter
     @AllArgsConstructor

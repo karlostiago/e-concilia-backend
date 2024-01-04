@@ -32,6 +32,7 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
     private final VendaRepository vendaRepository;
 
     public ImportacaoSchedulerIfoodImpl(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository) {
+        super(importacaoService);
         this.importacaoService = importacaoService;
         this.integracaoService = integracaoService;
         this.vendaRepository = vendaRepository;
@@ -40,11 +41,6 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
     @Override
     @Scheduled(fixedRate = QUINZE_MINUTOS)
     public void processar() {
-        Importacao importacao = importacaoService.buscarPorSituacaoAgendada()
-                .stream()
-                .filter(imp -> imp.getOperadora().getDescricao().equalsIgnoreCase(tipoImportacao().getDescricao()))
-                .findFirst().orElse(null);
-
         List<Periodo> periodos = new ArrayList<>();
 
         if (importacao != null) {
