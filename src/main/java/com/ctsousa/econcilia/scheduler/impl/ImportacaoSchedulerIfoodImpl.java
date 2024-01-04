@@ -73,16 +73,18 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
 
             log.info("Quantidade de vendas encontradas {}", vendas.size());
             log.info("Importando vendas na base de dados....");
-
-            for (Venda venda : vendas) {
-                venda.setEmpresa(importacao.getEmpresa());
-                venda.setOperadora(importacao.getOperadora());
-
-                vendaRepository.save(venda);
-            }
+            salvarVendas(vendas);
         }
         log.info("Atualizando situação da importação ...");
         importacaoService.atualizaPara(importacao, ImportacaoSituacao.PROCESSADO);
+    }
+
+    private void salvarVendas(final List<Venda> vendas) {
+        for (Venda venda : vendas) {
+            venda.setEmpresa(importacao.getEmpresa());
+            venda.setOperadora(importacao.getOperadora());
+            vendaRepository.save(venda);
+        }
     }
 
     private String getCodigoIntegracao(final Importacao importacao) {
