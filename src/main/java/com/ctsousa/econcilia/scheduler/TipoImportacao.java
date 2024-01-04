@@ -1,5 +1,8 @@
 package com.ctsousa.econcilia.scheduler;
 
+import lombok.Getter;
+
+@Getter
 public enum TipoImportacao {
 
     IFOOD("IFOOD");

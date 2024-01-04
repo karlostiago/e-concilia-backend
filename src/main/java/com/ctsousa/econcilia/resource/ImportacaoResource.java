@@ -25,7 +25,7 @@ public class ImportacaoResource {
 
     @PostMapping
     public ResponseEntity<ImportacaoDTO> agendar (@RequestBody @Valid ImportacaoDTO importacaoDTO) {
-        importacaoDTO.setSituacao(ImportacaoSituacao.AGENDADA);
+        importacaoDTO.setSituacao(ImportacaoSituacao.AGENDADO);
         var importacao = importacaoService.agendar(importacaoMapper.paraEntidade(importacaoDTO));
         return ResponseEntity.ok(importacaoMapper.paraDTO(importacao));
     }

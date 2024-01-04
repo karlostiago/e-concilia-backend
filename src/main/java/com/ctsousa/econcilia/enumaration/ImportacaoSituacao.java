@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ImportacaoSituacao {
 
-    AGENDADA("Agendada"),
+    AGENDADO("Agendado"),
 
     EM_PROCESSAMENTO("Em processamento"),
 

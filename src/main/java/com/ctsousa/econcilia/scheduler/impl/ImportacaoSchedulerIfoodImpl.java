@@ -8,6 +8,7 @@ import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.repository.VendaRepository;
 import com.ctsousa.econcilia.scheduler.ImportacaoAbstract;
 import com.ctsousa.econcilia.scheduler.Scheduler;
+import com.ctsousa.econcilia.scheduler.TipoImportacao;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,9 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
     @Scheduled(fixedRate = QUINZE_MINUTOS)
     public void processar() {
         Importacao importacao = importacaoService.buscarPorSituacaoAgendada()
-                .stream().findFirst().orElse(null);
+                .stream()
+                .filter(imp -> imp.getOperadora().getDescricao().equalsIgnoreCase(tipoImportacao().getDescricao()))
+                .findFirst().orElse(null);
 
         List<Periodo> periodos = new ArrayList<>();
 
@@ -95,5 +98,10 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
         }
 
         return integracoes.get(0).getCodigoIntegracao();
+    }
+
+    @Override
+    public TipoImportacao tipoImportacao() {
+        return TipoImportacao.IFOOD;
     }
 }

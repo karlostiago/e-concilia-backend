@@ -32,6 +32,8 @@ public abstract class ImportacaoAbstract {
         return periodos;
     }
 
+    public abstract TipoImportacao tipoImportacao();
+
     @Getter
     @AllArgsConstructor
     protected static class Periodo {

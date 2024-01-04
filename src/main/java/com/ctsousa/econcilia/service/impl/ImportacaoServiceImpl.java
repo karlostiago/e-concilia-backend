@@ -28,7 +28,7 @@ public class ImportacaoServiceImpl implements ImportacaoService {
 
     @Override
     public List<Importacao> buscarPorSituacaoAgendada() {
-        return this.importacaoRepository.buscarPorSituacaoAgendada(ImportacaoSituacao.AGENDADA);
+        return this.importacaoRepository.buscarPorSituacaoAgendada(ImportacaoSituacao.AGENDADO);
     }
 
     @Override
