@@ -59,7 +59,12 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
 
         String codigoIntegeracao = getCodigoIntegracao(importacao);
         importacaoService.atualizaPara(importacao, ImportacaoSituacao.EM_PROCESSAMENTO);
+        importar(periodos, codigoIntegeracao);
 
+        log.info("Importação concluída com sucesso.");
+    }
+
+    private void importar(final List<Periodo> periodos, final String codigoIntegeracao) {
         for (Periodo periodo : periodos) {
             log.info("Pesquisando as vendas para empresa {}, operadora {}, no periodo de {} ate {}", importacao.getEmpresa().getRazaoSocial(), importacao.getOperadora().getDescricao(), periodo.getDe(), periodo.getAte());
             List<Venda> vendas = integracaoService.pesquisarVendasIfood(codigoIntegeracao, null, null, null, periodo.getDe(), periodo.getAte());
@@ -76,11 +81,8 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
                 vendaRepository.save(venda);
             }
         }
-
-        log.info("Atualizando situação importação ...");
+        log.info("Atualizando situação da importação ...");
         importacaoService.atualizaPara(importacao, ImportacaoSituacao.PROCESSADO);
-
-        log.info("Importação concluída com sucesso.");
     }
 
     private String getCodigoIntegracao(final Importacao importacao) {
