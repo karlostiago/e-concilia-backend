@@ -1,0 +1,21 @@
+CREATE TABLE `cobranca` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `beneficio_comercio` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `beneficio_operadora` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `comissao` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `comissao_entrega` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `taxa_adquirente` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `taxa_adquirente_aplicada` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `taxa_antecipacao` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `taxa_comissao` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `taxa_comissao_adquirente` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `taxa_entrega` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `taxa_servico` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `total_credito` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `total_debito` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `valor_bruto` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `valor_cancelado` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `valor_parcial` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `valor_taxa_antecipacao` decimal(19,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`)
+);

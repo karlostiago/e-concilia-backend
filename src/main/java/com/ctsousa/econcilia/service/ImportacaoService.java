@@ -1,6 +1,5 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
 import com.ctsousa.econcilia.model.Importacao;
 import org.springframework.stereotype.Service;
 

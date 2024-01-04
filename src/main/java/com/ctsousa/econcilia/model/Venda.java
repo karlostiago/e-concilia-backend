@@ -1,35 +1,53 @@
 package com.ctsousa.econcilia.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
 @Setter
-public class Venda {
+@Entity
+@Table(name = "venda")
+@EqualsAndHashCode(callSuper = false)
+public class Venda extends Entidade {
 
+    @Column(name = "data_pedido", nullable = false)
     private LocalDate dataPedido;
 
+    @Column(name = "pedido_id", nullable = false)
     private String pedidoId;
 
+    @Column(name = "periodo_id", nullable = false)
     private String periodoId;
 
+    @Column(name = "ultima_data_processamento")
     private LocalDate ultimaDataProcessamento;
 
+    @Column(name = "razao_social", nullable = false)
     private String razaoSocial;
 
+    @Column(name = "numero_documento", nullable = false)
     private String numeroDocumento;
 
+    @Column(name = "modelo_negocio", nullable = false)
     private String modeloNegocio;
 
-    private VendaPagamento pagamento;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pagamento_id", nullable = false)
+    private Pagamento pagamento;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cobranca_id", nullable = false)
     private Cobranca cobranca;
 
+    @Column(name = "conciliado", nullable = false, columnDefinition = "boolean default false")
     private Boolean conciliado;
 
+    @Column(name = "diferenca", nullable = false, columnDefinition = "decimal(19,2) default 0.0")
     private BigDecimal diferenca;
 
     public BigDecimal getValorBruto() {

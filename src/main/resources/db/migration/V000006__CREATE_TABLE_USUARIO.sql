@@ -3,6 +3,7 @@ CREATE TABLE `usuario` (
   `nome_completo` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `senha` varchar(255) NOT NULL,
+  `lojas_permitidas` varchar(255),
   PRIMARY KEY (`id`),
   UNIQUE KEY `fk_usuario` (`email`)
 );

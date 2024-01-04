@@ -1,11 +1,9 @@
 package com.ctsousa.econcilia.mapper.impl;
 
 import com.ctsousa.econcilia.integration.ifood.entity.IncomeTaxe;
-import com.ctsousa.econcilia.integration.ifood.entity.Payment;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.model.ImpostoRenda;
-import com.ctsousa.econcilia.model.Pagamento;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

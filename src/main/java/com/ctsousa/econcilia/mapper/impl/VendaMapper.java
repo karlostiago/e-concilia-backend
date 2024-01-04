@@ -4,7 +4,7 @@ import com.ctsousa.econcilia.integration.ifood.entity.Sale;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.model.Cobranca;
-import com.ctsousa.econcilia.model.VendaPagamento;
+import com.ctsousa.econcilia.model.Pagamento;
 import com.ctsousa.econcilia.model.Venda;
 import org.springframework.stereotype.Component;
 
@@ -35,15 +35,15 @@ public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, 
         return venda;
     }
 
-    private VendaPagamento getPagamento(final Sale sale) {
-        VendaPagamento vendaPagamento = new VendaPagamento();
-        vendaPagamento.setBandeira(sale.getPayment().getBrand());
-        vendaPagamento.setTipo(sale.getPayment().getType());
-        vendaPagamento.setNsu(sale.getPayment().getNsu());
-        vendaPagamento.setMetodo(sale.getPayment().getMethod());
-        vendaPagamento.setResponsavel(sale.getPayment().getLiability());
-        vendaPagamento.setNumeroCartao(sale.getPayment().getCardNumber());
-        return vendaPagamento;
+    private Pagamento getPagamento(final Sale sale) {
+        Pagamento pagamento = new Pagamento();
+        pagamento.setBandeira(sale.getPayment().getBrand());
+        pagamento.setTipo(sale.getPayment().getType());
+        pagamento.setNsu(sale.getPayment().getNsu());
+        pagamento.setMetodo(sale.getPayment().getMethod());
+        pagamento.setResponsavel(sale.getPayment().getLiability());
+        pagamento.setNumeroCartao(sale.getPayment().getCardNumber());
+        return pagamento;
     }
 
     private Cobranca getCobranca(final Sale sale) {
