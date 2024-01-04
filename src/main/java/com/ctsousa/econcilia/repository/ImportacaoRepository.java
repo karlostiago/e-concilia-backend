@@ -1,8 +1,11 @@
 package com.ctsousa.econcilia.repository;
 
 import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
+import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Importacao;
+import com.ctsousa.econcilia.model.Operadora;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 

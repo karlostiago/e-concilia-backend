@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = false)
 public class Pagamento extends Entidade {
 
-    @Column(name = "periodo_id", nullable = false)
+    @Column(name = "periodo_id")
     private String periodoId;
 
     @Column(name = "tipo", nullable = false)
@@ -35,7 +35,7 @@ public class Pagamento extends Entidade {
     @Column(name = "numero_cartao", nullable = false)
     private String numeroCartao;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status")
     private String status;
 
     @Column(name = "nsu")
@@ -50,9 +50,9 @@ public class Pagamento extends Entidade {
     @Column(name = "data_confirmada_pagamento")
     private LocalDate dataConfirmacaoPagamento;
 
-    @Column(name = "valor_total", nullable = false)
+    @Column(name = "valor_total")
     private BigDecimal valorTotal;
 
-    @Column(name = "codigo_transacao", nullable = false)
+    @Column(name = "codigo_transacao")
     private String codigoTransacao;
 }

@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.scheduler;
 
-public interface ProcessoScheduler {
+public interface Scheduler {
 
     void processar();
 }

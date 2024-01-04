@@ -31,6 +31,12 @@ public class ImportacaoServiceImpl implements ImportacaoService {
         return this.importacaoRepository.buscarPorSituacaoAgendada(ImportacaoSituacao.AGENDADA);
     }
 
+    @Override
+    public void atualizaPara(Importacao importacao, ImportacaoSituacao situacao) {
+        importacao.setSituacao(situacao);
+        this.importacaoRepository.save(importacao);
+    }
+
     private boolean temImportacaoAgendada(final Importacao importacao) {
         var importacoes = buscarPorSituacaoAgendada();
 
