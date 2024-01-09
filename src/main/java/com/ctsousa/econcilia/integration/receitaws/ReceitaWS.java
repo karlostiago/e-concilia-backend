@@ -13,7 +13,7 @@ public class ReceitaWS {
 
     private final RestTemplate restTemplate;
 
-    ReceitaWS(final RestTemplate restTemplate) {
+    public ReceitaWS(final RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
