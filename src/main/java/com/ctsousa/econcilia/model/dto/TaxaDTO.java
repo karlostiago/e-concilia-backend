@@ -36,4 +36,6 @@ public class TaxaDTO implements Serializable {
     private Boolean ativo;
 
     private Long expiraEm;
+
+    private String tipo;
 }

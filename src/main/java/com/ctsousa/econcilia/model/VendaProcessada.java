@@ -32,6 +32,8 @@ public class VendaProcessada {
 
     private BigDecimal taxaMedia;
 
+    private BigDecimal totalRepasse;
+
     ///
     private BigDecimal totalComissaoTransacaoPagamento;
 

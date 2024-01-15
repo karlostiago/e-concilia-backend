@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.model.Integracao;
+import com.ctsousa.econcilia.model.Ocorrencia;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.VendaProcessada;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
@@ -53,17 +54,19 @@ public class DashboardServiceImpl implements DashboadService {
 
     @Override
     public DashboardDTO carregarInformacoes(Long empresaId, LocalDate dtInicial, LocalDate dtFinal) {
-
         if (empresaId < 0) {
             empresaId = null;
         }
 
         List<Integracao> integracoes = integracaoService.pesquisar(empresaId, null, null);
         List<Venda> vendas = new ArrayList<>();
+        List<Ocorrencia> ocorrencias = new ArrayList<>();
 
         for (Integracao integracao : integracoes) {
             var vendasPesquidas = integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
             conciliadorIfoodService.aplicarCancelamento(vendasPesquidas, integracao.getCodigoIntegracao());
+            ocorrencias = integracaoService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
+            conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendasPesquidas);
             vendas.addAll(vendasPesquidas);
         }
 
@@ -71,7 +74,7 @@ public class DashboardServiceImpl implements DashboadService {
             return getDashboardDTO();
         }
 
-        VendaProcessada vendaProcessada = vendaProcessadaService.processar(vendas);
+        VendaProcessada vendaProcessada = vendaProcessadaService.processar(vendas, ocorrencias);
 
         return DashboardDTO.builder()
                 .valorBrutoVendas(vendaProcessada.getTotalBruto())
@@ -82,6 +85,7 @@ public class DashboardServiceImpl implements DashboadService {
                 .valorIncentivoPromocionalLoja(vendaProcessada.getTotalPromocaoLoja().multiply(BigDecimal.valueOf(-1D)))
                 .valorIncentivoPromocionalOperadora(vendaProcessada.getTotalComissaoOperadora())
                 .valorTaxaEntrega(vendaProcessada.getTotalTaxaEntrega())
+                .valorEmRepasse(vendaProcessada.getTotalRepasse().subtract(BigDecimal.valueOf(100)))
 //                .valorComissao(vendaProcessada.getTotalComissao())
 //                .valorDesconto(vendaProcessada.getTotalDesconto())
 //                .valorTaxas(vendaProcessada.getTotalTaxas())

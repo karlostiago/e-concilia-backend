@@ -97,4 +97,9 @@ public class Venda extends Entidade {
         }
         return valorCancelado;
     }
+
+    @Override
+    public String toString() {
+        return "[PedidoId]:: " + pedidoId;
+    }
 }

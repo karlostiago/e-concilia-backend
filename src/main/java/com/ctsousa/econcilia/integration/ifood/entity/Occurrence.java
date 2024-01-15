@@ -33,7 +33,7 @@ public class Occurrence {
 
     private String documentNumber;
 
-    private LocalDateTime transactionDateTime;
+    private String transactionDateTime;
 
     private String referencePeriodId;
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,8 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         this.integracaoService = integracaoService;
         this.vendaProcessadaService = vendaProcessadaService;
     }
+
+
 
     @Override
     public void aplicarCancelamento(List<Venda> vendas, String lojaId) {
@@ -66,6 +69,25 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     }
 
     @Override
+    public void reprocessarVenda(LocalDate dtInicial, LocalDate dtFinal, String lojaId, final List<Venda> vendas) {
+        List<AjusteVenda> ajusteVendas = integracaoService.pesquisarAjusteVendasIfood(lojaId, dtInicial, dtFinal);
+
+        if (ajusteVendas.isEmpty()) return;
+
+        Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
+            Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
+        ));
+
+        for (AjusteVenda ajuste : ajusteVendas) {
+            Venda venda = vendaMap.get(ajuste.getPedidoId());
+            if (venda != null) {
+                venda.getCobranca().setTotalCredito(ajuste.getCobranca().getTotalCredito());
+                venda.getCobranca().setTotalDebito(ajuste.getCobranca().getTotalDebito());
+            }
+        }
+    }
+
+    @Override
     public List<Venda> conciliarTaxas(List<Venda> vendas, final String lojaId) {
         Integracao integracao = integracaoService.pesquisarPorCodigoIntegracao(lojaId);
         Empresa empresa = null;
@@ -94,6 +116,19 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     public TotalizadorDTO totalizar(List<Venda> vendas) {
         TotalizadorDTO totalizadorDTO = new TotalizadorDTO();
         var vendaProcessada = vendaProcessadaService.processar(vendas);
+
+        totalizadorDTO.setTotalValorBruto(vendaProcessada.getTotalBruto());
+        totalizadorDTO.setTotalValorPedido(vendaProcessada.getTotalPedido());
+        totalizadorDTO.setTotalValorLiquido(vendaProcessada.getTotalLiquido());
+        totalizadorDTO.setTotalValorCancelado(vendaProcessada.getTotalCancelado());
+
+        return totalizadorDTO;
+    }
+
+    @Override
+    public TotalizadorDTO totalizar(List<Venda> vendas, List<Ocorrencia> ocorrencias) {
+        TotalizadorDTO totalizadorDTO = new TotalizadorDTO();
+        var vendaProcessada = vendaProcessadaService.processar(vendas, ocorrencias);
 
         totalizadorDTO.setTotalValorBruto(vendaProcessada.getTotalBruto());
         totalizadorDTO.setTotalValorPedido(vendaProcessada.getTotalPedido());

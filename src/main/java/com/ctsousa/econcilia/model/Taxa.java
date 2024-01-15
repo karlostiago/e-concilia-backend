@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.enumaration.TipoValor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +41,10 @@ public class Taxa extends Entidade {
 
     @Column(name = "ativo", nullable = false, columnDefinition = "boolean default false ")
     private Boolean ativo;
+
+    @Column(name = "tipo", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TipoValor tipo;
 
     @Transient
     public Long expiraEm() {

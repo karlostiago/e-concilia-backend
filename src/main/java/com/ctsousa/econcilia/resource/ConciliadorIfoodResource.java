@@ -39,19 +39,21 @@ public class ConciliadorIfoodResource {
 
         List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, metodoPagamento, bandeira, tipoRecebimento, dtInicial, dtFinal);
         conciliadorIfoodService.aplicarCancelamento(vendas, lojaId);
-        return ResponseEntity.ok(getConciliadorDTO(vendas));
+        conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, lojaId, vendas);
+        List<Ocorrencia> ocorrencias = integracaoService.pesquisarOcorrencias(lojaId, dtInicial, dtFinal);
+        return ResponseEntity.ok(getConciliadorDTO(vendas, ocorrencias));
     }
 
-    private ConciliadorDTO getConciliadorDTO(final List<Venda> vendas) {
+    private ConciliadorDTO getConciliadorDTO(final List<Venda> vendas, final List<Ocorrencia> ocorrencias) {
         ConciliadorDTO conciliadorDTO = new ConciliadorDTO();
         conciliadorDTO.setVendas(vendas);
-        conciliadorDTO.setTotalizador(getTotalizadorDTO(vendas));
+        conciliadorDTO.setTotalizador(getTotalizadorDTO(vendas, ocorrencias));
         conciliadorDTO.setResumoFinanceiro(getResumoFinanceiroDTO(vendas));
         return conciliadorDTO;
     }
 
-    private TotalizadorDTO getTotalizadorDTO(final List<Venda> vendas) {
-        return conciliadorIfoodService.totalizar(vendas);
+    private TotalizadorDTO getTotalizadorDTO(final List<Venda> vendas, final List<Ocorrencia> ocorrencias) {
+        return conciliadorIfoodService.totalizar(vendas, ocorrencias);
     }
 
     private ResumoFinanceiroDTO getResumoFinanceiroDTO(final List<Venda> vendas) {

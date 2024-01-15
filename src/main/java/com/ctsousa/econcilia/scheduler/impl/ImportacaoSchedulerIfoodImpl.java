@@ -36,7 +36,7 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
     @Override
     @Scheduled(fixedRate = QUINZE_MINUTOS)
     public void processar() {
-        if (periodos.isEmpty()) {
+        if (periodos == null || periodos.isEmpty()) {
             log.info("Nenhum periodo encontrado para ser importado.");
             return;
         }

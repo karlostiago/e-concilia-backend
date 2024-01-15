@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.model.Ocorrencia;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.VendaProcessada;
 import com.ctsousa.econcilia.service.VendaProcessadaService;
@@ -16,7 +17,48 @@ import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
 public class VendaProcessadaImpl implements VendaProcessadaService {
 
     @Override
+    public VendaProcessada processar(List<Venda> vendas, List<Ocorrencia> ocorrencias) {
+        VendaProcessada venda = processar(vendas);
+
+        var totalDesconto = somar(ocorrencias.stream()
+                .map(Ocorrencia::getValor)
+                .toList());
+
+        return VendaProcessada
+                .builder()
+                .totalRepasse(venda.getTotalRepasse().subtract(totalDesconto))
+                .totalBruto(venda.getTotalBruto())
+                .totalPedido(venda.getTotalPedido())
+                .totalCancelado(venda.getTotalCancelado())
+                .totalLiquido(venda.getTotalLiquido())
+                .totalTaxaEntrega(venda.getTotalTaxaEntrega())
+                .totalDesconto(venda.getTotalDesconto())
+                .totalTicketMedio(venda.getTotalTicketMedio())
+                .totalComissao(venda.getTotalComissao())
+                .quantidade(BigInteger.valueOf(vendas.size()))
+                .totalTaxas(venda.getTotalTaxas())
+                .taxaMedia(venda.getTaxaMedia())
+                .totalComissaoOperadora(venda.getTotalComissaoOperadora())
+                .totalComissaoTransacaoPagamento(venda.getTotalComissaoTransacaoPagamento())
+                .totalPromocaoLoja(venda.getTotalPromocaoLoja())
+                .totalRecebidoLoja(venda.getTotalRecebidoLoja())
+                .totalRecebidoOperadora(venda.getTotalRecebidoOperadora())
+                .build();
+    }
+
+    @Override
     public VendaProcessada processar(List<Venda> vendas) {
+
+        var totalBruto = vendas.stream()
+                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
+                .map(venda -> venda.getCobranca().getValorBruto())
+                .toList();
+
+        var totalTaxaServico = vendas.stream()
+                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
+                .filter(venda -> venda.getCobranca().getTaxaServico() != null)
+                .map(venda -> venda.getCobranca().getTaxaServico())
+                .toList();
 
         var totalVenda = vendas.stream()
                 .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
@@ -33,7 +75,14 @@ public class VendaProcessadaImpl implements VendaProcessadaService {
                 .map(venda -> venda.getCobranca().getBeneficioOperadora())
                 .toList();
 
+        var totalRepasse = vendas.stream()
+                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
+                .map(venda -> venda.getCobranca().getTotalCredito().subtract(venda.getCobranca().getTotalDebito()))
+                .toList();
 
+        var resultTotalRepasse = somar(totalRepasse);
+        var resultTotalTaxaServico = somar(totalTaxaServico);
+        var resultTotalBruto1 = somar(totalBruto);
         var resultTotalVenda = somar(totalVenda);
         var resultTotalTaxa = somar(totalTaxa);
         var resultTotalDesconto = somar(totalDesconto);
@@ -47,10 +96,12 @@ public class VendaProcessadaImpl implements VendaProcessadaService {
         System.out.println(resultTotalDesconto);
         System.out.println("-----------------------------");
         System.out.println(resultTotalBruto);
+        System.out.println(resultTotalBruto1);
 
 
         return VendaProcessada
                 .builder()
+                .totalRepasse(resultTotalRepasse)
                 .totalBruto(calcularValorBruto(vendas))
                 .totalPedido(calcularTotalPedido(vendas))
                 .totalCancelado(calcularTotalCancelado(vendas))

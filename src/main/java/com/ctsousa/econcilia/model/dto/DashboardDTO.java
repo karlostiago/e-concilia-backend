@@ -28,6 +28,8 @@ public class DashboardDTO {
 
     private BigDecimal valorTaxaEntrega;
 
+    private BigDecimal valorEmRepasse;
+
     /// remover
     private BigDecimal valorTaxas;
 

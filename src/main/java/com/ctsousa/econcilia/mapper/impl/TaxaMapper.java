@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.enumaration.TipoValor;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.mapper.EntidadeMapper;
@@ -21,6 +22,7 @@ public class TaxaMapper implements EntidadeMapper<Taxa, TaxaDTO>, DtoMapper<Taxa
         taxa.setValidoAte(taxaDTO.getValidoAte());
         taxa.setEntraEmVigor(taxaDTO.getEntraEmVigor());
         taxa.setAtivo(taxaDTO.getAtivo());
+        taxa.setTipo(TipoValor.porDescricao(taxaDTO.getTipo()));
         return taxa;
     }
 
@@ -34,6 +36,7 @@ public class TaxaMapper implements EntidadeMapper<Taxa, TaxaDTO>, DtoMapper<Taxa
         taxaDTO.setEntraEmVigor(taxa.getEntraEmVigor());
         taxaDTO.setAtivo(taxa.getAtivo());
         taxaDTO.setEmpresa(taxa.getContrato().getEmpresa().getRazaoSocial());
+        taxaDTO.setTipo(taxa.getTipo().name());
         return taxaDTO;
     }
 
