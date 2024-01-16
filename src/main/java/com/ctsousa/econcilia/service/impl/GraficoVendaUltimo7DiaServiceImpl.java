@@ -1,7 +1,8 @@
-package com.ctsousa.econcilia.mapper.impl;
+package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDTO;
+import com.ctsousa.econcilia.service.GraficoVendaService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -14,12 +15,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
-import static com.ctsousa.econcilia.util.DataUtil.mesAno;
+import static com.ctsousa.econcilia.util.DataUtil.diaMes;
 
 @Component
-public class GraficoVendaUltimo7DiaMapper {
+public class GraficoVendaUltimo7DiaServiceImpl implements GraficoVendaService<GraficoVendaUltimo7DiaDTO> {
 
-    public GraficoVendaUltimo7DiaDTO toDTO (final List<Venda> vendas) {
+    @Override
+    public GraficoVendaUltimo7DiaDTO processar(List<Venda> vendas) {
         GraficoVendaUltimo7DiaDTO dto = new GraficoVendaUltimo7DiaDTO();
         dto.setData(new ArrayList<>(vendas.size()));
         dto.setLabels(new ArrayList<>(vendas.size()));
@@ -59,7 +61,7 @@ public class GraficoVendaUltimo7DiaMapper {
     }
 
     private String formatarDataVenda(final LocalDate dataVenda) {
-        return mesAno(dataVenda);
+        return diaMes(dataVenda);
     }
 
     private BigDecimal somarVendas(final List<Venda> vendas) {

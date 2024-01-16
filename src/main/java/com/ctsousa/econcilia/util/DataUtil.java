@@ -6,7 +6,9 @@ public final class DataUtil {
 
     private DataUtil() { }
 
-    public static String mesAno(final LocalDate data) {
-        return data.getDayOfMonth() + "/" + data.getMonth().getValue();
+    public static String diaMes(final LocalDate data) {
+        var mes = data.getMonth().getValue() < 10 ? "0" + data.getMonth().getValue() : data.getMonth().getValue();
+        var dia = data.getDayOfMonth() < 10 ? "0" + data.getDayOfMonth() : data.getDayOfMonth();
+        return dia + "/" + mes;
     }
 }

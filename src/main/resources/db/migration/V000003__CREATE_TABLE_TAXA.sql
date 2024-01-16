@@ -2,6 +2,7 @@ CREATE TABLE `taxa` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `descricao` varchar(100) NOT NULL,
   `valor` decimal(10,2) NOT NULL,
+  `tipo` ENUM('MONETARIO', 'PERCENTUAL') NOT NULL DEFAULT 'PERCENTUAL',
   `entra_em_vigor` date NOT NULL,
   `valido_ate` date NOT NULL,
   `ativo` tinyint(1) NOT NULL DEFAULT '0',

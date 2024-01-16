@@ -10,6 +10,7 @@ import java.util.List;
 @Service
 public interface DashboadService {
 
+
     DashboardDTO carregarInformacoes(final Long empresaId, final LocalDate dtInicial, final LocalDate dtFinal);
 
     List<Venda> buscarVendasUltimos7Dias(final Long empresaId);
