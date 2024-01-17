@@ -8,17 +8,11 @@ import java.util.List;
 
 @Getter
 @Setter
-public class GraficoVendaUltimo7DiaMeioPagamentoDTO {
+public class GraficoVendaUltimo7DiaDinheiroPixDTO {
 
     private List<String> labels;
 
     private List<BigDecimal> dataCash;
 
-    private List<BigDecimal> dataCredit;
-
-    private List<BigDecimal> dataDebit;
-
     private List<BigDecimal> dataPix;
-
-    private List<BigDecimal> dataOther;
 }
