@@ -6,6 +6,10 @@ import com.ctsousa.econcilia.model.dto.UsuarioDTO;
 import com.ctsousa.econcilia.repository.UsuarioRepository;
 import com.ctsousa.econcilia.service.UsuarioService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -93,4 +97,23 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new NotificacaoException("O campo senha não confere com a senha do campo confirma senha.");
         }
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        Usuario usuario = usuarioRepository.porEmail(username);
+
+        return User.withUsername(username)
+                .password(usuario.getSenha())
+                .roles("USER")
+                .build();
+
+    }
+    /*
+    public static void main(String[] args) {
+        BCryptPasswordEncoder pass = new BCryptPasswordEncoder();
+        System.out.println(pass.encode("123456"));
+        // $2a$10$iSsL3G4/bI7xLsBhHIhAIOmkvTFYtUzP24RY/AA1o95NpEaPK6Kr6
+    }
+     */
 }

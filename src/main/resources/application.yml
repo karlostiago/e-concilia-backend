@@ -12,8 +12,8 @@ spring:
             auto-commit: false
             connection-timeout: 250
             max-lifetime: 600000
-            maximum-pool-size: 20
-            minimum-idle: 10
+            maximum-pool-size: 8
+            minimum-idle: 4
             pool-name: master
     jpa:
         open-in-view: false
