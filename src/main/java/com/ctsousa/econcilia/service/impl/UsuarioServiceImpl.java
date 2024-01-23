@@ -35,6 +35,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new NotificacaoException(String.format("Já existe um usuário com o e-mail %s cadastrado.", usuario.getEmail()));
         }
+
+        usuario.setSenha(encriptarSenha(usuario.getSenha()));
+
         return usuarioRepository.save(usuario);
     }
 
@@ -62,12 +65,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario atualizar(Long id, UsuarioDTO usuarioDTO) {
         confirmaEmail(usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
         confirmaSenha(usuarioDTO.getSenha(), usuarioDTO.getConfirmaSenha());
+        usuarioDTO.setSenha(encriptarSenha(usuarioDTO.getSenha()));
 
         StringJoiner joiner = new StringJoiner(",");
         usuarioDTO.getLojasPermitidas().forEach(loja -> joiner.add(String.valueOf(loja.getId())));
 
         Usuario usuario = pesquisarPorId(id);
         usuario.setLojasPermitidas(joiner.toString());
+
         BeanUtils.copyProperties(usuarioDTO, usuario, "id");
         return usuarioRepository.save(usuario);
     }
@@ -105,15 +110,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return User.withUsername(username)
                 .password(usuario.getSenha())
-                .roles("USER")
+                .authorities("ROLE_PESQUISAR_CONCILIADOR_IFOOD")
                 .build();
 
     }
-    /*
-    public static void main(String[] args) {
-        BCryptPasswordEncoder pass = new BCryptPasswordEncoder();
-        System.out.println(pass.encode("123456"));
-        // $2a$10$iSsL3G4/bI7xLsBhHIhAIOmkvTFYtUzP24RY/AA1o95NpEaPK6Kr6
+
+    private String encriptarSenha(final String senha) {
+        return new BCryptPasswordEncoder().encode(senha);
     }
-     */
 }
