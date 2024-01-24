@@ -1,9 +1,11 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.model.*;
+import com.ctsousa.econcilia.model.Ocorrencia;
+import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.ConciliadorDTO;
 import com.ctsousa.econcilia.model.dto.ResumoFinanceiroDTO;
 import com.ctsousa.econcilia.model.dto.TotalizadorDTO;
+import com.ctsousa.econcilia.security.Autorizar;
 import com.ctsousa.econcilia.service.ConciliadorIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +34,7 @@ public class ConciliadorIfoodResource {
     }
 
     @GetMapping
-//    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_CONCILIADOR_IFOOD')")
+    @PreAuthorize(Autorizar.PESQUISAR_CONCILIADOR_IFOOD)
     public ResponseEntity<ConciliadorDTO> vendas(@RequestParam(name = "lojaId") final String lojaId,
                                                  @RequestParam(name = "dtInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial,
                                                  @RequestParam(name = "dtFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal,

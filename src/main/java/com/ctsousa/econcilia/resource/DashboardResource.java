@@ -5,12 +5,14 @@ import com.ctsousa.econcilia.model.dto.DashboardDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaCreditoDebitoDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDinheiroPixDTO;
+import com.ctsousa.econcilia.security.Autorizar;
 import com.ctsousa.econcilia.service.DashboadService;
 import com.ctsousa.econcilia.service.impl.GraficoVendaUltimo7DiaCreditoDebitoServiceImpl;
 import com.ctsousa.econcilia.service.impl.GraficoVendaUltimo7DiaDinheiroPixServiceImpl;
 import com.ctsousa.econcilia.service.impl.GraficoVendaUltimo7DiaServiceImpl;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +41,7 @@ public class DashboardResource {
     }
 
     @GetMapping
+    @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<DashboardDTO> carregarInfo(@RequestParam(name = "lojaId", required = false) final Long empresaId,
                                                      @RequestParam(name = "dtInicial", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial,
                                                      @RequestParam(name = "dtFinal", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal) {
@@ -47,18 +50,21 @@ public class DashboardResource {
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias")
+    @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<GraficoVendaUltimo7DiaDTO> buscarVendasUltimos7Dias(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
         List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
         return ResponseEntity.ok(graficoVendaUltimo7DiaService.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-credito-debito")
+    @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<GraficoVendaUltimo7DiaCreditoDebitoDTO> buscarVendasUltimos7DiasCreditoDebito(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
         List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
         return ResponseEntity.ok(graficoVendaUltimo7DiaCreditoDebitoService.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-dinheito-pix")
+    @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<GraficoVendaUltimo7DiaDinheiroPixDTO> buscarVendasUltimos7DiasDinheiroPix(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
         List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
         return ResponseEntity.ok(graficoVendaUltimo7DiaDinheiroPixService.processar(vendas));

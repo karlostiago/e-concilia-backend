@@ -1,11 +1,13 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.Funcionalidade;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.UsuarioDTO;
 import com.ctsousa.econcilia.repository.UsuarioRepository;
 import com.ctsousa.econcilia.service.UsuarioService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +21,9 @@ import java.util.StringJoiner;
 
 @Component
 public class UsuarioServiceImpl implements UsuarioService {
+
+    @Value("${credencial.senha}")
+    private String credencial;
 
     private final UsuarioRepository usuarioRepository;
 
@@ -106,11 +111,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        if (username.equals("econcilia")) {
+            return User.withUsername(username)
+                    .password(encriptarSenha(credencial))
+                    .authorities(Funcionalidade.todas())
+                    .build();
+        }
+
         Usuario usuario = usuarioRepository.porEmail(username);
 
         return User.withUsername(username)
                 .password(usuario.getSenha())
-                .authorities("ROLE_PESQUISAR_CONCILIADOR_IFOOD")
+                .authorities("ROLE_PESQUISAR_CONCILIADOR_IFOOD___")
                 .build();
 
     }

@@ -42,7 +42,6 @@ public class UsuarioMapper implements EntidadeMapper<Usuario, UsuarioDTO>, DtoMa
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setId(usuario.getId());
         usuarioDTO.setNomeCompleto(usuario.getNomeCompleto());
-        usuarioDTO.setSenha(usuario.getSenha());
         usuarioDTO.setEmail(usuario.getEmail());
 
         String [] idLojasPermitidas = usuario.getLojasPermitidas().split(",");
