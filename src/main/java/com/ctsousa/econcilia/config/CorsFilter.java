@@ -41,15 +41,16 @@ public class CorsFilter implements Filter {
 
     private String origemPermitida(final HttpServletRequest request) {
         String [] origens = origensPermitida.split(",");
-        String origemPermitida = null;
+        String origemPermitida = "http://localhost:4200";
 
         for (String origem : origens) {
             if (request.getHeader(ORIGIN) != null && request.getHeader(ORIGIN).equals(origem.trim())) {
                 origemPermitida = origem;
+                break;
             }
         }
 
-        log.info("Origem permitida ::: [{}], path origim [{}]",  origemPermitida, request.getHeader(ORIGIN));
+        log.info("Origem permitida ::: [{}], path origem [{}]",  origemPermitida, request.getHeader(ORIGIN));
 
         return origemPermitida;
     }
