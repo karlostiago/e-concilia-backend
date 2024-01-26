@@ -1,8 +1,8 @@
 package com.ctsousa.econcilia.service;
 
+import com.ctsousa.econcilia.enumaration.TipoFuncionalidade;
 import com.ctsousa.econcilia.model.Permissao;
 import com.ctsousa.econcilia.model.Usuario;
-import com.ctsousa.econcilia.model.dto.PermissaoDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +11,9 @@ import java.util.List;
 public interface PermissaoService {
     Permissao salvar (final Permissao permissao);
 
-    Permissao pesquisar (Usuario usuario);
+    List<Permissao> pesquisar (Usuario usuario, String tipoFuncionalidade);
+
+    Permissao pesquisar(Usuario usuario);
 
     void deletar (Long id);
 

@@ -17,4 +17,15 @@ public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
 
     @Query(value = "SELECT p FROM Permissao p INNER JOIN FETCH p.funcionalidades f INNER JOIN FETCH p.usuario u WHERE p.usuario = :usuario ")
     Permissao porUsuario(@Param("usuario") Usuario usuario);
+
+    Boolean existsByUsuario(Usuario usuario);
+
+    @Query("SELECT p FROM Permissao p INNER JOIN FETCH p.funcionalidades f INNER JOIN FETCH p.usuario u WHERE p.id = :id")
+    Permissao porId(@Param("id") Long id);
+
+    @Query("SELECT p FROM Permissao p INNER JOIN FETCH p.funcionalidades f INNER JOIN FETCH p.usuario u WHERE 1 = 1")
+    List<Permissao> todas();
+
+    @Query(value = "SELECT p FROM Permissao p INNER JOIN FETCH p.funcionalidades f INNER JOIN FETCH p.usuario u WHERE u.nomeCompleto LIKE %:nomeCompleto% OR f LIKE %:permissao%")
+    List<Permissao> pesquisar(@Param("nomeCompleto") String nomeCompleto, @Param("permissao") String permissao);
 }

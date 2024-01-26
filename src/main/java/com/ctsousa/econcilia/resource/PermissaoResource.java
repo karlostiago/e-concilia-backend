@@ -1,9 +1,9 @@
 package com.ctsousa.econcilia.resource;
 
+import com.ctsousa.econcilia.enumaration.TipoFuncionalidade;
 import com.ctsousa.econcilia.mapper.impl.PermissaoMapper;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.PermissaoDTO;
-import com.ctsousa.econcilia.model.dto.UsuarioDTO;
 import com.ctsousa.econcilia.security.Autorizar;
 import com.ctsousa.econcilia.service.PermissaoService;
 import com.ctsousa.econcilia.service.UsuarioService;
@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/permissoes")
@@ -52,5 +53,18 @@ public class PermissaoResource {
 
         permissao.setUsuario(usuario);
         return ResponseEntity.ok(permissaoMapper.paraDTO(permissao));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize(Autorizar.DELETAR_PERMISSAO)
+    public void deletar (@PathVariable Long id) {
+        this.permissaoService.deletar(id);
+    }
+
+    @GetMapping
+    @PreAuthorize(Autorizar.PESQUISAR_PERMISSAO)
+    public ResponseEntity<List<PermissaoDTO>> listar (@RequestParam( required = false ) String nomeCompleto, @RequestParam (required = false) String tipoPermissao) {
+        var permissoes = this.permissaoService.pesquisar(new Usuario(nomeCompleto), tipoPermissao);
+        return ResponseEntity.ok(permissaoMapper.paraLista(permissoes));
     }
 }

@@ -38,4 +38,10 @@ public class Usuario extends Entidade {
         this.nomeCompleto = maiuscula(this.nomeCompleto);
         this.email = maiuscula(this.email);
     }
+
+    public Usuario () { }
+
+    public Usuario(String nomeCompleto) {
+        setNomeCompleto(nomeCompleto);
+    }
 }
