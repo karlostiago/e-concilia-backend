@@ -1,17 +1,13 @@
 package com.ctsousa.econcilia.service.impl;
 
-import com.ctsousa.econcilia.enumaration.Funcionalidade;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.UsuarioDTO;
 import com.ctsousa.econcilia.repository.UsuarioRepository;
+import com.ctsousa.econcilia.service.SegurancaService;
 import com.ctsousa.econcilia.service.UsuarioService;
+import com.ctsousa.econcilia.util.StringUtil;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -22,13 +18,13 @@ import java.util.StringJoiner;
 @Component
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Value("${credencial.senha}")
-    private String credencial;
-
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
+    private final SegurancaService segurancaService;
+
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, SegurancaService segurancaService) {
         this.usuarioRepository = usuarioRepository;
+        this.segurancaService = segurancaService;
     }
 
     @Override
@@ -41,18 +37,18 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new NotificacaoException(String.format("Já existe um usuário com o e-mail %s cadastrado.", usuario.getEmail()));
         }
 
-        usuario.setSenha(encriptarSenha(usuario.getSenha()));
+        usuario.setSenha(segurancaService.encriptarSenha(usuario.getSenha()));
 
         return usuarioRepository.save(usuario);
     }
 
     @Override
     public List<Usuario> pesquisar(String nomeCompleto, String email) {
-        if (null != nomeCompleto && !nomeCompleto.isEmpty() && !"null".equalsIgnoreCase(nomeCompleto)) {
+        if (Boolean.TRUE.equals(StringUtil.temValor(nomeCompleto))) {
             return usuarioRepository.porNomeCompleto(nomeCompleto);
         }
 
-        if (null != email && !email.isEmpty() && !"null".equalsIgnoreCase(email)) {
+        if (Boolean.TRUE.equals(StringUtil.temValor(email))) {
             var usuario = usuarioRepository.porEmail(email);
             return usuario == null ? new ArrayList<>() : Collections.singletonList(usuario);
         }
@@ -70,7 +66,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario atualizar(Long id, UsuarioDTO usuarioDTO) {
         confirmaEmail(usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
         confirmaSenha(usuarioDTO.getSenha(), usuarioDTO.getConfirmaSenha());
-        usuarioDTO.setSenha(encriptarSenha(usuarioDTO.getSenha()));
+        usuarioDTO.setSenha(segurancaService.encriptarSenha(usuarioDTO.getSenha()));
 
         StringJoiner joiner = new StringJoiner(",");
         usuarioDTO.getLojasPermitidas().forEach(loja -> joiner.add(String.valueOf(loja.getId())));
@@ -106,28 +102,5 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (!senha.equalsIgnoreCase(confirmaSenha)) {
             throw new NotificacaoException("O campo senha não confere com a senha do campo confirma senha.");
         }
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        if (username.equals("econcilia")) {
-            return User.withUsername(username)
-                    .password(encriptarSenha(credencial))
-                    .authorities(Funcionalidade.todas())
-                    .build();
-        }
-
-        Usuario usuario = usuarioRepository.porEmail(username);
-
-        return User.withUsername(username)
-                .password(usuario.getSenha())
-                .authorities("ROLE_PESQUISAR_CONCILIADOR_IFOOD___")
-                .build();
-
-    }
-
-    private String encriptarSenha(final String senha) {
-        return new BCryptPasswordEncoder().encode(senha);
     }
 }

@@ -11,11 +11,11 @@ import java.util.List;
 public interface PermissaoService {
     Permissao salvar (final Permissao permissao);
 
-    List<Permissao> pesquisar (Usuario usuario);
+    Permissao pesquisar (Usuario usuario);
 
     void deletar (Long id);
 
     Permissao pesquisarPorId (Long id);
 
-    Permissao atualizar (Long id, PermissaoDTO permissaoDTO);
+    Permissao atualizar (Long id, Permissao permissao);
 }

@@ -38,9 +38,10 @@ public class PermissaoMapper implements EntidadeMapper<Permissao, PermissaoDTO>,
     @Override
     public PermissaoDTO paraDTO(Permissao permissao) {
         PermissaoDTO permissaoDTO = new PermissaoDTO();
-        permissaoDTO.setId(permissaoDTO.getId());
+        permissaoDTO.setId(permissao.getId());
         permissaoDTO.setUsuario(usuarioMapper.paraDTO(permissao.getUsuario()));
-        return null;
+        permissaoDTO.setFuncionalidades(getFuncionalidadesDTO(permissao.getFuncionalidades()));
+        return permissaoDTO;
     }
 
     @Override
@@ -58,5 +59,16 @@ public class PermissaoMapper implements EntidadeMapper<Permissao, PermissaoDTO>,
             funcionalidades.add(funcionalidade);
         }
         return funcionalidades;
+    }
+
+    private List<FuncionalidadeDTO> getFuncionalidadesDTO(final List<Funcionalidade> funcionalidades) {
+        List<FuncionalidadeDTO> funcionalidadesDTO = new ArrayList<>(funcionalidades.size());
+        for (Funcionalidade funcionalidade : funcionalidades) {
+            FuncionalidadeDTO funcionalidadeDTO = new FuncionalidadeDTO();
+            funcionalidadeDTO.setCodigo(funcionalidade.getCodigo());
+            funcionalidadeDTO.setPermissao(funcionalidade.getTipoFuncionalidade().name());
+            funcionalidadesDTO.add(funcionalidadeDTO);
+        }
+        return funcionalidadesDTO;
     }
 }

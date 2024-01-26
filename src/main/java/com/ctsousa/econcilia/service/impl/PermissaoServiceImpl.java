@@ -40,8 +40,14 @@ public class PermissaoServiceImpl implements PermissaoService {
     }
 
     @Override
-    public List<Permissao> pesquisar(Usuario usuario) {
-        return null;
+    public Permissao pesquisar(Usuario usuario) {
+        var permissao = permissaoRepository.porUsuario(usuario);
+
+        if (permissao == null) {
+            throw new NotificacaoException("Não existe permissão para este usuário ::: " + usuario.getNomeCompleto());
+        }
+
+        return permissao;
     }
 
     @Override
@@ -55,7 +61,8 @@ public class PermissaoServiceImpl implements PermissaoService {
     }
 
     @Override
-    public Permissao atualizar(Long id, PermissaoDTO permissaoDTO) {
-        return null;
+    public Permissao atualizar(Long id, Permissao permissao) {
+        permissao.setId(id);
+        return salvar(permissao);
     }
 }

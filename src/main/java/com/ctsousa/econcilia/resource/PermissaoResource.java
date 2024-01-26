@@ -1,15 +1,15 @@
 package com.ctsousa.econcilia.resource;
 
 import com.ctsousa.econcilia.mapper.impl.PermissaoMapper;
+import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.PermissaoDTO;
+import com.ctsousa.econcilia.model.dto.UsuarioDTO;
 import com.ctsousa.econcilia.security.Autorizar;
 import com.ctsousa.econcilia.service.PermissaoService;
+import com.ctsousa.econcilia.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -19,17 +19,38 @@ public class PermissaoResource {
 
     private final PermissaoService permissaoService;
 
+    private final UsuarioService usuarioService;
+
     private final PermissaoMapper permissaoMapper;
 
-    public PermissaoResource(PermissaoService permissaoService, PermissaoMapper permissaoMapper) {
+    public PermissaoResource(PermissaoService permissaoService, PermissaoMapper permissaoMapper, UsuarioService usuarioService) {
         this.permissaoService = permissaoService;
         this.permissaoMapper = permissaoMapper;
+        this.usuarioService = usuarioService;
     }
 
     @PostMapping
     @PreAuthorize(Autorizar.CADASTRAR_PERMISSAO)
     public ResponseEntity<PermissaoDTO> cadastrar(@RequestBody @Valid PermissaoDTO permissaoDTO) {
         var permissao = permissaoService.salvar(permissaoMapper.paraEntidade(permissaoDTO));
+        return ResponseEntity.ok(permissaoMapper.paraDTO(permissao));
+    }
+
+    @GetMapping("/{id}/usuario")
+    @PreAuthorize(Autorizar.PESQUISAR_PERMISSAO)
+    public ResponseEntity<PermissaoDTO> buscarPorUsuario (@PathVariable Long id) {
+        var usuario = usuarioService.pesquisarPorId(id);
+        var permissao = permissaoService.pesquisar(usuario);
+        return ResponseEntity.ok(permissaoMapper.paraDTO(permissao));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize(Autorizar.EDITAR_PERMISSAO)
+    public ResponseEntity<PermissaoDTO> atualizar (@PathVariable Long id, @RequestBody @Valid PermissaoDTO permissaoDTO) {
+        var usuario = this.usuarioService.pesquisarPorId(permissaoDTO.getUsuario().getId());
+        var permissao = this.permissaoService.atualizar(id, permissaoMapper.paraEntidade(permissaoDTO));
+
+        permissao.setUsuario(usuario);
         return ResponseEntity.ok(permissaoMapper.paraDTO(permissao));
     }
 }

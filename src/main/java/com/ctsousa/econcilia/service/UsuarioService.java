@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface UsuarioService extends UserDetailsService {
+public interface UsuarioService {
 
     Usuario salvar(Usuario usuario);
 

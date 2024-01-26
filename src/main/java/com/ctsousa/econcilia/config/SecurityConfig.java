@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.config;
 
-import com.ctsousa.econcilia.service.UsuarioService;
+import com.ctsousa.econcilia.service.SegurancaService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,10 +24,10 @@ public class SecurityConfig {
     @Value("${credencial.senha}")
     private String credencial;
 
-    private final UsuarioService usuarioService;
+    private final SegurancaService segurancaService;
 
-    public SecurityConfig(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
+    public SecurityConfig(SegurancaService segurancaService) {
+        this.segurancaService = segurancaService;
     }
 
     @Bean
@@ -48,7 +48,7 @@ public class SecurityConfig {
     public AuthenticationManager getAuthenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder
-                .userDetailsService(usuarioService)
+                .userDetailsService(segurancaService)
                 .passwordEncoder(passwordEncoder());
 
         authenticationManagerBuilder.inMemoryAuthentication()

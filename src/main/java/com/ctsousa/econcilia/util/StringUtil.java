@@ -3,6 +3,7 @@ package com.ctsousa.econcilia.util;
 public final class StringUtil {
 
     private static final String UNDEFINED = "undefined";
+    private static final String NULL = "null";
 
     private StringUtil () { }
 
@@ -21,7 +22,7 @@ public final class StringUtil {
     }
 
     public static Boolean temValor(final String str) {
-        return str != null && !str.isEmpty() && !UNDEFINED.equalsIgnoreCase(str);
+        return str != null && !str.isEmpty() && !UNDEFINED.equalsIgnoreCase(str) && !NULL.equalsIgnoreCase(str);
     }
 
     public static Boolean naoTemValor(final String str) {
