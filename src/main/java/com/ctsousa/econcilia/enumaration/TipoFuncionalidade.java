@@ -14,6 +14,8 @@ public enum TipoFuncionalidade {
 
     DELETAR,
 
+    MENU,
+
     AGENDAR;
 
     public static TipoFuncionalidade por(final String tipo) {
@@ -28,6 +30,7 @@ public enum TipoFuncionalidade {
             case "ATIVAR" -> ATIVAR;
             case "DELETAR" -> DELETAR;
             case "AGENDAR" -> AGENDAR;
+            case "MENU" -> MENU;
             default ->
                 throw new NotificacaoException("Nenhum tipo funcionalidade corresponde ao tipo funcionalidade selecionado ::: " + tipo);
         };

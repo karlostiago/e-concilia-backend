@@ -1,17 +1,10 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.enumaration.Funcionalidade;
-import com.ctsousa.econcilia.exceptions.NotificacaoException;
-import com.ctsousa.econcilia.mapper.impl.ContratoMapper;
-import com.ctsousa.econcilia.model.*;
-import com.ctsousa.econcilia.model.dto.ContratoDTO;
-import com.ctsousa.econcilia.repository.ContratoRepository;
+import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.repository.PermissaoRepository;
 import com.ctsousa.econcilia.repository.UsuarioRepository;
-import com.ctsousa.econcilia.service.ContratoService;
 import com.ctsousa.econcilia.service.SegurancaService;
-import com.ctsousa.econcilia.service.TaxaService;
-import com.ctsousa.econcilia.service.UsuarioService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
@@ -31,6 +24,9 @@ public class SegurancaServiceImpl implements SegurancaService {
     @Getter
     private Usuario usuario;
 
+    @Getter
+    private List<String> permissoes;
+
     private final UsuarioRepository usuarioRepository;
 
     private final PermissaoRepository permissaoRepository;
@@ -43,16 +39,18 @@ public class SegurancaServiceImpl implements SegurancaService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         usuario = null;
+        permissoes = null;
 
         if (username.equals("econcilia")) {
+            permissoes = Funcionalidade.todas();
             return User.withUsername(username)
                     .password(encriptarSenha(credencial))
-                    .authorities(Funcionalidade.todas())
+                    .authorities(permissoes.toArray(new String[0]))
                     .build();
         }
 
         usuario = usuarioRepository.porEmail(username);
-        List<String> permissoes = permissaoRepository.porUsuario(usuario.getId());
+        permissoes = permissaoRepository.porUsuario(usuario.getId());
 
         return User.withUsername(username)
                 .password(usuario.getSenha())
@@ -68,5 +66,10 @@ public class SegurancaServiceImpl implements SegurancaService {
     @Override
     public Usuario usuarioLogado() {
         return usuario;
+    }
+
+    @Override
+    public List<String> permissoes() {
+        return permissoes;
     }
 }
