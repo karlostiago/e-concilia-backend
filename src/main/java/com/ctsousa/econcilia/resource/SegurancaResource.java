@@ -37,4 +37,9 @@ public class SegurancaResource {
 
         return ResponseEntity.ok(segurancaDTO);
     }
+
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.ok().build();
+    }
 }
