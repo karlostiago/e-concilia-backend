@@ -73,6 +73,14 @@ public class PermissaoServiceImpl implements PermissaoService {
     }
 
     @Override
+    public void deletar(Usuario usuario) {
+        Permissao permissao = permissaoRepository.porUsuario(usuario);
+        if (permissao != null) {
+            permissaoRepository.delete(permissao);
+        }
+    }
+
+    @Override
     public Permissao pesquisarPorId(Long id) {
         Permissao permissao = permissaoRepository.porId(id);
 

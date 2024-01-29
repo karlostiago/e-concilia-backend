@@ -1,9 +1,11 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.Perfil;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.UsuarioDTO;
 import com.ctsousa.econcilia.repository.UsuarioRepository;
+import com.ctsousa.econcilia.service.PermissaoService;
 import com.ctsousa.econcilia.service.SegurancaService;
 import com.ctsousa.econcilia.service.UsuarioService;
 import com.ctsousa.econcilia.util.StringUtil;
@@ -22,9 +24,12 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final SegurancaService segurancaService;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, SegurancaService segurancaService) {
+    private final PermissaoService permissaoService;
+
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, SegurancaService segurancaService, PermissaoService permissaoService) {
         this.usuarioRepository = usuarioRepository;
         this.segurancaService = segurancaService;
+        this.permissaoService = permissaoService;
     }
 
     @Override
@@ -38,8 +43,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         usuario.setSenha(segurancaService.encriptarSenha(usuario.getSenha()));
+        var usuarioSalvo = usuarioRepository.save(usuario);
+        adicionarPerfil(usuario);
 
-        return usuarioRepository.save(usuario);
+        return usuarioSalvo;
     }
 
     @Override
@@ -59,6 +66,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public void deletar(Long id) {
         var usuario = pesquisarPorId(id);
+        permissaoService.deletar(usuario);
         usuarioRepository.delete(usuario);
     }
 
@@ -73,8 +81,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         Usuario usuario = pesquisarPorId(id);
         usuario.setLojasPermitidas(joiner.toString());
+        usuario.setPerfil(Perfil.porDescricao(usuarioDTO.getPerfil()));
 
         BeanUtils.copyProperties(usuarioDTO, usuario, "id");
+        adicionarPerfil(usuario);
+
         return usuarioRepository.save(usuario);
     }
 
@@ -101,6 +112,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         if (!senha.equalsIgnoreCase(confirmaSenha)) {
             throw new NotificacaoException("O campo senha não confere com a senha do campo confirma senha.");
+        }
+    }
+
+    private void adicionarPerfil(Usuario usuario) {
+        if (usuario.getPerfil() != null) {
+            Perfil perfil = usuario.getPerfil();
+            perfil.aplicar(usuario, permissaoService);
         }
     }
 }

@@ -17,6 +17,8 @@ public interface PermissaoService {
 
     void deletar (Long id);
 
+    void deletar(Usuario usuario);
+
     Permissao pesquisarPorId (Long id);
 
     Permissao atualizar (Long id, Permissao permissao);
