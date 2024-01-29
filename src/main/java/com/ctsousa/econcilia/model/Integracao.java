@@ -10,16 +10,16 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "integracao", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "operadora_id", "codigo_integracao" })
+        @UniqueConstraint(columnNames = {"operadora_id", "codigo_integracao"})
 })
 @EqualsAndHashCode(callSuper = false)
 public class Integracao extends Entidade {
 
-    @ManyToOne( fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
     private Empresa empresa;
 
-    @ManyToOne( fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "operadora_id", nullable = false)
     private Operadora operadora;
 

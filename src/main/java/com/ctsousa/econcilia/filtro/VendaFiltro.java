@@ -6,8 +6,8 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ctsousa.econcilia.util.StringUtil.temValor;
 import static com.ctsousa.econcilia.util.StringUtil.naoTemValor;
+import static com.ctsousa.econcilia.util.StringUtil.temValor;
 
 public class VendaFiltro {
 
@@ -33,10 +33,10 @@ public class VendaFiltro {
     public VendaFiltro porBandeira() {
         if (Boolean.TRUE.equals(temValor(bandeira))) {
             vendasFiltradas.addAll(vendas.stream().filter(venda -> {
-                var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
-                return descBandeira.contains(bandeira.toUpperCase());
-            })
-            .toList());
+                        var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
+                        return descBandeira.contains(bandeira.toUpperCase());
+                    })
+                    .toList());
         }
         return this;
     }
@@ -52,13 +52,13 @@ public class VendaFiltro {
     public VendaFiltro porMetodoPagamentoBandeira() {
         if (temValor(metodoPagamento) && temValor(bandeira)) {
             vendasFiltradas = vendas.stream().filter(venda -> {
-                var mPagamento = venda.getPagamento().getMetodo().toUpperCase();
-                var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
-                return descBandeira.contains(bandeira.toUpperCase())
-                        && mPagamento.equalsIgnoreCase(metodoPagamento);
-            })
-            .toList();
-        } else if(naoTemValor(metodoPagamento) && naoTemValor(bandeira)) {
+                        var mPagamento = venda.getPagamento().getMetodo().toUpperCase();
+                        var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
+                        return descBandeira.contains(bandeira.toUpperCase())
+                                && mPagamento.equalsIgnoreCase(metodoPagamento);
+                    })
+                    .toList();
+        } else if (naoTemValor(metodoPagamento) && naoTemValor(bandeira)) {
             vendasFiltradas.addAll(vendas);
         }
         return this;
@@ -69,8 +69,7 @@ public class VendaFiltro {
             vendasFiltradas = vendasFiltradas.stream()
                     .filter(venda -> "merchant".equalsIgnoreCase(venda.getPagamento().getResponsavel()))
                     .toList();
-        }
-        else if (Boolean.TRUE.equals(temValor(tipoRecebimento)) && !"loja".equalsIgnoreCase(tipoRecebimento)) {
+        } else if (Boolean.TRUE.equals(temValor(tipoRecebimento)) && !"loja".equalsIgnoreCase(tipoRecebimento)) {
             vendasFiltradas = vendasFiltradas.stream()
                     .filter(venda -> !"merchant".equalsIgnoreCase(venda.getPagamento().getResponsavel()))
                     .toList();

@@ -2,18 +2,16 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Operadora;
-import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.model.dto.OperadoraDTO;
 import com.ctsousa.econcilia.repository.OperadoraRepository;
 import com.ctsousa.econcilia.service.OperadoraService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class OperadoraServiceImpl implements OperadoraService  {
+public class OperadoraServiceImpl implements OperadoraService {
 
     private final OperadoraRepository operadoraRepository;
 
@@ -39,7 +37,7 @@ public class OperadoraServiceImpl implements OperadoraService  {
     }
 
     @Override
-    public Operadora salvar (Operadora operadora) {
+    public Operadora salvar(Operadora operadora) {
 
         if (operadora == null) {
             throw new NotificacaoException("Operadora não informada.");

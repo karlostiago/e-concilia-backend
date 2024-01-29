@@ -26,35 +26,35 @@ public class IntegracaoResource {
 
     @PostMapping
     @PreAuthorize(Autorizar.CADASTRAR_INTEGRACAO)
-    public ResponseEntity<IntegracaoDTO> cadastrar (@RequestBody @Valid IntegracaoDTO integracaoDTO) {
+    public ResponseEntity<IntegracaoDTO> cadastrar(@RequestBody @Valid IntegracaoDTO integracaoDTO) {
         var integracao = integracaoService.salvar(integracaoMapper.paraEntidade(integracaoDTO));
         return ResponseEntity.ok(integracaoMapper.paraDTO(integracao));
     }
 
     @GetMapping
     @PreAuthorize(Autorizar.PESQUISAR_INTEGRACAO)
-    public ResponseEntity<List<IntegracaoDTO>> listar (@RequestParam(required = false) Long empresaId, @RequestParam(required = false) Long operadoraId, @RequestParam(required = false) String codigoIntegracao) {
+    public ResponseEntity<List<IntegracaoDTO>> listar(@RequestParam(required = false) Long empresaId, @RequestParam(required = false) Long operadoraId, @RequestParam(required = false) String codigoIntegracao) {
         var integracoes = integracaoService.pesquisar(empresaId, operadoraId, codigoIntegracao);
         return ResponseEntity.ok(integracaoMapper.paraLista(integracoes));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize(Autorizar.EDITAR_INTEGRACAO)
-    public ResponseEntity<IntegracaoDTO> atualizar (@PathVariable Long id, @RequestBody @Valid IntegracaoDTO integracaoDTO) {
+    public ResponseEntity<IntegracaoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid IntegracaoDTO integracaoDTO) {
         var integracao = this.integracaoService.atualizar(id, integracaoDTO);
         return ResponseEntity.ok(integracaoMapper.paraDTO(integracao));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize(Autorizar.PESQUISAR_INTEGRACAO)
-    public ResponseEntity<IntegracaoDTO> buscarPorId (@PathVariable Long id) {
+    public ResponseEntity<IntegracaoDTO> buscarPorId(@PathVariable Long id) {
         var integracao = this.integracaoService.pesquisarPorId(id);
         return ResponseEntity.ok(integracaoMapper.paraDTO(integracao));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize(Autorizar.DELETAR_INTEGRACAO)
-    public void deletar (@PathVariable Long id) {
+    public void deletar(@PathVariable Long id) {
         this.integracaoService.deletar(id);
     }
 }

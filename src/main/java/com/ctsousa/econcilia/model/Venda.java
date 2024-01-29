@@ -36,11 +36,11 @@ public class Venda extends Entidade {
     @Column(name = "modelo_negocio", nullable = false)
     private String modeloNegocio;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "pagamento_id", nullable = false)
     private Pagamento pagamento;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "cobranca_id", nullable = false)
     private Cobranca cobranca;
 

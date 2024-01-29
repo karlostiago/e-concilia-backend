@@ -14,14 +14,13 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestControllerAdvice
 public class NotificaoExcepitonHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler( { NotificacaoException.class } )
-    public ResponseEntity<List<Error>> handleNotificacaoException (NotificacaoException ex) {
+    @ExceptionHandler({NotificacaoException.class})
+    public ResponseEntity<List<Error>> handleNotificacaoException(NotificacaoException ex) {
         List<Error> erros = List.of((ErrorBuilder.builder()
                 .comStatus(HttpStatus.BAD_REQUEST)
                 .comMensagem(ex.getMessage())
@@ -33,7 +32,7 @@ public class NotificaoExcepitonHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         List<Error> erros = criarListaDeErros(ex, ex.getBindingResult());
-        return handleExceptionInternal(ex,erros, headers, status, request);
+        return handleExceptionInternal(ex, erros, headers, status, request);
     }
 
     private List<Error> criarListaDeErros(Exception ex, BindingResult bindingResult) {

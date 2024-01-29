@@ -53,13 +53,12 @@ public class PermissaoServiceImpl implements PermissaoService {
     public List<Permissao> pesquisar(Usuario usuario, String tipoPermissao) {
 
         List<Permissao> permissoes;
-        String nomeCompleto = Boolean.TRUE.equals(temValor(usuario.getNomeCompleto())) ? usuario.getNomeCompleto() : null ;
+        String nomeCompleto = Boolean.TRUE.equals(temValor(usuario.getNomeCompleto())) ? usuario.getNomeCompleto() : null;
         tipoPermissao = getPermissao(tipoPermissao);
 
         if (nomeCompleto == null && tipoPermissao == null) {
             permissoes = permissaoRepository.todas();
-        }
-        else {
+        } else {
             permissoes = permissaoRepository.pesquisar(nomeCompleto, tipoPermissao);
         }
 
@@ -111,12 +110,12 @@ public class PermissaoServiceImpl implements PermissaoService {
     }
 
     private String getPermissao(String tipoPermissao) {
-        tipoPermissao = Boolean.TRUE.equals(temValor(tipoPermissao)) ? tipoPermissao : null ;
+        tipoPermissao = Boolean.TRUE.equals(temValor(tipoPermissao)) ? tipoPermissao : null;
         if (tipoPermissao != null) {
             try {
                 TipoFuncionalidade tipoFuncionalidade = TipoFuncionalidade.por(tipoPermissao);
                 tipoPermissao = tipoFuncionalidade != null ? tipoFuncionalidade.name() : null;
-            } catch(NotificacaoException e) {
+            } catch (NotificacaoException e) {
                 tipoPermissao = null;
             }
         }

@@ -21,7 +21,8 @@ public class Operadora extends Entidade {
     @Column(name = "ativo", nullable = false, columnDefinition = "boolean default false ")
     private Boolean ativo;
 
-    public Operadora() { }
+    public Operadora() {
+    }
 
     public Operadora(Long id) {
         setId(id);

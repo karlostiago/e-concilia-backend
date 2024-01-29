@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.assembler;
 
-public interface JsonAssembler <T, D>{
+public interface JsonAssembler<T, D> {
 
-    T paraDTO (D json);
+    T paraDTO(D json);
 }

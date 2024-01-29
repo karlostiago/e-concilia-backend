@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.mapper;
 
-public interface DtoMapper<T, D>{
+public interface DtoMapper<T, D> {
 
-    D paraDTO (T entidade);
+    D paraDTO(T entidade);
 }

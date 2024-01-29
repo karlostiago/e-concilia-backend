@@ -4,7 +4,8 @@ import java.time.LocalDate;
 
 public final class DataUtil {
 
-    private DataUtil() { }
+    private DataUtil() {
+    }
 
     public static String diaMes(final LocalDate data) {
         var mes = data.getMonth().getValue() < 10 ? "0" + data.getMonth().getValue() : data.getMonth().getValue();

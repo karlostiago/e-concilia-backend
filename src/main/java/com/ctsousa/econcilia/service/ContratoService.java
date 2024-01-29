@@ -13,13 +13,13 @@ public interface ContratoService {
 
     List<Contrato> pesquisar(final Long empresaId, final Long operadoraId);
 
-    void deletar (Long id);
+    void deletar(Long id);
 
-    Contrato atualizar (Long id, ContratoDTO contratoDTO);
+    Contrato atualizar(Long id, ContratoDTO contratoDTO);
 
-    Contrato pesquisarPorId (Long id);
+    Contrato pesquisarPorId(Long id);
 
-    Contrato ativar (Long id);
+    Contrato ativar(Long id);
 
-    Contrato desativar (Long id);
+    Contrato desativar(Long id);
 }

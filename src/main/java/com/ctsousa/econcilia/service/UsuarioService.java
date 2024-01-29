@@ -2,7 +2,6 @@ package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.UsuarioDTO;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,11 +13,11 @@ public interface UsuarioService {
 
     List<Usuario> pesquisar(final String nomeCompleto, final String email);
 
-    void deletar (Long id);
+    void deletar(Long id);
 
-    Usuario atualizar (Long id, UsuarioDTO usuarioDTO);
+    Usuario atualizar(Long id, UsuarioDTO usuarioDTO);
 
-    Usuario pesquisarPorId (Long id);
+    Usuario pesquisarPorId(Long id);
 
     void confirmaEmail(String email, String confirmacaoEmail);
 

@@ -26,7 +26,8 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
         String path = pathBase().concat("/").concat(uuid).concat("/receivableRecords?").concat("beginReceivableDate=" + startDate)
                 .concat("&endReceivableDate=" + endDate);
 
-        ParameterizedTypeReference<List<ReceivableRecord>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<ReceivableRecord>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -37,9 +38,10 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
         log.info("Buscando ocorrências no período de {} até {}", startDate, endDate);
 
         String path = pathBase().concat("/").concat(uuid).concat("/occurrences?").concat(TRANSACTION_DATE_BEGIN + "=" + startDate)
-                .concat("&"+ TRANSACTION_DATE_END + "=" + endDate);
+                .concat("&" + TRANSACTION_DATE_END + "=" + endDate);
 
-        ParameterizedTypeReference<List<Occurrence>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<Occurrence>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -50,9 +52,10 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
         log.info("Buscando taxa de manutenção no período de {} até {}", startDate, endDate);
 
         String path = pathBase().concat("/").concat(uuid).concat("/maintenanceFees?").concat(TRANSACTION_DATE_BEGIN + "=" + startDate)
-                .concat("&"+ TRANSACTION_DATE_END + "=" + endDate);
+                .concat("&" + TRANSACTION_DATE_END + "=" + endDate);
 
-        ParameterizedTypeReference<List<MaintenanceFee>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<MaintenanceFee>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -62,10 +65,11 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
 
         log.info("Buscando imposto de renda no período de {} até {}", startDate, endDate);
 
-        String path = pathBase().concat("/").concat(uuid).concat("/incomeTaxes?").concat( TRANSACTION_DATE_BEGIN + "=" + startDate)
-                .concat("&"+ TRANSACTION_DATE_END +"=" + endDate);
+        String path = pathBase().concat("/").concat(uuid).concat("/incomeTaxes?").concat(TRANSACTION_DATE_BEGIN + "=" + startDate)
+                .concat("&" + TRANSACTION_DATE_END + "=" + endDate);
 
-        ParameterizedTypeReference<List<IncomeTaxe>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<IncomeTaxe>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -75,10 +79,11 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
 
         log.info("Buscando cancelamentos de cobrança no período de {} até {}", startDate, endDate);
 
-        String path = pathBase().concat("/").concat(uuid).concat("/chargeCancellations?").concat(  TRANSACTION_DATE_BEGIN + "=" + startDate)
-                .concat("&"+ TRANSACTION_DATE_END +"=" + endDate);
+        String path = pathBase().concat("/").concat(uuid).concat("/chargeCancellations?").concat(TRANSACTION_DATE_BEGIN + "=" + startDate)
+                .concat("&" + TRANSACTION_DATE_END + "=" + endDate);
 
-        ParameterizedTypeReference<List<ChargeCancellation>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<ChargeCancellation>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -90,7 +95,8 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
 
         String path = pathBase().concat("/").concat(uuid).concat("/periods?").concat("competence=" + competence);
 
-        ParameterizedTypeReference<List<Period>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<Period>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -102,7 +108,8 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
 
         String path = pathBase().concat("/").concat(uuid).concat("/cancellations?").concat("periodId=" + periodId);
 
-        ParameterizedTypeReference<List<Cancellation>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<Cancellation>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -115,7 +122,8 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
         String path = pathBase().concat("/").concat(uuid).concat("/sales?").concat("beginOrderDate=" + startDate)
                 .concat("&endOrderDate=" + endDate);
 
-        ParameterizedTypeReference<List<Sale>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<Sale>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -128,7 +136,8 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
         String path = pathBase().concat("/").concat(uuid).concat("/salesAdjustments?").concat("beginUpdateDate=" + startDate)
                 .concat("&endUpdateDate=" + endDate);
 
-        ParameterizedTypeReference<List<SaleAdjustment>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<SaleAdjustment>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }
@@ -141,7 +150,8 @@ public class FinancialServiceImpl extends AbstractIfoodService implements Financ
         String path = pathBase().concat("/").concat(uuid).concat("/payments?").concat("beginExpectedExecutionDate=" + startDate)
                 .concat("&endExpectedExecutionDate=" + endDate);
 
-        ParameterizedTypeReference<List<Payment>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<Payment>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(path, token, responseType);
     }

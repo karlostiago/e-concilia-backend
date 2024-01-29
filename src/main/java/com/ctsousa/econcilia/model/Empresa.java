@@ -34,7 +34,8 @@ public class Empresa extends Entidade {
     @Column(columnDefinition = "default false")
     private boolean ativo;
 
-    public Empresa() { }
+    public Empresa() {
+    }
 
     public Empresa(final Long id) {
         setId(id);
@@ -42,7 +43,7 @@ public class Empresa extends Entidade {
 
     @PreUpdate
     @PrePersist
-    public void init () {
+    public void init() {
         setCnpj(somenteNumero(getCnpj()));
         setRazaoSocial(maiuscula(getRazaoSocial()));
         setNomeFantasia(maiuscula(getNomeFantasia()));

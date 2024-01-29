@@ -107,7 +107,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public void confirmaSenha(String senha, String confirmaSenha) {
-        if(senha == null) {
+        if (senha == null) {
             throw new NotificacaoException("O campo senha não pode ser null");
         }
         if (!senha.equalsIgnoreCase(confirmaSenha)) {

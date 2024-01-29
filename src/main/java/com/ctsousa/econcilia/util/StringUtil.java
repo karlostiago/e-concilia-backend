@@ -5,7 +5,8 @@ public final class StringUtil {
     private static final String UNDEFINED = "undefined";
     private static final String NULL = "null";
 
-    private StringUtil () { }
+    private StringUtil() {
+    }
 
     public static String somenteNumero(final String str) {
         if (str == null) {

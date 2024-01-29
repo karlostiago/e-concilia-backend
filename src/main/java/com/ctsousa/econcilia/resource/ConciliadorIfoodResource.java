@@ -38,9 +38,9 @@ public class ConciliadorIfoodResource {
     public ResponseEntity<ConciliadorDTO> vendas(@RequestParam(name = "lojaId") final String lojaId,
                                                  @RequestParam(name = "dtInicial") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial,
                                                  @RequestParam(name = "dtFinal") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal,
-                                                 @RequestParam(name  = "metodoPagamento", required = false) final String metodoPagamento,
-                                                 @RequestParam(name  = "bandeira", required = false) final String bandeira,
-                                                 @RequestParam(name  = "tipoRecebimento", required = false) final String tipoRecebimento) {
+                                                 @RequestParam(name = "metodoPagamento", required = false) final String metodoPagamento,
+                                                 @RequestParam(name = "bandeira", required = false) final String bandeira,
+                                                 @RequestParam(name = "tipoRecebimento", required = false) final String tipoRecebimento) {
 
         List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, metodoPagamento, bandeira, tipoRecebimento, dtInicial, dtFinal);
         conciliadorIfoodService.aplicarCancelamento(vendas, lojaId);

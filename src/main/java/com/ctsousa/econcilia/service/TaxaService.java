@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface TaxaService {
 
-    void validar (Taxa taxa);
+    void validar(Taxa taxa);
 
     Long calcularTempoExpiracao(LocalDate dataInicial, LocalDate dataFinal);
 
@@ -25,9 +25,9 @@ public interface TaxaService {
 
     List<Taxa> buscarTodos();
 
-    Taxa ativar (Long id);
+    Taxa ativar(Long id);
 
-    Taxa desativar (Long id);
+    Taxa desativar(Long id);
 
-    Taxa pesquisarPorId (Long id);
+    Taxa pesquisarPorId(Long id);
 }

@@ -17,5 +17,5 @@ public interface EmpresaRepository extends JpaRepository<Empresa, Long> {
     Empresa porCnpj(@Param(value = "cnpj") final String cnpj);
 
     @Query("SELECT emp FROM Empresa emp WHERE emp.razaoSocial LIKE %:razaoSocial%")
-    List<Empresa> porRazaoSocial( @Param(value = "razaoSocial") final String razaoSocial);
+    List<Empresa> porRazaoSocial(@Param(value = "razaoSocial") final String razaoSocial);
 }

@@ -1,6 +1,5 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.enumaration.TipoFuncionalidade;
 import com.ctsousa.econcilia.mapper.impl.PermissaoMapper;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.PermissaoDTO;
@@ -39,7 +38,7 @@ public class PermissaoResource {
 
     @GetMapping("/{id}/usuario")
     @PreAuthorize(Autorizar.PESQUISAR_PERMISSAO)
-    public ResponseEntity<PermissaoDTO> buscarPorUsuario (@PathVariable Long id) {
+    public ResponseEntity<PermissaoDTO> buscarPorUsuario(@PathVariable Long id) {
         var usuario = usuarioService.pesquisarPorId(id);
         var permissao = permissaoService.pesquisar(usuario);
         return ResponseEntity.ok(permissaoMapper.paraDTO(permissao));
@@ -47,7 +46,7 @@ public class PermissaoResource {
 
     @PutMapping("/{id}")
     @PreAuthorize(Autorizar.EDITAR_PERMISSAO)
-    public ResponseEntity<PermissaoDTO> atualizar (@PathVariable Long id, @RequestBody @Valid PermissaoDTO permissaoDTO) {
+    public ResponseEntity<PermissaoDTO> atualizar(@PathVariable Long id, @RequestBody @Valid PermissaoDTO permissaoDTO) {
         var usuario = this.usuarioService.pesquisarPorId(permissaoDTO.getUsuario().getId());
         var permissao = this.permissaoService.atualizar(id, permissaoMapper.paraEntidade(permissaoDTO));
 
@@ -57,13 +56,13 @@ public class PermissaoResource {
 
     @DeleteMapping("/{id}")
     @PreAuthorize(Autorizar.DELETAR_PERMISSAO)
-    public void deletar (@PathVariable Long id) {
+    public void deletar(@PathVariable Long id) {
         this.permissaoService.deletar(id);
     }
 
     @GetMapping
     @PreAuthorize(Autorizar.PESQUISAR_PERMISSAO)
-    public ResponseEntity<List<PermissaoDTO>> listar (@RequestParam( required = false ) String nomeCompleto, @RequestParam (required = false) String tipoPermissao) {
+    public ResponseEntity<List<PermissaoDTO>> listar(@RequestParam(required = false) String nomeCompleto, @RequestParam(required = false) String tipoPermissao) {
         var permissoes = this.permissaoService.pesquisar(new Usuario(nomeCompleto), tipoPermissao);
         return ResponseEntity.ok(permissaoMapper.paraLista(permissoes));
     }

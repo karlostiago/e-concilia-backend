@@ -43,7 +43,7 @@ public class ImportacaoServiceImpl implements ImportacaoService {
         for (Importacao imp : importacoes) {
             if (imp.getOperadora().getId().equals(importacao.getOperadora().getId())
                     && imp.getEmpresa().getId().equals(importacao.getEmpresa().getId())) {
-                    return true;
+                return true;
             }
         }
 

@@ -10,7 +10,7 @@ public class SpringConfig {
 
     @Bean
     public RestTemplate getRestTemplate() {
-        return  new RestTemplate();
+        return new RestTemplate();
     }
 
     @Bean

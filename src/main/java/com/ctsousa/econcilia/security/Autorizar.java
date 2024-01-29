@@ -75,5 +75,6 @@ public abstract class Autorizar {
     public static final String AGENDAR_IMPORTACAO = "hasAuthority('ROLE_AGENDAR_IMPORTACAO')";
     public static final String PESQUISAR_IMPORTACAO = "hasAuthority('ROLE_PESQUISAR_IMPORTACAO')";
 
-    private Autorizar() { }
+    private Autorizar() {
+    }
 }

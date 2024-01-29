@@ -209,14 +209,11 @@ public class IntegracaoServiceImpl implements IntegracaoService {
 
         if (empresaId != null && operadoraId != null) {
             integracoes = integracaoRepository.findByEmpresaAndOperadora(empresa, operadora);
-        }
-        else if (empresaId != null) {
+        } else if (empresaId != null) {
             integracoes = integracaoRepository.findByEmpresa(empresa);
-        }
-        else if (operadoraId != null) {
+        } else if (operadoraId != null) {
             integracoes = integracaoRepository.findByOperadora(operadora);
-        }
-        else {
+        } else {
             integracoes = integracaoRepository.findAll();
         }
 

@@ -1,7 +1,7 @@
 package com.ctsousa.econcilia.service.impl;
 
-import com.ctsousa.econcilia.mapper.impl.ContratoMapper;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.mapper.impl.ContratoMapper;
 import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
@@ -50,14 +50,11 @@ public class ContratoServiceImpl implements ContratoService {
 
         if (empresaId != null && operadoraId != null) {
             contratos = contratoRepository.findByEmpresaAndOperadora(empresa, operadora);
-        }
-        else if (empresaId != null) {
+        } else if (empresaId != null) {
             contratos = contratoRepository.findByEmpresa(empresa);
-        }
-        else if (operadoraId != null) {
+        } else if (operadoraId != null) {
             contratos = contratoRepository.findByOperadora(operadora);
-        }
-        else {
+        } else {
             contratos = contratoRepository.findAll();
         }
 

@@ -24,35 +24,35 @@ public class OperadoraResource {
 
     @PostMapping
     @PreAuthorize(Autorizar.CADASTRAR_OPERADORA)
-    public ResponseEntity<OperadoraDTO> cadastrar (@RequestBody @Valid OperadoraDTO operadoraDTO) {
+    public ResponseEntity<OperadoraDTO> cadastrar(@RequestBody @Valid OperadoraDTO operadoraDTO) {
         var operadora = operadoraService.salvar(operadoraMapper.paraEntidade(operadoraDTO));
         return ResponseEntity.ok(operadoraMapper.paraDTO(operadora));
     }
 
     @GetMapping
     @PreAuthorize(Autorizar.PESQUISAR_OPERADORA)
-    public ResponseEntity<List<OperadoraDTO>> listar (@RequestParam( required = false ) String descricao) {
+    public ResponseEntity<List<OperadoraDTO>> listar(@RequestParam(required = false) String descricao) {
         var operadoras = operadoraService.pesquisar(descricao);
         return ResponseEntity.ok(operadoraMapper.paraLista(operadoras));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize(Autorizar.PESQUISAR_OPERADORA)
-    public ResponseEntity<OperadoraDTO> porId (@PathVariable Long id) {
+    public ResponseEntity<OperadoraDTO> porId(@PathVariable Long id) {
         var operadora = operadoraService.buscarPorID(id);
         return ResponseEntity.ok(operadoraMapper.paraDTO(operadora));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize(Autorizar.EDITAR_OPERADORA)
-    public ResponseEntity<OperadoraDTO> atualizar (@PathVariable Long id, @RequestBody @Valid OperadoraDTO operadoraDTO) {
+    public ResponseEntity<OperadoraDTO> atualizar(@PathVariable Long id, @RequestBody @Valid OperadoraDTO operadoraDTO) {
         var operadora = this.operadoraService.atualizar(id, operadoraDTO);
         return ResponseEntity.ok(operadoraMapper.paraDTO(operadora));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize(Autorizar.DELETAR_OPERADORA)
-    public void deletar (@PathVariable Long id) {
+    public void deletar(@PathVariable Long id) {
         this.operadoraService.deletar(id);
     }
 }

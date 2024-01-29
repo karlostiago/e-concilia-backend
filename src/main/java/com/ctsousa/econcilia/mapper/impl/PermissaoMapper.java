@@ -2,7 +2,6 @@ package com.ctsousa.econcilia.mapper.impl;
 
 import com.ctsousa.econcilia.enumaration.Funcionalidade;
 import com.ctsousa.econcilia.enumaration.TipoFuncionalidade;
-import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.mapper.EntidadeMapper;

@@ -19,7 +19,7 @@ public enum TipoFuncionalidade {
     AGENDAR;
 
     public static TipoFuncionalidade por(final String tipo) {
-        String [] tipos = tipo.split("_");
+        String[] tipos = tipo.split("_");
 
         if (tipos.length == 0) return null;
 
@@ -32,7 +32,7 @@ public enum TipoFuncionalidade {
             case "AGENDAR" -> AGENDAR;
             case "MENU" -> MENU;
             default ->
-                throw new NotificacaoException("Nenhum tipo funcionalidade corresponde ao tipo funcionalidade selecionado ::: " + tipo);
+                    throw new NotificacaoException("Nenhum tipo funcionalidade corresponde ao tipo funcionalidade selecionado ::: " + tipo);
         };
     }
 }

@@ -21,7 +21,7 @@ public class CnpjServiceImpl implements CnpjService {
         this.cache = new HashMap<>();
     }
 
-    public DadosCnpjJson buscarCNPJ (final String cnpj) {
+    public DadosCnpjJson buscarCNPJ(final String cnpj) {
         new CnpjValidator(cnpj).validar();
 
         DadosCnpjJson dadosCnpjJson = cache.get(cnpj);

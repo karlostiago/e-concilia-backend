@@ -34,12 +34,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
                 .anyRequest().authenticated()
-                    .and()
+                .and()
                 .authenticationManager(getAuthenticationManager(http))
                 .httpBasic()
-                    .and()
+                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
+                .and()
                 .csrf().disable();
         return http.build();
     }

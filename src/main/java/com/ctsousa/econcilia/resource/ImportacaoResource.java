@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -28,7 +27,7 @@ public class ImportacaoResource {
 
     @PostMapping
     @PreAuthorize(Autorizar.AGENDAR_IMPORTACAO)
-    public ResponseEntity<ImportacaoDTO> agendar (@RequestBody @Valid ImportacaoDTO importacaoDTO) {
+    public ResponseEntity<ImportacaoDTO> agendar(@RequestBody @Valid ImportacaoDTO importacaoDTO) {
         importacaoDTO.setSituacao(ImportacaoSituacao.AGENDADO);
         var importacao = importacaoService.agendar(importacaoMapper.paraEntidade(importacaoDTO));
         return ResponseEntity.ok(importacaoMapper.paraDTO(importacao));

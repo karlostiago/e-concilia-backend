@@ -2,18 +2,16 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaCreditoDebitoDTO;
-import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDinheiroPixDTO;
 import com.ctsousa.econcilia.service.AbstractGraficoVendaMeioPagamento;
 import com.ctsousa.econcilia.service.GraficoVendaService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static com.ctsousa.econcilia.util.DataUtil.diaMes;
 
 @Component
 public class GraficoVendaUltimo7DiaCreditoDebitoServiceImpl extends AbstractGraficoVendaMeioPagamento implements GraficoVendaService<GraficoVendaUltimo7DiaCreditoDebitoDTO> {

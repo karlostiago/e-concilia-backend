@@ -16,7 +16,8 @@ public class MerchantServiceImpl extends AbstractIfoodService implements Merchan
     @Override
     public List<Merchant> all(String token) {
         log.info("Listando todos merchants permitidos pelo ifood.");
-        ParameterizedTypeReference<List<Merchant>> responseType = new ParameterizedTypeReference<>() { };
+        ParameterizedTypeReference<List<Merchant>> responseType = new ParameterizedTypeReference<>() {
+        };
 
         return requestProcess(pathBase(), token, responseType);
     }

@@ -7,7 +7,6 @@ import com.ctsousa.econcilia.mapper.EntidadeMapper;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.EmpresaDTO;
 import com.ctsousa.econcilia.model.dto.UsuarioDTO;
-import com.ctsousa.econcilia.repository.EmpresaRepository;
 import com.ctsousa.econcilia.service.EmpresaService;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +45,7 @@ public class UsuarioMapper implements EntidadeMapper<Usuario, UsuarioDTO>, DtoMa
         usuarioDTO.setNomeCompleto(usuario.getNomeCompleto());
         usuarioDTO.setEmail(usuario.getEmail());
 
-        String [] idLojasPermitidas = usuario.getLojasPermitidas().split(",");
+        String[] idLojasPermitidas = usuario.getLojasPermitidas().split(",");
         List<EmpresaDTO> lojasPermitidas = Arrays.stream(idLojasPermitidas)
                 .map(idLojaPermitida -> empresaMapper.paraDTO(empresaService.pesquisarPorId(Long.valueOf(idLojaPermitida))))
                 .toList();

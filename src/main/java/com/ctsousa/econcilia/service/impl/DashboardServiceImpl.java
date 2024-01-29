@@ -55,7 +55,7 @@ public class DashboardServiceImpl implements DashboadService {
 
     @Override
     public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
-        String [] empresasIdSplit = empresaId.split(",");
+        String[] empresasIdSplit = empresaId.split(",");
 
         List<Long> empresasId = Arrays.stream(empresasIdSplit)
                 .map(s -> Long.valueOf(s.trim()))

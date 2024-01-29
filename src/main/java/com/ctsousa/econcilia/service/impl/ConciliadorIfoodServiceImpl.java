@@ -14,7 +14,9 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
@@ -35,7 +37,6 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     }
 
 
-
     @Override
     public void aplicarCancelamento(List<Venda> vendas, String lojaId) {
         if (vendas.isEmpty()) {
@@ -43,12 +44,12 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         }
 
         Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
-            Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
+                Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
         ));
 
         Map<String, List<Venda>> periodIdMap = vendas.stream().collect(Collectors.groupingBy(
-            venda -> (venda.getPeriodoId() != null) ? venda.getPeriodoId() : "",
-            Collectors.toList()
+                venda -> (venda.getPeriodoId() != null) ? venda.getPeriodoId() : "",
+                Collectors.toList()
         ));
 
         List<String> periodoIds = periodIdMap.keySet().stream().toList();
@@ -75,7 +76,7 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         if (ajusteVendas.isEmpty()) return;
 
         Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
-            Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
+                Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
         ));
 
         for (AjusteVenda ajuste : ajusteVendas) {

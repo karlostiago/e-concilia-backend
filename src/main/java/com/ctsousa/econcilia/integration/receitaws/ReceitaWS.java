@@ -17,7 +17,7 @@ public class ReceitaWS {
         this.restTemplate = restTemplate;
     }
 
-    public DadosCnpjJson consultarDadosCNPJ (final String cnpj) {
+    public DadosCnpjJson consultarDadosCNPJ(final String cnpj) {
         ResponseEntity<DadosCnpjJson> response = this.restTemplate.getForEntity(URL + cnpj, DadosCnpjJson.class);
 
         if (!response.getStatusCode().equals(HttpStatus.OK)) {

@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
-import static com.ctsousa.econcilia.util.StringUtil.somenteNumero;
 
 @Getter
 @Setter

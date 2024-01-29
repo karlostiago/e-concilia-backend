@@ -16,11 +16,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class Contrato extends Entidade {
 
-    @ManyToOne( fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
     private Empresa empresa;
 
-    @ManyToOne( fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "operadora_id", nullable = false)
     private Operadora operadora;
 

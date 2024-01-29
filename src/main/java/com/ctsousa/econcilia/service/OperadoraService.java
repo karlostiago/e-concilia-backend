@@ -9,13 +9,13 @@ import java.util.List;
 @Service
 public interface OperadoraService {
 
-    Operadora salvar (Operadora operadora);
+    Operadora salvar(Operadora operadora);
 
-    Operadora buscarPorID (Long id);
+    Operadora buscarPorID(Long id);
 
-    List<Operadora> pesquisar (String descricao);
+    List<Operadora> pesquisar(String descricao);
 
-    Operadora atualizar (Long id, OperadoraDTO operadoraDTO);
+    Operadora atualizar(Long id, OperadoraDTO operadoraDTO);
 
-    void deletar (Long id);
+    void deletar(Long id);
 }

@@ -40,7 +40,7 @@ public class CorsFilter implements Filter {
     }
 
     private String origemPermitida(final HttpServletRequest request) {
-        String [] origens = origensPermitida.split(",");
+        String[] origens = origensPermitida.split(",");
         String origemPermitida = "http://localhost:4200";
 
         for (String origem : origens) {
@@ -50,7 +50,7 @@ public class CorsFilter implements Filter {
             }
         }
 
-        log.info("Origem permitida ::: [{}], path origem [{}]",  origemPermitida, request.getHeader(ORIGIN));
+        log.info("Origem permitida ::: [{}], path origem [{}]", origemPermitida, request.getHeader(ORIGIN));
 
         return origemPermitida;
     }
