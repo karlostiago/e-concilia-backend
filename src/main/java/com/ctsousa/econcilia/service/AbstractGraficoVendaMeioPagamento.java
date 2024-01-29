@@ -1,63 +1,31 @@
-package com.ctsousa.econcilia.service.impl;
+package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.model.Venda;
-import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaMeioPagamentoDTO;
-import com.ctsousa.econcilia.service.GraficoVendaService;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.ctsousa.econcilia.util.DataUtil.diaMes;
 
-@Component
-public class GraficoVendaUltimo7DiaMeioPagamentoServiceImpl implements GraficoVendaService<GraficoVendaUltimo7DiaMeioPagamentoDTO> {
+public class AbstractGraficoVendaMeioPagamento {
 
-    private static final String DINHEIRO = "DINHEIRO";
+    protected static final String DINHEIRO = "DINHEIRO";
 
-    private static final String DEBITO = "DEBITO";
+    protected static final String DEBITO = "DEBITO";
 
-    private static final String CREDITO = "CREDITO";
+    protected static final String CREDITO = "CREDITO";
 
-    private static final String PIX = "PIX";
+    protected static final String PIX = "PIX";
 
-    private static final String OUTROS = "OUTROS";
+    protected static final String OUTROS = "OUTROS";
 
-    @Override
-    public GraficoVendaUltimo7DiaMeioPagamentoDTO processar(List<Venda> vendas) {
-        GraficoVendaUltimo7DiaMeioPagamentoDTO graficoDTO = new GraficoVendaUltimo7DiaMeioPagamentoDTO();
-
-        graficoDTO.setLabels(new ArrayList<>());
-        graficoDTO.setDataCredit(new ArrayList<>());
-        graficoDTO.setDataCash(new ArrayList<>());
-        graficoDTO.setDataPix(new ArrayList<>());
-        graficoDTO.setDataDebit(new ArrayList<>());
-        graficoDTO.setDataOther(new ArrayList<>());
-
-        Map<LocalDate, Map<String, BigDecimal>> ultimas7DiasMap = ultimos7Dias();
-        ultimas7DiasMap = ordenacaoCrescente(ultimas7DiasMap);
-
-        Map<LocalDate, List<Venda>> vendasMap = vendas.stream()
-                .collect(Collectors.groupingBy(Venda::getDataPedido));
-
-        adicionarVendasTotalizadas(ultimas7DiasMap, vendasMap);
-
-        for (Map.Entry<LocalDate, Map<String, BigDecimal>> entry : ultimas7DiasMap.entrySet()) {
-            graficoDTO.getLabels().add(formatarDataVenda(entry.getKey()));
-            graficoDTO.getDataDebit().add(entry.getValue().get(DEBITO));
-            graficoDTO.getDataCredit().add(entry.getValue().get(CREDITO));
-            graficoDTO.getDataPix().add(entry.getValue().get(PIX));
-            graficoDTO.getDataCash().add(entry.getValue().get(DINHEIRO));
-            graficoDTO.getDataOther().add(entry.getValue().get(OUTROS));
-        }
-
-        return graficoDTO;
-    }
-
-    private void adicionarVendasTotalizadas(Map<LocalDate, Map<String, BigDecimal>> ultimas7DiasMap, Map<LocalDate, List<Venda>> vendasMap) {
+    protected void adicionarVendasTotalizadas(Map<LocalDate, Map<String, BigDecimal>> ultimas7DiasMap, Map<LocalDate, List<Venda>> vendasMap) {
         var vendasTotalizadasMap = totalizarVendasPorMeioPagamento(vendasMap);
 
         for (Map.Entry<LocalDate, Map<String, BigDecimal>> entry : ultimas7DiasMap.entrySet()) {
@@ -75,6 +43,25 @@ public class GraficoVendaUltimo7DiaMeioPagamentoServiceImpl implements GraficoVe
 
             ultimas7DiasMap.put(entry.getKey(), totalizadorMap);
         }
+    }
+
+    protected Map<LocalDate, Map<String, BigDecimal>> ultimos7Dias() {
+        var diaAnterior = LocalDate.now().minusDays(1);
+        return IntStream.range(0, 7)
+                .mapToObj(diaAnterior::minusDays)
+                .collect(Collectors.toMap(data -> data, data -> new HashMap<>()));
+    }
+
+    protected Map<LocalDate, Map<String, BigDecimal>> ordenacaoCrescente(Map<LocalDate, Map<String, BigDecimal>> ultimas7DiasMap) {
+        return ultimas7DiasMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (valorAtual, novoValor) -> valorAtual, LinkedHashMap::new));
+
+    }
+
+    protected String formatarDataVenda(final LocalDate dataVenda) {
+        return diaMes(dataVenda);
     }
 
     private Map<LocalDate, Map<String, BigDecimal>> totalizarVendasPorMeioPagamento(Map<LocalDate, List<Venda>> vendas) {
@@ -118,24 +105,5 @@ public class GraficoVendaUltimo7DiaMeioPagamentoServiceImpl implements GraficoVe
         totalizadorMeioPagamentoMap.put(OUTROS, outros);
 
         return totalizadorMeioPagamentoMap;
-    }
-
-    private Map<LocalDate, Map<String, BigDecimal>> ultimos7Dias() {
-        var diaAnterior = LocalDate.now().minusDays(1);
-        return IntStream.range(0, 7)
-                .mapToObj(diaAnterior::minusDays)
-                .collect(Collectors.toMap(data -> data, data -> new HashMap<>()));
-    }
-
-    private Map<LocalDate, Map<String, BigDecimal>> ordenacaoCrescente(Map<LocalDate, Map<String, BigDecimal>> ultimas7DiasMap) {
-        return ultimas7DiasMap.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (valorAtual, novoValor) -> valorAtual, LinkedHashMap::new));
-
-    }
-
-    private String formatarDataVenda(final LocalDate dataVenda) {
-        return diaMes(dataVenda);
     }
 }

@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.enumaration.Perfil;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.mapper.EntidadeMapper;
@@ -34,6 +35,7 @@ public class UsuarioMapper implements EntidadeMapper<Usuario, UsuarioDTO>, DtoMa
         usuario.setSenha(usuarioDTO.getSenha());
         usuario.setEmail(usuarioDTO.getEmail());
         usuario.setLojasPermitidas(getLojasPermitidas(usuarioDTO));
+        usuario.setPerfil(Perfil.porDescricao(usuarioDTO.getPerfil()));
         return usuario;
     }
 
@@ -42,7 +44,6 @@ public class UsuarioMapper implements EntidadeMapper<Usuario, UsuarioDTO>, DtoMa
         UsuarioDTO usuarioDTO = new UsuarioDTO();
         usuarioDTO.setId(usuario.getId());
         usuarioDTO.setNomeCompleto(usuario.getNomeCompleto());
-        usuarioDTO.setSenha(usuario.getSenha());
         usuarioDTO.setEmail(usuario.getEmail());
 
         String [] idLojasPermitidas = usuario.getLojasPermitidas().split(",");
@@ -51,6 +52,9 @@ public class UsuarioMapper implements EntidadeMapper<Usuario, UsuarioDTO>, DtoMa
                 .toList();
 
         usuarioDTO.setLojasPermitidas(lojasPermitidas);
+
+        if (usuario.getPerfil() != null)
+            usuarioDTO.setPerfil(usuario.getPerfil().getDescricao());
 
         return usuarioDTO;
     }

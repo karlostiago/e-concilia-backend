@@ -81,8 +81,7 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         for (AjusteVenda ajuste : ajusteVendas) {
             Venda venda = vendaMap.get(ajuste.getPedidoId());
             if (venda != null) {
-                venda.getCobranca().setTotalCredito(ajuste.getCobranca().getTotalCredito());
-                venda.getCobranca().setTotalDebito(ajuste.getCobranca().getTotalDebito());
+                venda.setCobranca(ajuste.getCobranca());
             }
         }
     }

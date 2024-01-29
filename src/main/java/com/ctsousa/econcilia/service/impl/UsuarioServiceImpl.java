@@ -1,10 +1,14 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.Perfil;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.UsuarioDTO;
 import com.ctsousa.econcilia.repository.UsuarioRepository;
+import com.ctsousa.econcilia.service.PermissaoService;
+import com.ctsousa.econcilia.service.SegurancaService;
 import com.ctsousa.econcilia.service.UsuarioService;
+import com.ctsousa.econcilia.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +22,14 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
+    private final SegurancaService segurancaService;
+
+    private final PermissaoService permissaoService;
+
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, SegurancaService segurancaService, PermissaoService permissaoService) {
         this.usuarioRepository = usuarioRepository;
+        this.segurancaService = segurancaService;
+        this.permissaoService = permissaoService;
     }
 
     @Override
@@ -31,16 +41,21 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new NotificacaoException(String.format("Já existe um usuário com o e-mail %s cadastrado.", usuario.getEmail()));
         }
-        return usuarioRepository.save(usuario);
+
+        usuario.setSenha(segurancaService.encriptarSenha(usuario.getSenha()));
+        var usuarioSalvo = usuarioRepository.save(usuario);
+        adicionarPerfil(usuario);
+
+        return usuarioSalvo;
     }
 
     @Override
     public List<Usuario> pesquisar(String nomeCompleto, String email) {
-        if (null != nomeCompleto && !nomeCompleto.isEmpty() && !"null".equalsIgnoreCase(nomeCompleto)) {
+        if (Boolean.TRUE.equals(StringUtil.temValor(nomeCompleto))) {
             return usuarioRepository.porNomeCompleto(nomeCompleto);
         }
 
-        if (null != email && !email.isEmpty() && !"null".equalsIgnoreCase(email)) {
+        if (Boolean.TRUE.equals(StringUtil.temValor(email))) {
             var usuario = usuarioRepository.porEmail(email);
             return usuario == null ? new ArrayList<>() : Collections.singletonList(usuario);
         }
@@ -51,6 +66,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public void deletar(Long id) {
         var usuario = pesquisarPorId(id);
+        permissaoService.deletar(usuario);
         usuarioRepository.delete(usuario);
     }
 
@@ -58,13 +74,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario atualizar(Long id, UsuarioDTO usuarioDTO) {
         confirmaEmail(usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
         confirmaSenha(usuarioDTO.getSenha(), usuarioDTO.getConfirmaSenha());
+        usuarioDTO.setSenha(segurancaService.encriptarSenha(usuarioDTO.getSenha()));
 
         StringJoiner joiner = new StringJoiner(",");
         usuarioDTO.getLojasPermitidas().forEach(loja -> joiner.add(String.valueOf(loja.getId())));
 
         Usuario usuario = pesquisarPorId(id);
         usuario.setLojasPermitidas(joiner.toString());
+        usuario.setPerfil(Perfil.porDescricao(usuarioDTO.getPerfil()));
+
         BeanUtils.copyProperties(usuarioDTO, usuario, "id");
+        adicionarPerfil(usuario);
+
         return usuarioRepository.save(usuario);
     }
 
@@ -91,6 +112,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         if (!senha.equalsIgnoreCase(confirmaSenha)) {
             throw new NotificacaoException("O campo senha não confere com a senha do campo confirma senha.");
+        }
+    }
+
+    private void adicionarPerfil(Usuario usuario) {
+        if (usuario.getPerfil() != null) {
+            Perfil perfil = usuario.getPerfil();
+            perfil.aplicar(usuario, permissaoService);
         }
     }
 }

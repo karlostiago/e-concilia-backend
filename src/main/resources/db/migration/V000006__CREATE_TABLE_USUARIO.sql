@@ -4,6 +4,7 @@ CREATE TABLE `usuario` (
   `email` varchar(255) NOT NULL,
   `senha` varchar(255) NOT NULL,
   `lojas_permitidas` varchar(255),
+  `perfil` varchar(100),
   PRIMARY KEY (`id`),
   UNIQUE KEY `fk_usuario` (`email`)
 );

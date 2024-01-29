@@ -33,3 +33,6 @@ ifood:
         comerciantes: https://merchant-api.ifood.com.br/merchant/v1.0/merchants
         financeiro: https://merchant-api.ifood.com.br/financial/v2.0/merchants/
         autenticacao: https://merchant-api.ifood.com.br/authentication/v1.0/oauth/token
+
+credencial:
+    senha: ${credencial_senha}

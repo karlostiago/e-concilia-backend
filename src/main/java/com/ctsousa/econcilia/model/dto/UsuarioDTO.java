@@ -30,4 +30,6 @@ public class UsuarioDTO implements Serializable {
 
     @NotEmpty(message = "Selecione ao menos uma loja.")
     private List<EmpresaDTO> lojasPermitidas;
+
+    private String perfil;
 }

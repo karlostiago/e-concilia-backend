@@ -2,6 +2,7 @@ package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.UsuarioDTO;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

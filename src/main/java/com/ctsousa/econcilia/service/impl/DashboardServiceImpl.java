@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -53,21 +54,25 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     @Override
-    public DashboardDTO carregarInformacoes(Long empresaId, LocalDate dtInicial, LocalDate dtFinal) {
-        if (empresaId < 0) {
-            empresaId = null;
-        }
+    public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
+        String [] empresasIdSplit = empresaId.split(",");
 
-        List<Integracao> integracoes = integracaoService.pesquisar(empresaId, null, null);
+        List<Long> empresasId = Arrays.stream(empresasIdSplit)
+                .map(s -> Long.valueOf(s.trim()))
+                .toList();
+
         List<Venda> vendas = new ArrayList<>();
         List<Ocorrencia> ocorrencias = new ArrayList<>();
 
-        for (Integracao integracao : integracoes) {
-            var vendasPesquidas = integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
-            conciliadorIfoodService.aplicarCancelamento(vendasPesquidas, integracao.getCodigoIntegracao());
-            ocorrencias = integracaoService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
-            conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendasPesquidas);
-            vendas.addAll(vendasPesquidas);
+        for (Long idEmpresa : empresasId) {
+            List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
+            for (Integracao integracao : integracoes) {
+                var vendasPesquidas = integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
+                conciliadorIfoodService.aplicarCancelamento(vendasPesquidas, integracao.getCodigoIntegracao());
+                ocorrencias = integracaoService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
+                conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendasPesquidas);
+                vendas.addAll(vendasPesquidas);
+            }
         }
 
         if (vendas.isEmpty()) {
