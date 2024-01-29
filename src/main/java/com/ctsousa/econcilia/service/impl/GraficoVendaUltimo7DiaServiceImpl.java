@@ -34,7 +34,8 @@ public class GraficoVendaUltimo7DiaServiceImpl implements GraficoVendaService<Gr
 
         for (Map.Entry<LocalDate, List<Venda>> entry : vendasMap.entrySet()) {
             var total = somarVendas(entry.getValue());
-            ultimas7DiasMap.put(entry.getKey(), total);
+            if (entry.getKey().isBefore(LocalDate.now()))
+                ultimas7DiasMap.put(entry.getKey(), total);
         }
 
         for (Map.Entry<LocalDate, BigDecimal> entry : ultimas7DiasMap.entrySet()) {

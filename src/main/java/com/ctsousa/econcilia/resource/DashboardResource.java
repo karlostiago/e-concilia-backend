@@ -1,12 +1,10 @@
 package com.ctsousa.econcilia.resource;
 
 import com.ctsousa.econcilia.model.Venda;
-import com.ctsousa.econcilia.model.dto.DashboardDTO;
-import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaCreditoDebitoDTO;
-import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDTO;
-import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDinheiroPixDTO;
+import com.ctsousa.econcilia.model.dto.*;
 import com.ctsousa.econcilia.security.Autorizar;
 import com.ctsousa.econcilia.service.DashboadService;
+import com.ctsousa.econcilia.service.impl.GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl;
 import com.ctsousa.econcilia.service.impl.GraficoVendaUltimo7DiaCreditoDebitoServiceImpl;
 import com.ctsousa.econcilia.service.impl.GraficoVendaUltimo7DiaDinheiroPixServiceImpl;
 import com.ctsousa.econcilia.service.impl.GraficoVendaUltimo7DiaServiceImpl;
@@ -31,13 +29,16 @@ public class DashboardResource {
 
     private final GraficoVendaUltimo7DiaCreditoDebitoServiceImpl graficoVendaUltimo7DiaCreditoDebitoService;
 
+    private final GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl graficoPercentualVendaUltimo7DiaFormaPagamento;
+
     private final DashboadService dashboadService;
 
-    public DashboardResource(GraficoVendaUltimo7DiaServiceImpl graficoVendaUltimo7DiaService, GraficoVendaUltimo7DiaDinheiroPixServiceImpl graficoVendaUltimo7DiaDinheiroPixService, GraficoVendaUltimo7DiaCreditoDebitoServiceImpl graficoVendaUltimo7DiaCreditoDebitoService, DashboadService dashboadService) {
+    public DashboardResource(GraficoVendaUltimo7DiaServiceImpl graficoVendaUltimo7DiaService, GraficoVendaUltimo7DiaDinheiroPixServiceImpl graficoVendaUltimo7DiaDinheiroPixService, GraficoVendaUltimo7DiaCreditoDebitoServiceImpl graficoVendaUltimo7DiaCreditoDebitoService, DashboadService dashboadService, GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl graficoPercentualVendaUltimo7DiaFormaPagamento) {
         this.graficoVendaUltimo7DiaService = graficoVendaUltimo7DiaService;
         this.graficoVendaUltimo7DiaDinheiroPixService = graficoVendaUltimo7DiaDinheiroPixService;
         this.graficoVendaUltimo7DiaCreditoDebitoService = graficoVendaUltimo7DiaCreditoDebitoService;
         this.dashboadService = dashboadService;
+        this.graficoPercentualVendaUltimo7DiaFormaPagamento = graficoPercentualVendaUltimo7DiaFormaPagamento;
     }
 
     @GetMapping
@@ -61,6 +62,13 @@ public class DashboardResource {
     public ResponseEntity<GraficoVendaUltimo7DiaCreditoDebitoDTO> buscarVendasUltimos7DiasCreditoDebito(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
         List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
         return ResponseEntity.ok(graficoVendaUltimo7DiaCreditoDebitoService.processar(vendas));
+    }
+
+    @GetMapping(value = "/buscar-percentual-venda-ultimos-7-dias")
+    @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
+    public ResponseEntity<GraficoPercentualVendaUltimo7DiaDTO> buscarPercentualVendasUltimos7Dias(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
+        List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
+        return ResponseEntity.ok(graficoPercentualVendaUltimo7DiaFormaPagamento.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-dinheito-pix")

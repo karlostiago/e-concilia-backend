@@ -25,6 +25,8 @@ public class AbstractGraficoVendaMeioPagamento {
 
     protected static final String OUTROS = "OUTROS";
 
+    private BigDecimal valorTotal;
+
     protected void adicionarVendasTotalizadas(Map<LocalDate, Map<String, BigDecimal>> ultimas7DiasMap, Map<LocalDate, List<Venda>> vendasMap) {
         var vendasTotalizadasMap = totalizarVendasPorMeioPagamento(vendasMap);
 
@@ -64,7 +66,8 @@ public class AbstractGraficoVendaMeioPagamento {
         return diaMes(dataVenda);
     }
 
-    private Map<LocalDate, Map<String, BigDecimal>> totalizarVendasPorMeioPagamento(Map<LocalDate, List<Venda>> vendas) {
+    protected Map<LocalDate, Map<String, BigDecimal>> totalizarVendasPorMeioPagamento(Map<LocalDate, List<Venda>> vendas) {
+        valorTotal = BigDecimal.ZERO;
         Map<LocalDate, Map<String, BigDecimal>> totalizadorMap = new HashMap<>();
 
         for (Map.Entry<LocalDate, List<Venda>> entry : vendas.entrySet()) {
@@ -96,6 +99,7 @@ public class AbstractGraficoVendaMeioPagamento {
             } else {
                 outros = outros.add(venda.getCobranca().getValorBruto());
             }
+            valorTotal = valorTotal.add(venda.getCobranca().getValorBruto());
         }
 
         totalizadorMeioPagamentoMap.put(PIX, pix);
@@ -105,5 +109,12 @@ public class AbstractGraficoVendaMeioPagamento {
         totalizadorMeioPagamentoMap.put(OUTROS, outros);
 
         return totalizadorMeioPagamentoMap;
+    }
+
+    public BigDecimal getValorTotal() {
+        if (valorTotal == null) {
+            this.valorTotal = BigDecimal.ZERO;
+        }
+        return valorTotal;
     }
 }
