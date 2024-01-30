@@ -14,9 +14,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class DashboardServiceImpl implements DashboadService {
@@ -34,20 +32,19 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     @Override
-    public List<Venda> buscarVendasUltimos7Dias(Long empresaId) {
-        if (empresaId < 0) {
-            empresaId = null;
-        }
+    public List<Venda> buscarVendasUltimos7Dias(String empresaId) {
+        List<Long> empresasId = getEmpresasId(empresaId);
 
         var dtInicial = LocalDate.now().minusDays(7);
         var dtFinal = LocalDate.now();
 
-        List<Integracao> integracoes = integracaoService.pesquisar(empresaId, null, null);
-
         List<Venda> vendas = new ArrayList<>();
 
-        for (Integracao integracao : integracoes) {
-            vendas.addAll(integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal));
+        for (Long idEmpresa : empresasId) {
+            List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
+            for (Integracao integracao : integracoes) {
+                vendas.addAll(integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal));
+            }
         }
 
         return vendas;
@@ -55,11 +52,7 @@ public class DashboardServiceImpl implements DashboadService {
 
     @Override
     public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
-        String[] empresasIdSplit = empresaId.split(",");
-
-        List<Long> empresasId = Arrays.stream(empresasIdSplit)
-                .map(s -> Long.valueOf(s.trim()))
-                .toList();
+        List<Long> empresasId = getEmpresasId(empresaId);
 
         List<Venda> vendas = new ArrayList<>();
         List<Ocorrencia> ocorrencias = new ArrayList<>();
@@ -110,5 +103,12 @@ public class DashboardServiceImpl implements DashboadService {
                 .quantidadeVendas(BigInteger.ZERO)
                 .taxaMedia(new BigDecimal("0.0"))
                 .build();
+    }
+
+    private List<Long> getEmpresasId(final String empresasId) {
+        String[] empresasIdSplit = empresasId.split(",");
+        return Arrays.stream(empresasIdSplit)
+                .map(s -> Long.valueOf(s.trim()))
+                .toList();
     }
 }

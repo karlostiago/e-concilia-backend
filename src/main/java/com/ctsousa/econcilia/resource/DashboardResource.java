@@ -52,28 +52,28 @@ public class DashboardResource {
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
-    public ResponseEntity<GraficoVendaUltimo7DiaDTO> buscarVendasUltimos7Dias(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
+    public ResponseEntity<GraficoVendaUltimo7DiaDTO> buscarVendasUltimos7Dias(@RequestParam(name = "lojaId", required = false) final String empresaId) {
         List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
         return ResponseEntity.ok(graficoVendaUltimo7DiaService.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-credito-debito")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
-    public ResponseEntity<GraficoVendaUltimo7DiaCreditoDebitoDTO> buscarVendasUltimos7DiasCreditoDebito(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
+    public ResponseEntity<GraficoVendaUltimo7DiaCreditoDebitoDTO> buscarVendasUltimos7DiasCreditoDebito(@RequestParam(name = "lojaId", required = false) final String empresaId) {
         List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
         return ResponseEntity.ok(graficoVendaUltimo7DiaCreditoDebitoService.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-percentual-venda-ultimos-7-dias")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
-    public ResponseEntity<GraficoPercentualVendaUltimo7DiaDTO> buscarPercentualVendasUltimos7Dias(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
+    public ResponseEntity<GraficoPercentualVendaUltimo7DiaDTO> buscarPercentualVendasUltimos7Dias(@RequestParam(name = "lojaId", required = false) final String empresaId) {
         List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
         return ResponseEntity.ok(graficoPercentualVendaUltimo7DiaFormaPagamento.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-dinheito-pix")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
-    public ResponseEntity<GraficoVendaUltimo7DiaDinheiroPixDTO> buscarVendasUltimos7DiasDinheiroPix(@RequestParam(name = "lojaId", required = false) final Long empresaId) {
+    public ResponseEntity<GraficoVendaUltimo7DiaDinheiroPixDTO> buscarVendasUltimos7DiasDinheiroPix(@RequestParam(name = "lojaId", required = false) final String empresaId) {
         List<Venda> vendas = dashboadService.buscarVendasUltimos7Dias(empresaId);
         return ResponseEntity.ok(graficoVendaUltimo7DiaDinheiroPixService.processar(vendas));
     }

@@ -12,5 +12,5 @@ public interface DashboadService {
 
     DashboardDTO carregarInformacoes(final String empresaId, final LocalDate dtInicial, final LocalDate dtFinal);
 
-    List<Venda> buscarVendasUltimos7Dias(final Long empresaId);
+    List<Venda> buscarVendasUltimos7Dias(final String empresaId);
 }
