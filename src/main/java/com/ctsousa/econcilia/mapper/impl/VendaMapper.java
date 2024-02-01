@@ -63,6 +63,7 @@ public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, 
         cobranca.setValorTaxaAntecipacao(sale.getBilling().getAnticipationFee());
         cobranca.setTaxaAntecipacao(sale.getBilling().getAnticipationFeeRate());
         cobranca.setTaxaServico(sale.getBilling().getSmallOrderFee());
+        cobranca.setTaxaAdquirenteBeneficio(sale.getBilling().getBenefitAcquirerFee());
         return cobranca;
     }
 }

@@ -17,5 +17,6 @@ CREATE TABLE `cobranca` (
   `valor_cancelado` decimal(19,2) NOT NULL DEFAULT '0.00',
   `valor_parcial` decimal(19,2) NOT NULL DEFAULT '0.00',
   `valor_taxa_antecipacao` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `taxa_adquirente_beneficio` decimal(19,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`id`)
 );

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
@@ -24,213 +25,138 @@ public class VendaProcessadaImpl implements VendaProcessadaService {
 
     @Override
     public VendaProcessada processar(List<Venda> vendas, List<Ocorrencia> ocorrencias) {
-        VendaProcessada venda = processar(vendas);
+        var empresa = vendas.get(0).getEmpresa();
+        var operadora = vendas.get(0).getOperadora();
 
-        var totalDebito = somar(ocorrencias.stream()
+        var valorTotalRepasse = BigDecimal.valueOf(0D);
+        var valorTotalBrutoParcial = BigDecimal.valueOf(0D);
+        var valorTotalBruto = BigDecimal.valueOf(0D);
+
+        var valorTotalComissao = BigDecimal.valueOf(0D);
+        var valorTotalTransacaoPagamento = BigDecimal.valueOf(0D);
+        var valorTotalRecebidoViaLoja = BigDecimal.valueOf(0D);
+        var valorTotalPromocao = BigDecimal.valueOf(0D);
+        var valorTotalPedidoMinimo = BigDecimal.valueOf(0D);
+        var valorTotalReembolsoBeneficio = BigDecimal.valueOf(0D);
+        var valorTotalTaxaEntrega = BigDecimal.valueOf(0D);
+        var valorTotalCancelado = BigDecimal.valueOf(0D);
+
+        for (Venda venda : vendas) {
+            if (venda.getCobranca().getValorCancelado().compareTo(BigDecimal.valueOf(0)) != 0) continue;
+
+            valorTotalReembolsoBeneficio = valorTotalReembolsoBeneficio.add(getValorReembolsoBeneficio(venda.getCobranca()));
+            valorTotalPedidoMinimo = valorTotalPedidoMinimo.add(getValorPedidoMinimo(venda.getCobranca()));
+            valorTotalPromocao = valorTotalPromocao.add(venda.getCobranca().getBeneficioComercio().abs());
+            valorTotalComissao = calcularValorComissao(venda.getCobranca(), valorTotalComissao);
+            valorTotalRecebidoViaLoja = valorTotalRecebidoViaLoja.add(getValorRecebido(venda, operadora));
+            valorTotalTransacaoPagamento = valorTotalTransacaoPagamento.add(venda.getCobranca().getTaxaAdquirente());
+            valorTotalRepasse = valorTotalRepasse.add(venda.getCobranca().getTotalCredito().subtract(venda.getCobranca().getTotalDebito()));
+            valorTotalBrutoParcial = valorTotalBrutoParcial.add(venda.getValorBruto());
+            valorTotalTaxaEntrega = valorTotalTaxaEntrega.add(venda.getCobranca().getTaxaEntrega());
+            valorTotalCancelado = valorTotalCancelado.add(venda.getValorCancelado());
+        }
+
+        var valorTotalMensalidade = calcularTaxaMensalidade(empresa, valorTotalBrutoParcial);
+
+        var valorTotalOcorrencia = somar(ocorrencias.stream()
                 .map(Ocorrencia::getValor)
                 .toList());
 
-        var taxaMensalidade = getTaxaMensalidade(vendas.get(0).getEmpresa(), venda.getTotalBruto());
+        var valorOutrosLancamentos = calcularOutrosLancamentos(vendas, ocorrencias, valorTotalBrutoParcial);
 
-        return VendaProcessada
-                .builder()
-                .totalRepasse(venda.getTotalRepasse()
-                        .subtract(totalDebito)
-                        .subtract(taxaMensalidade))
-                .totalBruto(venda.getTotalBruto())
-                .totalPedido(venda.getTotalPedido())
-                .totalCancelado(venda.getTotalCancelado())
-                .totalLiquido(venda.getTotalLiquido())
-                .totalTaxaEntrega(venda.getTotalTaxaEntrega())
-                .totalDesconto(venda.getTotalDesconto())
-                .totalTicketMedio(venda.getTotalTicketMedio())
-                .totalComissao(venda.getTotalComissao())
+        valorTotalRepasse = valorTotalRepasse
+                .subtract(valorTotalMensalidade)
+                .subtract(valorTotalOcorrencia);
+
+        valorTotalBruto = valorTotalBruto
+                .add(valorTotalPromocao)
+                .add(valorTotalTransacaoPagamento.abs())
+                .add(valorTotalPedidoMinimo)
+                .add(valorTotalReembolsoBeneficio)
+                .add(valorTotalRecebidoViaLoja.abs())
+                .add(valorTotalComissao.abs())
+                .add(valorTotalRepasse)
+                .add(valorOutrosLancamentos);
+
+        return VendaProcessada.builder()
+                .totalRepasse(valorTotalRepasse)
+                .totalPromocao(valorTotalPromocao)
+                .totalComissao(valorTotalComissao)
+                .totalComissaoTransacaoPagamento(valorTotalTransacaoPagamento)
+                .totalRecebidoLoja(valorTotalRecebidoViaLoja)
+                .totalBruto(valorTotalBruto)
                 .quantidade(BigInteger.valueOf(vendas.size()))
-                .totalTaxas(venda.getTotalTaxas())
-                .taxaMedia(venda.getTaxaMedia())
-                .totalComissaoOperadora(venda.getTotalComissaoOperadora())
-                .totalComissaoTransacaoPagamento(venda.getTotalComissaoTransacaoPagamento().multiply(BigDecimal.valueOf(-1D)))
-//                .totalPromocaoLoja(venda.getTotalPromocaoLoja().multiply(BigDecimal.valueOf(-1D)))
-                .totalRecebidoLoja(venda.getTotalRecebidoLoja())
-                .totalRecebidoOperadora(venda.getTotalRecebidoOperadora())
-                .taxaService(venda.getTaxaService())
-                .totalPromocao(venda.getTotalPromocao().multiply(BigDecimal.valueOf(-1D)))
-                .totalComissaoTransacaoPagamento(venda.getTotalComissaoTransacaoPagamento())
+                .totalTicketMedio(calcularTicketMedio(BigInteger.valueOf(vendas.size()), valorTotalBruto))
+                .totalTaxaEntrega(valorTotalTaxaEntrega)
+                .totalCancelado(valorTotalCancelado)
                 .build();
     }
 
     @Override
     public VendaProcessada processar(List<Venda> vendas) {
-
-        var totalTaxaServico = vendas.stream()
-                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .filter(venda -> venda.getCobranca().getTaxaServico() != null)
-                .map(venda -> venda.getCobranca().getTaxaServico())
-                .toList();
-
-        var totalRepasse = vendas.stream()
-                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .map(venda -> venda.getCobranca().getTotalCredito().subtract(venda.getCobranca().getTotalDebito()))
-                .toList();
-
-        var totalComissaoDebito = vendas.stream()
-                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .filter(venda -> venda.getCobranca().getComissao().compareTo(BigDecimal.valueOf(0D)) < 0)
-                .map(venda -> venda.getCobranca().getComissao())
-                .toList();
-
-        var totalComissaoCredito = vendas.stream()
-                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .filter(venda -> venda.getCobranca().getComissao().compareTo(BigDecimal.valueOf(0D)) > 0)
-                .map(venda -> venda.getCobranca().getComissao())
-                .toList();
-
-        var resultTotalComissaoDebito = somar(totalComissaoDebito);
-        var resultTotalComissaoCredito = somar(totalComissaoCredito);
-        var resultTotalComissao = resultTotalComissaoDebito.subtract(resultTotalComissaoCredito);
-        var resultTotalRepasse = somar(totalRepasse);
-        var resultTaxaServico = somar(totalTaxaServico);
-
-        return VendaProcessada.builder()
-                .totalRepasse(resultTotalRepasse)
-                .totalBruto(calcularValorBruto(vendas))
-                .totalPedido(calcularTotalPedido(vendas))
-                .totalCancelado(calcularTotalCancelado(vendas))
-                .totalLiquido(calcularTotalLiquido(vendas))
-                .totalTaxaEntrega(calcularTotalTaxaEntrega(vendas))
-                .totalDesconto(calcularTotalDesconto(vendas).multiply(BigDecimal.valueOf(-1D)))
-                .totalTicketMedio(calcularTicketMedio(vendas))
-                .totalComissao(resultTotalComissao)
-                .quantidade(BigInteger.valueOf(vendas.size()))
-                .totalTaxas(calcularTotalTaxas(vendas))
-                .taxaService(resultTaxaServico)
-                .totalPromocao(calcularIncentivoPromocionalLoja(vendas))
-                .totalComissaoOperadora(resultTotalComissao)
-                .totalComissaoTransacaoPagamento(calcularComissaoTransacaoPagamento(vendas))
-                .totalRecebidoLoja(calcularValorRecebidoLoja(vendas))
-                .totalRecebidoOperadora(calcularValorRecebidoOperadora(vendas))
-                .build();
+        return processar(vendas, new ArrayList<>());
     }
 
-    private BigDecimal calcularValorBruto(List<Venda> vendas) {
-        var total = vendas.stream()
-                .filter(venda -> venda.getCobranca().getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .map(Venda::getValorBruto)
-                .toList();
-
-        return somar(total);
+    private BigDecimal calcularValorComissao(Cobranca cobranca, BigDecimal valorComissao) {
+        if (cobranca.getComissao().compareTo(BigDecimal.valueOf(0D)) < 0) {
+            valorComissao = valorComissao.add(cobranca.getComissao());
+        }
+        if (cobranca.getComissao().compareTo(BigDecimal.valueOf(0D)) > 0) {
+            valorComissao = valorComissao.subtract(cobranca.getComissao());
+        }
+        return valorComissao;
     }
 
-    private BigDecimal calcularValorRecebidoOperadora(List<Venda> vendas) {
-        var total = vendas.stream()
-                .filter(venda -> venda.getPagamento().getResponsavel().equalsIgnoreCase("ifood"))
-                .map(Venda::getValorTotalPedido)
-                .toList();
+    private BigDecimal getValorRecebido(Venda venda, Operadora operadora) {
 
-        return somar(total);
+        if (!venda.getPagamento().getResponsavel().equalsIgnoreCase(operadora.getDescricao())) {
+            return venda.getValorTotalPedido();
+        }
+
+        return BigDecimal.valueOf(0D);
     }
 
-    private BigDecimal calcularValorRecebidoLoja(List<Venda> vendas) {
-        var total = vendas.stream()
-                .filter(venda -> !venda.getPagamento().getResponsavel().equalsIgnoreCase("ifood"))
-                .map(Venda::getValorTotalPedido)
-                .toList();
-
-        return somar(total);
+    private BigDecimal getValorPedidoMinimo(Cobranca cobranca) {
+        if (cobranca.getTaxaServico() != null) {
+            return cobranca.getTaxaServico();
+        }
+        return BigDecimal.valueOf(0D);
     }
 
-    private BigDecimal calcularIncentivoPromocionalOperadora(List<Venda> vendas) {
-        var total = vendas.stream()
-                .filter(venda -> venda.getCobranca().getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .map(venda -> venda.getCobranca().getBeneficioOperadora().abs())
-                .toList();
-
-        return somar(total);
+    private BigDecimal getValorReembolsoBeneficio(Cobranca cobranca) {
+        if (cobranca.getTaxaAdquirenteBeneficio() != null && cobranca.getTaxaAdquirenteBeneficio().compareTo(BigDecimal.valueOf(0D)) > 0) {
+            return cobranca.getTaxaAdquirenteBeneficio();
+        }
+        return BigDecimal.valueOf(0D);
     }
 
-    private BigDecimal calcularIncentivoPromocionalLoja(List<Venda> vendas) {
-        var total = vendas.stream()
-                .filter(venda -> venda.getCobranca().getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .map(venda -> venda.getCobranca().getBeneficioComercio().abs())
-                .toList();
+    private BigDecimal calcularTicketMedio(BigInteger quantidade, BigDecimal valorBruto) {
+        if (quantidade.equals(BigInteger.ZERO)) return BigDecimal.valueOf(0D);
 
-        return somar(total);
+        return valorBruto.divide(new BigDecimal(quantidade), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calcularTotalPedido(List<Venda> vendas) {
-        var total = vendas.stream()
-                .map(Venda::getValorTotalPedido)
-                .toList();
+    private BigDecimal calcularOutrosLancamentos(List<Venda> vendas, List<Ocorrencia> ocorrencias, BigDecimal totalBruto) {
+        var valorReembolso = calcularTotalReembolso(vendas);
+        var taxaMensalidade = calcularTaxaMensalidade(vendas.get(0).getEmpresa(), totalBruto);
 
-        return somar(total);
+        var totalOcorrencia = somar(ocorrencias.stream()
+                .map(Ocorrencia::getValor)
+                .toList());
+
+        var taxaBeneficioAdquirente = somar(vendas.stream()
+                .filter(venda -> venda.getCobranca().getTaxaAdquirenteBeneficio() != null)
+                .filter(venda -> venda.getCobranca().getTaxaAdquirenteBeneficio().compareTo(BigDecimal.valueOf(0D)) > 0)
+                .map(venda -> venda.getCobranca().getTaxaAdquirenteBeneficio())
+                .toList());
+
+        return taxaMensalidade
+                .subtract(valorReembolso)
+                .subtract(taxaBeneficioAdquirente)
+                .add(totalOcorrencia);
     }
 
-    private BigDecimal calcularTotalLiquido(List<Venda> vendas) {
-        var total = vendas.stream()
-                .map(Venda::getValorLiquido)
-                .toList();
-
-        return somar(total);
-    }
-
-    private BigDecimal calcularTotalCancelado(List<Venda> vendas) {
-        var total = vendas.stream()
-                .map(Venda::getValorCancelado)
-                .toList();
-
-        return somar(total);
-    }
-
-    private BigDecimal calcularTotalTaxaEntrega(List<Venda> vendas) {
-        var total = vendas.stream()
-                .filter(venda -> venda.getCobranca().getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .map(venda -> venda.getCobranca().getTaxaEntrega())
-                .toList();
-
-        return somar(total);
-    }
-
-    private BigDecimal calcularTotalDesconto(List<Venda> vendas) {
-        var total = vendas.stream()
-                .map(Venda::getValorDesconto)
-                .toList();
-
-        return somar(total);
-    }
-
-    private BigDecimal calcularTotalComissao(List<Venda> vendas) {
-        var total = vendas.stream()
-                .filter(venda -> venda.getCobranca().getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .map(venda -> venda.getCobranca().getComissao())
-                .toList();
-
-        return somar(total);
-    }
-
-    private BigDecimal calcularTotalTaxas(List<Venda> vendas) {
-        var total = vendas.stream()
-                .map(venda -> venda.getCobranca().getTotalTaxas())
-                .toList();
-
-        return somar(total);
-    }
-
-    private BigDecimal calcularTicketMedio(List<Venda> vendas) {
-        var valorBruto = calcularValorBruto(vendas);
-        return valorBruto.divide(new BigDecimal(vendas.size()), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
-    }
-
-    private BigDecimal calcularComissaoTransacaoPagamento(List<Venda> vendas) {
-        var total = vendas.stream()
-                .filter(venda -> venda.getCobranca().getValorCancelado().equals(BigDecimal.valueOf(0D)))
-                .filter(venda -> venda.getCobranca().getTaxaAdquirente().compareTo(BigDecimal.ZERO) < 0)
-                .map(venda -> venda.getCobranca().getTaxaAdquirente())
-                .toList();
-
-        return somar(total);
-    }
-
-    private BigDecimal getTaxaMensalidade(Empresa empresa, BigDecimal totalBruto) {
+    private BigDecimal calcularTaxaMensalidade(Empresa empresa, BigDecimal totalBruto) {
         Taxa taxa = new Taxa();
         taxa.setValor(BigDecimal.valueOf(0D));
 
@@ -243,5 +169,29 @@ public class VendaProcessadaImpl implements VendaProcessadaService {
         }
 
         return taxa.getValor();
+    }
+
+    private BigDecimal calcularTotalReembolso(List<Venda> vendas) {
+        var vendasComTaxaServico = vendas.stream()
+                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
+                .filter(venda -> venda.getCobranca().getTaxaServico() != null && venda.getCobranca().getTaxaServico().compareTo(BigDecimal.valueOf(0D)) > 0)
+                .toList();
+
+        var taxaReembolso = BigDecimal.valueOf(0D);
+
+        for (Venda venda : vendasComTaxaServico) {
+            BigDecimal valorReembolso = venda.getCobranca().getTotalCredito().remainder(BigDecimal.ONE);
+            if (valorReembolso.compareTo(BigDecimal.valueOf(0.01D)) == 0) {
+                taxaReembolso = taxaReembolso.add(BigDecimal.valueOf(0.01D));
+            }
+            else if (valorReembolso.compareTo(BigDecimal.valueOf(0.02D)) == 0) {
+                taxaReembolso = taxaReembolso.add(BigDecimal.valueOf(0.02D));
+            }
+            else if (valorReembolso.compareTo(BigDecimal.valueOf(0.03D)) == 0) {
+                taxaReembolso = taxaReembolso.add(BigDecimal.valueOf(0.03D));
+            }
+        }
+
+        return taxaReembolso;
     }
 }
