@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.service;
 
+import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Taxa;
 import org.springframework.stereotype.Service;
 
@@ -30,4 +31,6 @@ public interface TaxaService {
     Taxa desativar(Long id);
 
     Taxa pesquisarPorId(Long id);
+
+    Taxa buscarPorDescricaoEmpresa(String descricao, Empresa empresa);
 }

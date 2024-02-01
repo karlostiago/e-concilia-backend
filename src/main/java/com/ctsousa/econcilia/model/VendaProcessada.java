@@ -34,12 +34,14 @@ public class VendaProcessada {
 
     private BigDecimal totalRepasse;
 
+    private BigDecimal taxaService;
+
+    private BigDecimal totalPromocao;
+
     ///
     private BigDecimal totalComissaoTransacaoPagamento;
 
     private BigDecimal totalComissaoOperadora;
-
-    private BigDecimal totalPromocaoLoja;
 
     private BigDecimal totalRecebidoLoja;
 

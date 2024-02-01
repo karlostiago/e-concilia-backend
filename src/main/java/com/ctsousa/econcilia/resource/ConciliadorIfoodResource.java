@@ -41,27 +41,32 @@ public class ConciliadorIfoodResource {
                                                  @RequestParam(name = "metodoPagamento", required = false) final String metodoPagamento,
                                                  @RequestParam(name = "bandeira", required = false) final String bandeira,
                                                  @RequestParam(name = "tipoRecebimento", required = false) final String tipoRecebimento) {
-
+        /**
+         * <br>Para remover<br/>
         List<Venda> vendas = integracaoService.pesquisarVendasIfood(lojaId, metodoPagamento, bandeira, tipoRecebimento, dtInicial, dtFinal);
         conciliadorIfoodService.aplicarCancelamento(vendas, lojaId);
         conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, lojaId, vendas);
         List<Ocorrencia> ocorrencias = integracaoService.pesquisarOcorrencias(lojaId, dtInicial, dtFinal);
         return ResponseEntity.ok(getConciliadorDTO(vendas, ocorrencias));
+         */
+
+        var conciliador = conciliadorIfoodService.conciliar(lojaId, metodoPagamento, bandeira, tipoRecebimento, dtInicial, dtFinal);
+        return ResponseEntity.ok(conciliador);
     }
 
-    private ConciliadorDTO getConciliadorDTO(final List<Venda> vendas, final List<Ocorrencia> ocorrencias) {
-        ConciliadorDTO conciliadorDTO = new ConciliadorDTO();
-        conciliadorDTO.setVendas(vendas);
-        conciliadorDTO.setTotalizador(getTotalizadorDTO(vendas, ocorrencias));
-        conciliadorDTO.setResumoFinanceiro(getResumoFinanceiroDTO(vendas));
-        return conciliadorDTO;
-    }
-
-    private TotalizadorDTO getTotalizadorDTO(final List<Venda> vendas, final List<Ocorrencia> ocorrencias) {
-        return conciliadorIfoodService.totalizar(vendas, ocorrencias);
-    }
-
-    private ResumoFinanceiroDTO getResumoFinanceiroDTO(final List<Venda> vendas) {
-        return conciliadorIfoodService.calcularResumoFinanceiro(vendas);
-    }
+//    private ConciliadorDTO getConciliadorDTO(final List<Venda> vendas, final List<Ocorrencia> ocorrencias) {
+//        ConciliadorDTO conciliadorDTO = new ConciliadorDTO();
+//        conciliadorDTO.setVendas(vendas);
+//        conciliadorDTO.setTotalizador(getTotalizadorDTO(vendas, ocorrencias));
+//        conciliadorDTO.setResumoFinanceiro(getResumoFinanceiroDTO(vendas));
+//        return conciliadorDTO;
+//    }
+//
+//    private TotalizadorDTO getTotalizadorDTO(final List<Venda> vendas, final List<Ocorrencia> ocorrencias) {
+//        return conciliadorIfoodService.totalizar(vendas, ocorrencias);
+//    }
+//
+//    private ResumoFinanceiroDTO getResumoFinanceiroDTO(final List<Venda> vendas) {
+//        return conciliadorIfoodService.calcularResumoFinanceiro(vendas);
+//    }
 }

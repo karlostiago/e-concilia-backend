@@ -60,6 +60,7 @@ public class Venda extends Entidade {
 
     public BigDecimal getValorBruto() {
         return this.cobranca.getValorParcial()
+                .add(this.cobranca.getTaxaServico())
                 .add(this.cobranca.getTaxaEntrega());
     }
 

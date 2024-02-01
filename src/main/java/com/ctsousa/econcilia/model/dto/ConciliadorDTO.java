@@ -15,4 +15,8 @@ public class ConciliadorDTO {
     private TotalizadorDTO totalizador;
 
     private ResumoFinanceiroDTO resumoFinanceiro;
+
+    public ConciliadorDTO(final List<Venda> vendas) {
+        this.vendas = vendas;
+    }
 }

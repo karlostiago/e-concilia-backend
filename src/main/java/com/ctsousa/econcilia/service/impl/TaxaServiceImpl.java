@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.repository.TaxaRepository;
 import com.ctsousa.econcilia.service.TaxaService;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class TaxaServiceImpl implements TaxaService {
@@ -18,6 +20,17 @@ public class TaxaServiceImpl implements TaxaService {
 
     public TaxaServiceImpl(TaxaRepository taxaRepository) {
         this.taxaRepository = taxaRepository;
+    }
+
+    @Override
+    public Taxa buscarPorDescricaoEmpresa(String descricao, Empresa empresa) {
+        Optional<Taxa> taxaOpt = taxaRepository.por(descricao, empresa.getId());
+
+        if (taxaOpt.isEmpty()) {
+            throw new NotificacaoException("Nenhuma taxa encontrada com descrição :: " + descricao + ", e empresa :: " + empresa.getRazaoSocial());
+        }
+
+        return taxaOpt.get();
     }
 
     @Override

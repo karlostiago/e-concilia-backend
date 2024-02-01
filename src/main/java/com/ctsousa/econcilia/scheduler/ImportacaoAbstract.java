@@ -1,6 +1,5 @@
 package com.ctsousa.econcilia.scheduler;
 
-import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Importacao;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.service.ImportacaoService;
@@ -26,6 +25,9 @@ public abstract class ImportacaoAbstract {
     protected ImportacaoAbstract(ImportacaoService importacaoService, IntegracaoService integracaoService) {
         this.importacaoService = importacaoService;
         this.integracaoService = integracaoService;
+    }
+
+    public void executar() {
         this.buscarImportacao();
         this.buscarPeriodos();
     }
@@ -74,14 +76,8 @@ public abstract class ImportacaoAbstract {
     public String getCodigoIntegracao() {
         var empresa = importacao.getEmpresa();
         var operadora = importacao.getOperadora();
-
-        List<Integracao> integracoes = integracaoService.pesquisar(empresa.getId(), operadora.getId(), null);
-
-        if (integracoes.isEmpty()) {
-            throw new NotificacaoException(String.format("Nenhum codigo integracao encontrado para empresa %s e operadora %s", empresa.getRazaoSocial(), operadora.getDescricao()));
-        }
-
-        return integracoes.get(0).getCodigoIntegracao();
+        Integracao integracao = integracaoService.pesquisar(empresa, operadora);
+        return integracao.getCodigoIntegracao();
     }
 
     private void buscarImportacao() {

@@ -7,8 +7,10 @@ import com.ctsousa.econcilia.scheduler.ImportacaoAbstract;
 import com.ctsousa.econcilia.scheduler.Scheduler;
 import com.ctsousa.econcilia.scheduler.TipoImportacao;
 import com.ctsousa.econcilia.service.ImportacaoService;
+import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,20 +24,30 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
 
     private final ImportacaoService importacaoService;
 
-    private final IntegracaoService integracaoService;
+    private final IntegracaoIfoodService integracaoIfoodService;
 
     private final VendaRepository vendaRepository;
 
-    public ImportacaoSchedulerIfoodImpl(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository) {
+    @Value("${importacao_habilitar}")
+    private boolean habilitar;
+
+    public ImportacaoSchedulerIfoodImpl(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService) {
         super(importacaoService, integracaoService);
         this.importacaoService = importacaoService;
-        this.integracaoService = integracaoService;
         this.vendaRepository = vendaRepository;
+        this.integracaoIfoodService = integracaoIfoodService;
     }
 
     @Override
     @Scheduled(fixedRate = QUINZE_MINUTOS)
     public void processar() {
+        if (!habilitar) {
+            log.info("O processo de importação não está habilitado.");
+            return;
+        }
+
+        executar();
+
         if (periodos == null || periodos.isEmpty()) {
             log.info("Nenhum periodo encontrado para ser importado.");
             return;
@@ -53,7 +65,7 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
     private void importar(final List<Periodo> periodos, final String codigoIntegeracao) {
         for (Periodo periodo : periodos) {
             log.info("Pesquisando as vendas para empresa {}, operadora {}, no periodo de {} ate {}", importacao.getEmpresa().getRazaoSocial(), importacao.getOperadora().getDescricao(), periodo.getDe(), periodo.getAte());
-            List<Venda> vendas = integracaoService.pesquisarVendasIfood(codigoIntegeracao, null, null, null, periodo.getDe(), periodo.getAte());
+            List<Venda> vendas = integracaoIfoodService.pesquisarVendas(codigoIntegeracao, null, null, null, periodo.getDe(), periodo.getAte());
 
             if (vendas.isEmpty()) continue;
 

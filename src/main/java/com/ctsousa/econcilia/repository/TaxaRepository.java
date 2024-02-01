@@ -26,4 +26,12 @@ public interface TaxaRepository extends JpaRepository<Taxa, Long> {
 
     @Query(value = "SELECT t FROM Taxa t INNER JOIN FETCH t.contrato c INNER JOIN FETCH c.empresa WHERE t.id = :id")
     Optional<Taxa> porId(@Param(value = "id") Long id);
+
+    @Query(value = "SELECT tx.* FROM contrato c " +
+            "INNER JOIN empresa emp ON c.empresa_id = emp.id " +
+            "INNER JOIN operadora oper ON oper .id = c.operadora_id " +
+            "INNER JOIN taxa tx ON tx.contrato_id = c.id " +
+            "WHERE c.ativo = 1 AND tx.ativo = 1 AND UPPER(tx.descricao) LIKE :descricao% AND c.empresa_id = :empresaId",
+    nativeQuery = true)
+    Optional<Taxa> por(@Param(value = "descricao") String descricao, @Param(value = "empresaId") Long empresaId);
 }

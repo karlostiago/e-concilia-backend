@@ -36,3 +36,6 @@ ifood:
 
 credencial:
     senha: ${credencial_senha}
+
+importacao:
+    habilitar: ${importacao_habilitar}

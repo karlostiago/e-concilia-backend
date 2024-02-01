@@ -22,21 +22,23 @@ public interface IntegracaoService {
 
     Integracao pesquisarPorCodigoIntegracao(final String codigoIntegracao);
 
-    List<Venda> pesquisarVendasIfood(final String codigoIntegracao, final String metodoPagamento, final String bandeira, final String tipoRecebimento, final LocalDate dtInicial, final LocalDate dtFinal);
+    Integracao pesquisar(final Empresa empresa, final Operadora operadora);
 
-    List<AjusteVenda> pesquisarAjusteVendasIfood(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
-
-    List<Pagamento> pesquisarPagamentos(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
-
-    List<Cancelamento> pesquisarCancelamentos(final String codigoIntegracao, final String periodoId);
-
-    List<CobrancaCancelada> pesquisarCobrancaCanceladas(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
-
-    List<TaxaManutencao> pesquisarTaxasManutencao(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
-
-    List<ImpostoRenda> pesquisarImpostoRenda(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
-
-    List<RegistroContaReceber> pesquisarRegistroContaReceber(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
-
-    List<Ocorrencia> pesquisarOcorrencias(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+//    List<Venda> pesquisarVendasIfood(final String codigoIntegracao, final String metodoPagamento, final String bandeira, final String tipoRecebimento, final LocalDate dtInicial, final LocalDate dtFinal);
+//
+//    List<AjusteVenda> pesquisarAjusteVendasIfood(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+//
+//    List<Pagamento> pesquisarPagamentos(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+//
+//    List<Cancelamento> pesquisarCancelamentos(final String codigoIntegracao, final String periodoId);
+//
+//    List<CobrancaCancelada> pesquisarCobrancaCanceladas(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+//
+//    List<TaxaManutencao> pesquisarTaxasManutencao(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+//
+//    List<ImpostoRenda> pesquisarImpostoRenda(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+//
+//    List<RegistroContaReceber> pesquisarRegistroContaReceber(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+//
+//    List<Ocorrencia> pesquisarOcorrencias(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
 }

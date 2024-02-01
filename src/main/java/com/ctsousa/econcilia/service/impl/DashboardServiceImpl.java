@@ -5,30 +5,31 @@ import com.ctsousa.econcilia.model.Ocorrencia;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.VendaProcessada;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
-import com.ctsousa.econcilia.service.ConciliadorIfoodService;
-import com.ctsousa.econcilia.service.DashboadService;
-import com.ctsousa.econcilia.service.IntegracaoService;
-import com.ctsousa.econcilia.service.VendaProcessadaService;
+import com.ctsousa.econcilia.service.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class DashboardServiceImpl implements DashboadService {
 
     private final IntegracaoService integracaoService;
 
+    private final IntegracaoIfoodService integracaoIfoodService;
+
     private final VendaProcessadaService vendaProcessadaService;
 
     private final ConciliadorIfoodService conciliadorIfoodService;
 
-    public DashboardServiceImpl(IntegracaoService integracaoService, VendaProcessadaService vendaProcessadaService, ConciliadorIfoodService conciliadorIfoodService) {
+    public DashboardServiceImpl(IntegracaoService integracaoService, VendaProcessadaService vendaProcessadaService, ConciliadorIfoodService conciliadorIfoodService, IntegracaoIfoodService integracaoIfoodService) {
         this.integracaoService = integracaoService;
         this.vendaProcessadaService = vendaProcessadaService;
         this.conciliadorIfoodService = conciliadorIfoodService;
+        this.integracaoIfoodService = integracaoIfoodService;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class DashboardServiceImpl implements DashboadService {
         for (Long idEmpresa : empresasId) {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
-                vendas.addAll(integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal));
+                vendas.addAll(integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal));
             }
         }
 
@@ -60,16 +61,18 @@ public class DashboardServiceImpl implements DashboadService {
         for (Long idEmpresa : empresasId) {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
-                var vendasPesquidas = integracaoService.pesquisarVendasIfood(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
+                var vendasPesquidas = integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
                 conciliadorIfoodService.aplicarCancelamento(vendasPesquidas, integracao.getCodigoIntegracao());
-                ocorrencias = integracaoService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
+                var ocorrenciasPesquisadas = integracaoIfoodService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
                 conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendasPesquidas);
+
                 vendas.addAll(vendasPesquidas);
+                ocorrencias.addAll(ocorrenciasPesquisadas);
             }
         }
 
         if (vendas.isEmpty()) {
-            return getDashboardDTO();
+            return DashboardDTO.builder().build();
         }
 
         VendaProcessada vendaProcessada = vendaProcessadaService.processar(vendas, ocorrencias);
@@ -80,28 +83,11 @@ public class DashboardServiceImpl implements DashboadService {
                 .quantidadeVendas(vendaProcessada.getQuantidade())
                 .valorCancelamento(vendaProcessada.getTotalCancelado())
                 .valorRecebidoLoja(vendaProcessada.getTotalRecebidoLoja().multiply(BigDecimal.valueOf(-1D)))
-                .valorIncentivoPromocionalLoja(vendaProcessada.getTotalPromocaoLoja().multiply(BigDecimal.valueOf(-1D)))
-                .valorIncentivoPromocionalOperadora(vendaProcessada.getTotalComissaoOperadora())
+                .valorComissaoTransacao(vendaProcessada.getTotalComissaoTransacaoPagamento())
                 .valorTaxaEntrega(vendaProcessada.getTotalTaxaEntrega())
-                .valorEmRepasse(vendaProcessada.getTotalRepasse().subtract(BigDecimal.valueOf(100)))
-//                .valorComissao(vendaProcessada.getTotalComissao())
-//                .valorDesconto(vendaProcessada.getTotalDesconto())
-//                .valorTaxas(vendaProcessada.getTotalTaxas())
-//                .taxaMedia(vendaProcessada.getTaxaMedia())
-                .build();
-    }
-
-    private DashboardDTO getDashboardDTO() {
-        return DashboardDTO
-                .builder()
-                .valorCancelamento(new BigDecimal("0.0"))
-                .taxaMedia(new BigDecimal("0.0"))
-                .valorBrutoVendas(new BigDecimal("0.0"))
-                .valorComissao(new BigDecimal("0.0"))
-                .valorDesconto(new BigDecimal("0.0"))
-                .valorTaxas(new BigDecimal("0.0"))
-                .quantidadeVendas(BigInteger.ZERO)
-                .taxaMedia(new BigDecimal("0.0"))
+                .valorEmRepasse(vendaProcessada.getTotalRepasse())
+                .valorComissao(vendaProcessada.getTotalComissao())
+                .valorPromocao(vendaProcessada.getTotalPromocao())
                 .build();
     }
 
