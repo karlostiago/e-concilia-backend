@@ -80,7 +80,7 @@ public class VendaProcessadaImpl implements VendaProcessadaService {
 
         return VendaProcessada.builder()
                 .totalRepasse(valorTotalRepasse)
-                .totalPromocao(valorTotalPromocao)
+                .totalPromocao(valorTotalPromocao.multiply(BigDecimal.valueOf(-1D)))
                 .totalComissao(valorTotalComissao)
                 .totalComissaoTransacaoPagamento(valorTotalTransacaoPagamento)
                 .totalRecebidoLoja(valorTotalRecebidoViaLoja)

@@ -8,11 +8,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ProcessadorIfood extends Processador<VendaDTO> {
+public class ProcessadorUberEats extends Processador<VendaDTO> {
 
     @Override
     public VendaDTO processar(List<Venda> vendas) {
-        System.out.println("Processando vendas ifood");
-        return null;
+        throw new UnsupportedOperationException("Operação não suportada por esse processador.");
     }
 }

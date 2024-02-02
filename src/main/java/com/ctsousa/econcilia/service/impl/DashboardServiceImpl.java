@@ -1,10 +1,13 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.TipoProcessador;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Ocorrencia;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.VendaProcessada;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
+import com.ctsousa.econcilia.processador.Processador;
+import com.ctsousa.econcilia.processador.ProcessadorFactory;
 import com.ctsousa.econcilia.service.*;
 import org.springframework.stereotype.Component;
 
@@ -25,11 +28,14 @@ public class DashboardServiceImpl implements DashboadService {
 
     private final ConciliadorIfoodService conciliadorIfoodService;
 
-    public DashboardServiceImpl(IntegracaoService integracaoService, VendaProcessadaService vendaProcessadaService, ConciliadorIfoodService conciliadorIfoodService, IntegracaoIfoodService integracaoIfoodService) {
+    private final ProcessadorFactory processadorFactory;
+
+    public DashboardServiceImpl(IntegracaoService integracaoService, VendaProcessadaService vendaProcessadaService, ConciliadorIfoodService conciliadorIfoodService, IntegracaoIfoodService integracaoIfoodService, ProcessadorFactory processadorFactory) {
         this.integracaoService = integracaoService;
         this.vendaProcessadaService = vendaProcessadaService;
         this.conciliadorIfoodService = conciliadorIfoodService;
         this.integracaoIfoodService = integracaoIfoodService;
+        this.processadorFactory = processadorFactory;
     }
 
     @Override
@@ -61,6 +67,10 @@ public class DashboardServiceImpl implements DashboadService {
         for (Long idEmpresa : empresasId) {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
+
+                Processador<?> processador = TipoProcessador.porOperadora(integracao.getOperadora(), processadorFactory);
+                processador.processar(new ArrayList<>());
+
                 var vendasPesquidas = integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
                 conciliadorIfoodService.aplicarCancelamento(vendasPesquidas, integracao.getCodigoIntegracao());
                 var ocorrenciasPesquisadas = integracaoIfoodService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
