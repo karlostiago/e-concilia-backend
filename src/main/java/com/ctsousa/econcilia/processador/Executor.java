@@ -1,10 +1,10 @@
 package com.ctsousa.econcilia.processador;
 
-import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.Integracao;
 
-import java.util.List;
+import java.time.LocalDate;
 
-public interface Executor<T> {
+public interface Executor {
 
-    T processar(List<Venda> vendas);
+    void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal);
 }

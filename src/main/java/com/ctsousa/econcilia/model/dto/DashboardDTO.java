@@ -1,6 +1,5 @@
 package com.ctsousa.econcilia.model.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +8,6 @@ import java.math.BigInteger;
 
 @Getter
 @Setter
-@Builder
 public class DashboardDTO {
 
     private BigDecimal valorBrutoVendas;
@@ -31,4 +29,17 @@ public class DashboardDTO {
     private BigDecimal valorPromocao;
 
     private BigDecimal valorComissaoTransacao;
+
+    public DashboardDTO() {
+        this.setValorBrutoVendas(BigDecimal.valueOf(0D));
+        this.setQuantidadeVendas(BigInteger.valueOf(0));
+        this.setTicketMedio(BigDecimal.valueOf(0D));
+        this.setValorCancelamento(BigDecimal.valueOf(0D));
+        this.setValorRecebidoLoja(BigDecimal.valueOf(0D));
+        this.setValorTaxaEntrega(BigDecimal.valueOf(0D));
+        this.setValorEmRepasse(BigDecimal.valueOf(0D));
+        this.setValorComissao(BigDecimal.valueOf(0D));
+        this.setValorPromocao(BigDecimal.valueOf(0D));
+        this.setValorComissaoTransacao(BigDecimal.valueOf(0D));
+    }
 }

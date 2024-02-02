@@ -2,7 +2,7 @@ package com.ctsousa.econcilia.processador;
 
 import com.ctsousa.econcilia.enumaration.TipoProcessador;
 import com.ctsousa.econcilia.processador.ifood.ProcessadorIfood;
-import com.ctsousa.econcilia.processador.ifood.ProcessadorUberEats;
+import com.ctsousa.econcilia.processador.ubereats.ProcessadorUberEats;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +17,7 @@ public class ProcessadorFactory {
         this.processadorUberEats = processadorUberEats;
     }
 
-    public Processador<?> criar(TipoProcessador tipoProcessador) {
+    public Processador criar(TipoProcessador tipoProcessador) {
         return switch (tipoProcessador) {
             case IFOOD -> processadorIfood;
             case UBER_EATS -> processadorUberEats;

@@ -1,5 +1,7 @@
 package com.ctsousa.econcilia.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -7,6 +9,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class SpringConfig {
+
+    private static ApplicationContext applicationContext;
+
+    @Autowired
+    @SuppressWarnings("static")
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        SpringConfig.applicationContext = applicationContext;
+    }
 
     @Bean
     public RestTemplate getRestTemplate() {
@@ -16,5 +26,9 @@ public class SpringConfig {
     @Bean
     public WebClient webClient() {
         return WebClient.builder().build();
+    }
+
+    public static Object getBean(String bean) {
+        return applicationContext.getBean(bean);
     }
 }

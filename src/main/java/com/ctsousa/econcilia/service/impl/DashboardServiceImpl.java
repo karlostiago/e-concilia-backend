@@ -2,16 +2,15 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.enumaration.TipoProcessador;
 import com.ctsousa.econcilia.model.Integracao;
-import com.ctsousa.econcilia.model.Ocorrencia;
 import com.ctsousa.econcilia.model.Venda;
-import com.ctsousa.econcilia.model.VendaProcessada;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
 import com.ctsousa.econcilia.processador.Processador;
-import com.ctsousa.econcilia.processador.ProcessadorFactory;
-import com.ctsousa.econcilia.service.*;
+import com.ctsousa.econcilia.service.DashboadService;
+import com.ctsousa.econcilia.service.IntegracaoIfoodService;
+import com.ctsousa.econcilia.service.IntegracaoService;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,18 +23,10 @@ public class DashboardServiceImpl implements DashboadService {
 
     private final IntegracaoIfoodService integracaoIfoodService;
 
-    private final VendaProcessadaService vendaProcessadaService;
 
-    private final ConciliadorIfoodService conciliadorIfoodService;
-
-    private final ProcessadorFactory processadorFactory;
-
-    public DashboardServiceImpl(IntegracaoService integracaoService, VendaProcessadaService vendaProcessadaService, ConciliadorIfoodService conciliadorIfoodService, IntegracaoIfoodService integracaoIfoodService, ProcessadorFactory processadorFactory) {
+    public DashboardServiceImpl(IntegracaoService integracaoService, IntegracaoIfoodService integracaoIfoodService) {
         this.integracaoService = integracaoService;
-        this.vendaProcessadaService = vendaProcessadaService;
-        this.conciliadorIfoodService = conciliadorIfoodService;
         this.integracaoIfoodService = integracaoIfoodService;
-        this.processadorFactory = processadorFactory;
     }
 
     @Override
@@ -60,45 +51,29 @@ public class DashboardServiceImpl implements DashboadService {
     @Override
     public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Long> empresasId = getEmpresasId(empresaId);
-
-        List<Venda> vendas = new ArrayList<>();
-        List<Ocorrencia> ocorrencias = new ArrayList<>();
+        DashboardDTO dashboardDTO = new DashboardDTO();
 
         for (Long idEmpresa : empresasId) {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
 
-                Processador<?> processador = TipoProcessador.porOperadora(integracao.getOperadora(), processadorFactory);
-                processador.processar(new ArrayList<>());
+                Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
+                processador.processar(integracao, dtInicial, dtFinal);
 
-                var vendasPesquidas = integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
-                conciliadorIfoodService.aplicarCancelamento(vendasPesquidas, integracao.getCodigoIntegracao());
-                var ocorrenciasPesquisadas = integracaoIfoodService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
-                conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendasPesquidas);
-
-                vendas.addAll(vendasPesquidas);
-                ocorrencias.addAll(ocorrenciasPesquisadas);
+                dashboardDTO.setValorBrutoVendas(dashboardDTO.getValorBrutoVendas().add(processador.getValorTotalBruto()));
+                dashboardDTO.setQuantidadeVendas(dashboardDTO.getQuantidadeVendas().add(BigInteger.valueOf(processador.getQuantidade())));
+                dashboardDTO.setTicketMedio(dashboardDTO.getTicketMedio().add(processador.getValorTotalTicketMedio()));
+                dashboardDTO.setValorCancelamento(dashboardDTO.getValorCancelamento().add(processador.getValorTotalCancelado()));
+                dashboardDTO.setValorRecebidoLoja(dashboardDTO.getValorRecebidoLoja().add(processador.getValorTotalRecebido()));
+                dashboardDTO.setValorComissaoTransacao(dashboardDTO.getValorComissaoTransacao().add(processador.getValorTotalComissaoTransacaoPagamento()));
+                dashboardDTO.setValorTaxaEntrega(dashboardDTO.getValorTaxaEntrega().add(processador.getValorTotalTaxaEntrega()));
+                dashboardDTO.setValorEmRepasse(dashboardDTO.getValorEmRepasse().add(processador.getValorTotalPagar()));
+                dashboardDTO.setValorComissao(dashboardDTO.getValorComissao().add(processador.getValorTotalComissao()));
+                dashboardDTO.setValorPromocao(dashboardDTO.getValorPromocao().add(processador.getValorTotalPromocao()));
             }
         }
 
-        if (vendas.isEmpty()) {
-            return DashboardDTO.builder().build();
-        }
-
-        VendaProcessada vendaProcessada = vendaProcessadaService.processar(vendas, ocorrencias);
-
-        return DashboardDTO.builder()
-                .valorBrutoVendas(vendaProcessada.getTotalBruto())
-                .ticketMedio(vendaProcessada.getTotalTicketMedio())
-                .quantidadeVendas(vendaProcessada.getQuantidade())
-                .valorCancelamento(vendaProcessada.getTotalCancelado())
-                .valorRecebidoLoja(vendaProcessada.getTotalRecebidoLoja().multiply(BigDecimal.valueOf(-1D)))
-                .valorComissaoTransacao(vendaProcessada.getTotalComissaoTransacaoPagamento())
-                .valorTaxaEntrega(vendaProcessada.getTotalTaxaEntrega())
-                .valorEmRepasse(vendaProcessada.getTotalRepasse())
-                .valorComissao(vendaProcessada.getTotalComissao())
-                .valorPromocao(vendaProcessada.getTotalPromocao())
-                .build();
+        return dashboardDTO;
     }
 
     private List<Long> getEmpresasId(final String empresasId) {
