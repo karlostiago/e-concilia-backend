@@ -1,17 +1,22 @@
 package com.ctsousa.econcilia.service.impl;
 
-import com.ctsousa.econcilia.model.*;
+import com.ctsousa.econcilia.enumaration.TipoProcessador;
+import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.dto.ConciliadorDTO;
 import com.ctsousa.econcilia.model.dto.ResumoFinanceiroDTO;
 import com.ctsousa.econcilia.model.dto.TotalizadorDTO;
-import com.ctsousa.econcilia.service.*;
+import com.ctsousa.econcilia.processor.FormaRecebimento;
+import com.ctsousa.econcilia.processor.Processador;
+import com.ctsousa.econcilia.processor.ProcessadorFiltro;
+import com.ctsousa.econcilia.service.ConciliadorIfoodService;
+import com.ctsousa.econcilia.service.IntegracaoService;
+import com.ctsousa.econcilia.service.TaxaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
+import static com.ctsousa.econcilia.util.StringUtil.temValor;
 
 @Slf4j
 @Component
@@ -21,96 +26,100 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
 
     private final IntegracaoService integracaoService;
 
-    private final IntegracaoIfoodService integracaoIfoodService;
 
-    private final VendaProcessadaService vendaProcessadaService;
 
-    public ConciliadorIfoodServiceImpl(TaxaService taxaService, IntegracaoService integracaoService, IntegracaoIfoodService integracaoIfoodService, VendaProcessadaService vendaProcessadaService) {
+
+    public ConciliadorIfoodServiceImpl(TaxaService taxaService, IntegracaoService integracaoService) {
         this.taxaService = taxaService;
         this.integracaoService = integracaoService;
-        this.integracaoIfoodService = integracaoIfoodService;
-        this.vendaProcessadaService = vendaProcessadaService;
     }
 
     @Override
     public ConciliadorDTO conciliar(String codigoLoja, String metodoPagamento, String bandeira, String tipoRecebimento, LocalDate dtInicial, LocalDate dtFinal) {
-        List<Venda> vendas = integracaoIfoodService.pesquisarVendas(codigoLoja, metodoPagamento, bandeira, tipoRecebimento, dtInicial, dtFinal);
-        List<Ocorrencia> ocorrencias = integracaoIfoodService.pesquisarOcorrencias(codigoLoja, dtInicial, dtFinal);
-        processarCancelamento(vendas, codigoLoja);
+        Integracao integracao = integracaoService.pesquisarPorCodigoIntegracao(codigoLoja);
+
+        ProcessadorFiltro processadorFiltro = new ProcessadorFiltro();
+        processadorFiltro.setCartaoBandeira(Boolean.TRUE.equals(temValor(bandeira)) ? bandeira : null);
+        processadorFiltro.setIntegracao(integracao);
+        processadorFiltro.setDtInicial(dtInicial);
+        processadorFiltro.setDtFinal(dtFinal);
+        processadorFiltro.setFormaPagamento(Boolean.TRUE.equals(temValor(metodoPagamento)) ? metodoPagamento : null);
+        processadorFiltro.setFormaRecebimento(FormaRecebimento.porDescricao(tipoRecebimento));
+
+        Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
+        processador.processar(processadorFiltro, true);
+        var vendas = processador.getVendas();
 
         ConciliadorDTO conciliadorDTO = new ConciliadorDTO(vendas);
-        conciliadorDTO.setTotalizador(getTotalizadorDTO(vendas));
+        conciliadorDTO.setTotalizador(getTotalizadorDTO(processador));
         conciliadorDTO.setResumoFinanceiro(new ResumoFinanceiroDTO());
         return conciliadorDTO;
     }
 
-    private TotalizadorDTO getTotalizadorDTO(List<Venda> vendas) {
+    private TotalizadorDTO getTotalizadorDTO(Processador processador) {
         TotalizadorDTO totalizadorDTO = new TotalizadorDTO();
-        VendaProcessada vendaProcessada = vendaProcessadaService.processar(vendas);
-
-        totalizadorDTO.setTotalValorBruto(vendaProcessada.getTotalBruto());
-        totalizadorDTO.setTotalValorPedido(vendaProcessada.getTotalPedido());
-        totalizadorDTO.setTotalValorLiquido(vendaProcessada.getTotalLiquido());
-        totalizadorDTO.setTotalValorCancelado(vendaProcessada.getTotalCancelado());
-
+        totalizadorDTO.setTotalValorBruto(processador.getValorTotalBruto());
+        totalizadorDTO.setTotalValorPedido(processador.getValorTotalPedido());
+        totalizadorDTO.setTotalValorLiquido(processador.getValorTotalLiquido());
+        totalizadorDTO.setTotalValorCancelado(processador.getValorTotalCancelado());
         return totalizadorDTO;
     }
 
-    private void processarCancelamento(List<Venda> vendas, String codigoLoja) {
-        if (vendas.isEmpty()) {
-            return;
-        }
-
-        Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
-                Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
-        ));
-
-        Map<String, List<Venda>> periodIdMap = vendas.stream().collect(Collectors.groupingBy(
-                venda -> (venda.getPeriodoId() != null) ? venda.getPeriodoId() : "",
-                Collectors.toList()
-        ));
-
-        List<String> periodoIds = periodIdMap.keySet().stream().toList();
-
-        for (String periodId : periodoIds) {
-            if (periodId.isEmpty()) continue;
-
-            List<Cancelamento> cancelamentos = integracaoIfoodService.pesquisarCancelamentos(codigoLoja, periodId);
-            log.info("Total de cancelamentos encontrados ::: {}", cancelamentos.size());
-
-            if (!cancelamentos.isEmpty()) {
-                for (Cancelamento cancelamento : cancelamentos) {
-                    Venda venda = vendaMap.get(cancelamento.getPedidoId());
-                    if (venda != null) {
-                        venda.getCobranca().setValorCancelado(cancelamento.getValor());
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void aplicarCancelamento(List<Venda> vendas, String lojaId) {
-        processarCancelamento(vendas, lojaId);
-    }
-
-    @Override
-    public void reprocessarVenda(LocalDate dtInicial, LocalDate dtFinal, String lojaId, List<Venda> vendas) {
-        List<AjusteVenda> ajusteVendas = integracaoIfoodService.pesquisarAjusteVendas(lojaId, dtInicial, dtFinal);
-
-        if (ajusteVendas.isEmpty()) return;
-
-        Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
-                Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
-        ));
-
-        for (AjusteVenda ajuste : ajusteVendas) {
-            Venda venda = vendaMap.get(ajuste.getPedidoId());
-            if (venda != null) {
-                venda.setCobranca(ajuste.getCobranca());
-            }
-        }
-    }
+//    private void processarCancelamento(List<Venda> vendas, String codigoLoja) {
+//        if (vendas.isEmpty()) {
+//            return;
+//        }
+//
+//        Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
+//                Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
+//        ));
+//
+//        Map<String, List<Venda>> periodIdMap = vendas.stream().collect(Collectors.groupingBy(
+//                venda -> (venda.getPeriodoId() != null) ? venda.getPeriodoId() : "",
+//                Collectors.toList()
+//        ));
+//
+//        List<String> periodoIds = periodIdMap.keySet().stream().toList();
+//
+//        for (String periodId : periodoIds) {
+//            if (periodId.isEmpty()) continue;
+//
+//            List<Cancelamento> cancelamentos = integracaoIfoodService.pesquisarCancelamentos(codigoLoja, periodId);
+//            log.info("Total de cancelamentos encontrados ::: {}", cancelamentos.size());
+//
+//            if (!cancelamentos.isEmpty()) {
+//                for (Cancelamento cancelamento : cancelamentos) {
+//                    Venda venda = vendaMap.get(cancelamento.getPedidoId());
+//                    if (venda != null) {
+//                        venda.getCobranca().setValorCancelado(cancelamento.getValor());
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void aplicarCancelamento(List<Venda> vendas, String lojaId) {
+//        processarCancelamento(vendas, lojaId);
+//    }
+//
+//    @Override
+//    public void reprocessarVenda(LocalDate dtInicial, LocalDate dtFinal, String lojaId, List<Venda> vendas) {
+//        List<AjusteVenda> ajusteVendas = integracaoIfoodService.pesquisarAjusteVendas(lojaId, dtInicial, dtFinal);
+//
+//        if (ajusteVendas.isEmpty()) return;
+//
+//        Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
+//                Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
+//        ));
+//
+//        for (AjusteVenda ajuste : ajusteVendas) {
+//            Venda venda = vendaMap.get(ajuste.getPedidoId());
+//            if (venda != null) {
+//                venda.setCobranca(ajuste.getCobranca());
+//            }
+//        }
+//    }
 
     /*
     @Override

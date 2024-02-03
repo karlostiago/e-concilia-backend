@@ -3,8 +3,8 @@ package com.ctsousa.econcilia.enumaration;
 import com.ctsousa.econcilia.config.SpringConfig;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Operadora;
-import com.ctsousa.econcilia.processador.Processador;
-import com.ctsousa.econcilia.processador.ProcessadorFactory;
+import com.ctsousa.econcilia.processor.Processador;
+import com.ctsousa.econcilia.processor.ProcessadorFactory;
 
 public enum TipoProcessador {
 

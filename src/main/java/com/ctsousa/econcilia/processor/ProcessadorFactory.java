@@ -1,8 +1,8 @@
-package com.ctsousa.econcilia.processador;
+package com.ctsousa.econcilia.processor;
 
 import com.ctsousa.econcilia.enumaration.TipoProcessador;
-import com.ctsousa.econcilia.processador.ifood.ProcessadorIfood;
-import com.ctsousa.econcilia.processador.ubereats.ProcessadorUberEats;
+import com.ctsousa.econcilia.processor.ifood.ProcessadorIfood;
+import com.ctsousa.econcilia.processor.ubereats.ProcessadorUberEats;
 import org.springframework.stereotype.Component;
 
 @Component

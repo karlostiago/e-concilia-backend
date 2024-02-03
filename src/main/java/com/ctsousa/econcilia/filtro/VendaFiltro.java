@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.filtro;
 
+import com.ctsousa.econcilia.enumaration.MetodoPagamento;
 import com.ctsousa.econcilia.model.Venda;
 import lombok.Getter;
 
@@ -43,19 +44,24 @@ public class VendaFiltro {
 
     public VendaFiltro porMetodoPagamento() {
         if (Boolean.TRUE.equals(temValor(metodoPagamento))) {
-            vendasFiltradas.addAll(vendas.stream().filter(venda -> venda.getPagamento().getMetodo().equalsIgnoreCase(metodoPagamento))
-                    .toList());
+            MetodoPagamento formaPagamento = MetodoPagamento.porDescricao(metodoPagamento);
+
+            if (formaPagamento != null) {
+                vendasFiltradas.addAll(vendas.stream().filter(venda -> venda.getPagamento().getMetodo().equalsIgnoreCase(formaPagamento.name()))
+                        .toList());
+            }
         }
         return this;
     }
 
     public VendaFiltro porMetodoPagamentoBandeira() {
         if (temValor(metodoPagamento) && temValor(bandeira)) {
+            MetodoPagamento formaPagamento = MetodoPagamento.porDescricao(metodoPagamento);
             vendasFiltradas = vendas.stream().filter(venda -> {
                         var mPagamento = venda.getPagamento().getMetodo().toUpperCase();
                         var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
                         return descBandeira.contains(bandeira.toUpperCase())
-                                && mPagamento.equalsIgnoreCase(metodoPagamento);
+                                && mPagamento.equalsIgnoreCase(formaPagamento.name());
                     })
                     .toList();
         } else if (naoTemValor(metodoPagamento) && naoTemValor(bandeira)) {

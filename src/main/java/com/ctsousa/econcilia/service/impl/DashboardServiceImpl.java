@@ -4,7 +4,8 @@ import com.ctsousa.econcilia.enumaration.TipoProcessador;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
-import com.ctsousa.econcilia.processador.Processador;
+import com.ctsousa.econcilia.processor.Processador;
+import com.ctsousa.econcilia.processor.ProcessadorFiltro;
 import com.ctsousa.econcilia.service.DashboadService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import org.springframework.stereotype.Component;
@@ -36,8 +37,9 @@ public class DashboardServiceImpl implements DashboadService {
         for (Long idEmpresa : empresasId) {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
+                ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, dtInicial, dtFinal);
                 Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                processador.processar(integracao, dtInicial, dtFinal, false);
+                processador.processar(processadorFiltro, false);
                 vendas.addAll(processador.getVendas());
             }
         }
@@ -54,8 +56,9 @@ public class DashboardServiceImpl implements DashboadService {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
 
+                ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, dtInicial, dtFinal);
                 Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                processador.processar(integracao, dtInicial, dtFinal, true);
+                processador.processar(processadorFiltro, true);
 
                 dashboardDTO.setValorBrutoVendas(dashboardDTO.getValorBrutoVendas().add(processador.getValorTotalBruto()));
                 dashboardDTO.setQuantidadeVendas(dashboardDTO.getQuantidadeVendas().add(BigInteger.valueOf(processador.getQuantidade())));
@@ -71,6 +74,14 @@ public class DashboardServiceImpl implements DashboadService {
         }
 
         return dashboardDTO;
+    }
+
+    private ProcessadorFiltro getProcessadorFiltro(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal) {
+        ProcessadorFiltro processadorFiltro = new ProcessadorFiltro();
+        processadorFiltro.setIntegracao(integracao);
+        processadorFiltro.setDtInicial(dtInicial);
+        processadorFiltro.setDtFinal(dtFinal);
+        return processadorFiltro;
     }
 
     private List<Long> getEmpresasId(final String empresasId) {

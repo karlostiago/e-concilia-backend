@@ -1,9 +1,9 @@
-package com.ctsousa.econcilia.processador.ifood;
+package com.ctsousa.econcilia.processor.ifood;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.*;
-import com.ctsousa.econcilia.processador.Processador;
-import com.ctsousa.econcilia.service.ConciliadorIfoodService;
+import com.ctsousa.econcilia.processor.Processador;
+import com.ctsousa.econcilia.processor.ProcessadorFiltro;
 import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.TaxaService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,8 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
 
@@ -23,31 +25,40 @@ public class ProcessadorIfood extends Processador {
 
     private final IntegracaoIfoodService integracaoIfoodService;
 
-    private final ConciliadorIfoodService conciliadorIfoodService;
-
     private final TaxaService taxaService;
 
-    public ProcessadorIfood(IntegracaoIfoodService integracaoIfoodService, ConciliadorIfoodService conciliadorIfoodService, TaxaService taxaService) {
+    public ProcessadorIfood(IntegracaoIfoodService integracaoIfoodService, TaxaService taxaService) {
         this.integracaoIfoodService = integracaoIfoodService;
-        this.conciliadorIfoodService = conciliadorIfoodService;
         this.taxaService = taxaService;
     }
 
     @Override
-    public void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal, boolean executarCalculo) {
+    public void processar(ProcessadorFiltro processadorFiltro, boolean executarCalculo) {
         log.info(" ::: Iniciando processador IFOOD ::: ");
 
+        var formaRecebimento = processadorFiltro.getFormaRecebimento() != null ? processadorFiltro.getFormaRecebimento().getDescricao() : null;
+
         log.info(" ::: Buscando vendas ::: ");
-        vendas = integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
+        vendas = integracaoIfoodService.pesquisarVendas(
+                processadorFiltro.getIntegracao().getCodigoIntegracao(), processadorFiltro.getFormaPagamento(),
+                processadorFiltro.getCartaoBandeira(), formaRecebimento,
+                processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal());
+
+        if (vendas.isEmpty()) {
+            log.info(" ::: Finalizado processador IFOOD, nenhuma venda foi encontrada ::: ");
+            reiniciar();
+            return;
+        }
 
         log.info(" ::: Buscando ocorrencias ::: ");
-        var ocorrencias = integracaoIfoodService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
+        var ocorrencias = integracaoIfoodService.pesquisarOcorrencias(processadorFiltro.getIntegracao().getCodigoIntegracao(),
+                processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal());
 
-        log.info(" ::: Aplicando cancelamento se houver ::: ");
-        conciliadorIfoodService.aplicarCancelamento(vendas, integracao.getCodigoIntegracao());
+        log.info(" ::: Processando cancelamento se houver ::: ");
+        processarCancelamento(processadorFiltro.getIntegracao().getCodigoIntegracao());
 
         log.info(" ::: Reprocessando vendas ::: ");
-        conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendas);
+        reprocessar(processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal(), processadorFiltro.getIntegracao().getCodigoIntegracao());
 
         if (executarCalculo) {
             log.info(" ::: Calculo das vendas iniciado ::: ");
@@ -55,6 +66,54 @@ public class ProcessadorIfood extends Processador {
         }
 
         log.info(" ::: Finalizado processador IFOOD ::: ");
+    }
+
+    private void processarCancelamento(String codigoLoja) {
+        Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
+            Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
+        ));
+
+        Map<String, List<Venda>> periodIdMap = vendas.stream().collect(Collectors.groupingBy(
+            venda -> (venda.getPeriodoId() != null) ? venda.getPeriodoId() : "",
+            Collectors.toList()
+        ));
+
+        List<String> periodoIds = periodIdMap.keySet().stream().toList();
+
+        for (String periodId : periodoIds) {
+            if (periodId.isEmpty()) continue;
+
+            List<Cancelamento> cancelamentos = integracaoIfoodService.pesquisarCancelamentos(codigoLoja, periodId);
+            log.info("Total de cancelamentos encontrados ::: {}", cancelamentos.size());
+
+            if (!cancelamentos.isEmpty()) {
+                for (Cancelamento cancelamento : cancelamentos) {
+                    Venda venda = vendaMap.get(cancelamento.getPedidoId());
+                    if (venda != null) {
+                        venda.getCobranca().setValorCancelado(cancelamento.getValor());
+                    }
+                }
+            }
+        }
+    }
+
+    private void reprocessar(LocalDate dtInicial, LocalDate dtFinal, String lojaId) {
+        List<AjusteVenda> ajusteVendas = integracaoIfoodService.pesquisarAjusteVendas(lojaId, dtInicial, dtFinal);
+        log.info("Total de vendas a serem reprocessadas ::: {}", ajusteVendas.size());
+
+        if (ajusteVendas.isEmpty()) return;
+
+        Map<String, Venda> vendaMap = vendas.stream().collect(Collectors.toMap(
+                Venda::getPedidoId, venda -> venda, (vendaAtual, vendaNova) -> vendaAtual
+        ));
+
+        for (AjusteVenda ajuste : ajusteVendas) {
+            Venda venda = vendaMap.get(ajuste.getPedidoId());
+            if (venda != null) {
+                venda.setCobranca(ajuste.getCobranca());
+                venda.setReprocessada(Boolean.TRUE);
+            }
+        }
     }
 
     private void calcular(List<Ocorrencia> ocorrencias) {
@@ -73,9 +132,14 @@ public class ProcessadorIfood extends Processador {
         var valorTotalReembolsoBeneficio = BigDecimal.valueOf(0D);
         var valorTotalTaxaEntrega = BigDecimal.valueOf(0D);
         var valorTotalCancelado = BigDecimal.valueOf(0D);
+        var valorTotalPedido = BigDecimal.valueOf(0D);
+        var valorTotalLiquido = BigDecimal.valueOf(0D);
 
         for (Venda venda : vendas) {
-            if (venda.getCobranca().getValorCancelado().compareTo(BigDecimal.valueOf(0)) != 0) continue;
+            if (venda.getCobranca().getValorCancelado().compareTo(BigDecimal.valueOf(0)) != 0) {
+                valorTotalCancelado = valorTotalCancelado.add(venda.getValorCancelado());
+                continue;
+            }
 
             valorTotalReembolsoBeneficio = valorTotalReembolsoBeneficio.add(getValorReembolsoBeneficio(venda.getCobranca()));
             valorTotalPedidoMinimo = valorTotalPedidoMinimo.add(getValorPedidoMinimo(venda.getCobranca()));
@@ -86,7 +150,8 @@ public class ProcessadorIfood extends Processador {
             valorTotalRepasse = valorTotalRepasse.add(venda.getCobranca().getTotalCredito().subtract(venda.getCobranca().getTotalDebito()));
             valorTotalBrutoParcial = valorTotalBrutoParcial.add(venda.getValorBruto());
             valorTotalTaxaEntrega = valorTotalTaxaEntrega.add(venda.getCobranca().getTaxaEntrega());
-            valorTotalCancelado = valorTotalCancelado.add(venda.getValorCancelado());
+            valorTotalPedido = valorTotalPedido.add(venda.getValorTotalPedido());
+            valorTotalLiquido = valorTotalLiquido.add(venda.getValorLiquido());
         }
 
         var valorTotalMensalidade = calcularTaxaMensalidade(empresa, valorTotalBrutoParcial);
@@ -120,6 +185,8 @@ public class ProcessadorIfood extends Processador {
         this.valorTotalTaxaEntrega = valorTotalTaxaEntrega;
         this.valorTotalRepasse = valorTotalRepasse;
         this.valorTotalPromocao = valorTotalPromocao.multiply(BigDecimal.valueOf(-1D));
+        this.valorTotalPedido = valorTotalPedido;
+        this.valorTotalLiquido = valorTotalLiquido;
         this.quantidade = vendas.size();
     }
 

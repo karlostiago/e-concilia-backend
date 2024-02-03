@@ -15,9 +15,9 @@ public interface ConciliadorIfoodService {
 
 //    List<Venda> conciliarTaxas(final List<Venda> vendas, final String lojaId);
 //
-    void aplicarCancelamento(final List<Venda> vendas, final String lojaId);
+//    void aplicarCancelamento(final List<Venda> vendas, final String lojaId);
 //
-    void reprocessarVenda(final LocalDate dtInicial, final LocalDate dtFinal, final String lojaId, List<Venda> vendas);
+//    void reprocessarVenda(final LocalDate dtInicial, final LocalDate dtFinal, final String lojaId, List<Venda> vendas);
 //
 //    TotalizadorDTO totalizar(List<Venda> vendas);
 //

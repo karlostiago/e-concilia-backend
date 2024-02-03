@@ -27,10 +27,10 @@ public enum MetodoPagamento {
 
     public static MetodoPagamento porDescricao(final String descricao) {
         for (MetodoPagamento metodoPagamento : MetodoPagamento.values()) {
-            if (metodoPagamento.name().equalsIgnoreCase(descricao)) {
+            if (metodoPagamento.getDescricao().equalsIgnoreCase(descricao)) {
                 return metodoPagamento;
             }
         }
-        return null;
+        return OUTROS;
     }
 }

@@ -58,6 +58,9 @@ public class Venda extends Entidade {
     @Column(name = "diferenca", nullable = false, columnDefinition = "decimal(19,2) default 0.0")
     private BigDecimal diferenca;
 
+    @Transient
+    private Boolean reprocessada = Boolean.FALSE;
+
     public BigDecimal getValorBruto() {
         return this.cobranca.getValorParcial()
                 .add(this.cobranca.getTaxaServico())
