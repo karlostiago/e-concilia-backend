@@ -34,7 +34,7 @@ public class ProcessadorIfood extends Processador {
     }
 
     @Override
-    public void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal, boolean executar) {
+    public void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal, boolean executarCalculo) {
         log.info(" ::: Iniciando processador IFOOD ::: ");
 
         log.info(" ::: Buscando vendas ::: ");
@@ -49,7 +49,7 @@ public class ProcessadorIfood extends Processador {
         log.info(" ::: Reprocessando vendas ::: ");
         conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendas);
 
-        if (executar) {
+        if (executarCalculo) {
             log.info(" ::: Calculo das vendas iniciado ::: ");
             calcular(ocorrencias);
         }

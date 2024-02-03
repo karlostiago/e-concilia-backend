@@ -6,5 +6,5 @@ import java.time.LocalDate;
 
 public interface Executor {
 
-    void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal, boolean executar);
+    void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal, boolean executarCalculo);
 }

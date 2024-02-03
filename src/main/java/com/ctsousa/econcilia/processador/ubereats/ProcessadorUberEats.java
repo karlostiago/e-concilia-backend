@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class ProcessadorUberEats extends Processador {
 
     @Override
-    public void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal, boolean executar) {
+    public void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal, boolean executarCalculo) {
         throw new UnsupportedOperationException("Operação não suportada por esse processador.");
     }
 }
