@@ -50,14 +50,14 @@ public class ProcessadorIfood extends Processador {
         conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendas);
 
         if (executar) {
-            log.info(" ::: Processamento iniciado ::: ");
-            processar(ocorrencias);
+            log.info(" ::: Calculo das vendas iniciado ::: ");
+            calcular(ocorrencias);
         }
 
         log.info(" ::: Finalizado processador IFOOD ::: ");
     }
 
-    private void processar(List<Ocorrencia> ocorrencias) {
+    private void calcular(List<Ocorrencia> ocorrencias) {
         var empresa = vendas.get(0).getEmpresa();
         var operadora = vendas.get(0).getOperadora();
 
