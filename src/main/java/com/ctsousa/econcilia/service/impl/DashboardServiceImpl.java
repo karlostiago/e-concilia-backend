@@ -6,7 +6,6 @@ import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
 import com.ctsousa.econcilia.processador.Processador;
 import com.ctsousa.econcilia.service.DashboadService;
-import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import org.springframework.stereotype.Component;
 
@@ -21,12 +20,8 @@ public class DashboardServiceImpl implements DashboadService {
 
     private final IntegracaoService integracaoService;
 
-    private final IntegracaoIfoodService integracaoIfoodService;
-
-
-    public DashboardServiceImpl(IntegracaoService integracaoService, IntegracaoIfoodService integracaoIfoodService) {
+    public DashboardServiceImpl(IntegracaoService integracaoService) {
         this.integracaoService = integracaoService;
-        this.integracaoIfoodService = integracaoIfoodService;
     }
 
     @Override
@@ -41,7 +36,9 @@ public class DashboardServiceImpl implements DashboadService {
         for (Long idEmpresa : empresasId) {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
-                vendas.addAll(integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal));
+                Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
+                processador.processar(integracao, dtInicial, dtFinal, false);
+                vendas.addAll(processador.getVendas());
             }
         }
 
@@ -58,7 +55,7 @@ public class DashboardServiceImpl implements DashboadService {
             for (Integracao integracao : integracoes) {
 
                 Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                processador.processar(integracao, dtInicial, dtFinal);
+                processador.processar(integracao, dtInicial, dtFinal, true);
 
                 dashboardDTO.setValorBrutoVendas(dashboardDTO.getValorBrutoVendas().add(processador.getValorTotalBruto()));
                 dashboardDTO.setQuantidadeVendas(dashboardDTO.getQuantidadeVendas().add(BigInteger.valueOf(processador.getQuantidade())));
@@ -67,7 +64,7 @@ public class DashboardServiceImpl implements DashboadService {
                 dashboardDTO.setValorRecebidoLoja(dashboardDTO.getValorRecebidoLoja().add(processador.getValorTotalRecebido()));
                 dashboardDTO.setValorComissaoTransacao(dashboardDTO.getValorComissaoTransacao().add(processador.getValorTotalComissaoTransacaoPagamento()));
                 dashboardDTO.setValorTaxaEntrega(dashboardDTO.getValorTaxaEntrega().add(processador.getValorTotalTaxaEntrega()));
-                dashboardDTO.setValorEmRepasse(dashboardDTO.getValorEmRepasse().add(processador.getValorTotalPagar()));
+                dashboardDTO.setValorEmRepasse(dashboardDTO.getValorEmRepasse().add(processador.getValorTotalRepasse()));
                 dashboardDTO.setValorComissao(dashboardDTO.getValorComissao().add(processador.getValorTotalComissao()));
                 dashboardDTO.setValorPromocao(dashboardDTO.getValorPromocao().add(processador.getValorTotalPromocao()));
             }

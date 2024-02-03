@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Deprecated(forRemoval = true)
 public interface VendaProcessadaService {
 
     VendaProcessada processar(final List<Venda> vendas);

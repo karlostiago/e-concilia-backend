@@ -1,8 +1,10 @@
 package com.ctsousa.econcilia.processador;
 
+import com.ctsousa.econcilia.model.Venda;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 public abstract class Processador implements Executor {
@@ -21,10 +23,11 @@ public abstract class Processador implements Executor {
 
     protected BigDecimal valorTotalTaxaEntrega;
 
-    protected BigDecimal valorTotalPagar;
+    protected BigDecimal valorTotalRepasse;
 
     protected BigDecimal valorTotalPromocao;
 
     protected Integer quantidade;
 
+    protected List<Venda> vendas;
 }

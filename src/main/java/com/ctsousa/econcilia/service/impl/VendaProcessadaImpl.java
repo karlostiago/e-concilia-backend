@@ -15,6 +15,7 @@ import java.util.List;
 import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
 
 @Component
+@Deprecated(forRemoval = true)
 public class VendaProcessadaImpl implements VendaProcessadaService {
 
     private final TaxaService taxaService;

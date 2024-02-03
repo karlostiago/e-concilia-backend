@@ -34,19 +34,30 @@ public class ProcessadorIfood extends Processador {
     }
 
     @Override
-    public void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal) {
+    public void processar(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal, boolean executar) {
         log.info(" ::: Iniciando processador IFOOD ::: ");
 
-        var vendas = integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
+        log.info(" ::: Buscando vendas ::: ");
+        vendas = integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
+
+        log.info(" ::: Buscando ocorrencias ::: ");
+        var ocorrencias = integracaoIfoodService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
+
+        log.info(" ::: Aplicando cancelamento se houver ::: ");
         conciliadorIfoodService.aplicarCancelamento(vendas, integracao.getCodigoIntegracao());
 
-        var ocorrencias = integracaoIfoodService.pesquisarOcorrencias(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
+        log.info(" ::: Reprocessando vendas ::: ");
         conciliadorIfoodService.reprocessarVenda(dtInicial, dtFinal, integracao.getCodigoIntegracao(), vendas);
 
-        processar(vendas, ocorrencias);
+        if (executar) {
+            log.info(" ::: Processamento iniciado ::: ");
+            processar(ocorrencias);
+        }
+
+        log.info(" ::: Finalizado processador IFOOD ::: ");
     }
 
-    private void processar(List<Venda> vendas, List<Ocorrencia> ocorrencias) {
+    private void processar(List<Ocorrencia> ocorrencias) {
         var empresa = vendas.get(0).getEmpresa();
         var operadora = vendas.get(0).getOperadora();
 
@@ -107,11 +118,9 @@ public class ProcessadorIfood extends Processador {
         this.valorTotalComissaoTransacaoPagamento = valorTotalTransacaoPagamento;
         this.valorTotalComissao = valorTotalComissao;
         this.valorTotalTaxaEntrega = valorTotalTaxaEntrega;
-        this.valorTotalPagar = valorTotalRepasse;
+        this.valorTotalRepasse = valorTotalRepasse;
         this.valorTotalPromocao = valorTotalPromocao.multiply(BigDecimal.valueOf(-1D));
         this.quantidade = vendas.size();
-
-        log.info(" ::: Finalizado processador IFOOD ::: ");
     }
 
     private BigDecimal calcularValorComissao(Cobranca cobranca, BigDecimal valorComissao) {
