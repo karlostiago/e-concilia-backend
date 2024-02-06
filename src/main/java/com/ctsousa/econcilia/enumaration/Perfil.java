@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.enumaration;
 
+import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Permissao;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.service.PermissaoService;
@@ -57,7 +58,13 @@ public enum Perfil {
     public abstract void aplicar(Usuario usuario, PermissaoService permissaoService);
 
     private static void salvar(Usuario usuario, List<Funcionalidade> funcionalidades, PermissaoService permissaoService) {
-        Permissao permissao = permissaoService.pesquisar(usuario);
+        Permissao permissao = null;
+
+        try {
+            permissao = permissaoService.pesquisar(usuario);
+        } catch (NotificacaoException e) {
+            //
+        }
 
         if (permissao == null) {
             permissao = new Permissao();
