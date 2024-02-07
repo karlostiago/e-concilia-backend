@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.processor;
 
+import com.ctsousa.econcilia.enumaration.FormaRecebimento;
 import com.ctsousa.econcilia.model.Integracao;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,5 @@
 package com.ctsousa.econcilia.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Slf4j
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter implements Filter {
@@ -27,8 +25,6 @@ public class CorsFilter implements Filter {
         response.setHeader("Access-Control-Allow-Credentials", "true");
 
         if ("OPTIONS".equals(request.getMethod()) && temOrigemPermitida(request)) {
-            log.info("Adicinoando header a requisição ::: ");
-
             response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, PATCH, OPTIONS");
             response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept");
             response.setHeader("Access-Control-Max-Age", "3600");
@@ -49,8 +45,6 @@ public class CorsFilter implements Filter {
                 break;
             }
         }
-
-        log.info("Origem permitida ::: [{}], path origem [{}]", origemPermitida, request.getHeader(ORIGIN));
 
         return origemPermitida;
     }

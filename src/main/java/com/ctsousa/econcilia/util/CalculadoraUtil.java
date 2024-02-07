@@ -13,4 +13,8 @@ public final class CalculadoraUtil {
                 .stream()
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    public static BigDecimal multiplicar(BigDecimal valor, int fatorMultiplicador) {
+        return valor.multiply(BigDecimal.valueOf(fatorMultiplicador));
+    }
 }

@@ -223,12 +223,6 @@ public class ProcessadorIfood extends Processador {
         return BigDecimal.valueOf(0D);
     }
 
-    private BigDecimal calcularTicketMedio(BigInteger quantidade, BigDecimal valorBruto) {
-        if (quantidade.equals(BigInteger.ZERO)) return BigDecimal.valueOf(0D);
-
-        return valorBruto.divide(new BigDecimal(quantidade), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
-    }
-
     private BigDecimal calcularOutrosLancamentos(List<Venda> vendas, List<Ocorrencia> ocorrencias, BigDecimal totalBruto) {
         var valorReembolso = calcularTotalReembolso(vendas);
         var taxaMensalidade = calcularTaxaMensalidade(vendas.get(0).getEmpresa(), totalBruto);

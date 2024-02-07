@@ -1,12 +1,15 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Empresa;
+import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.repository.TaxaRepository;
 import com.ctsousa.econcilia.service.TaxaService;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -138,5 +141,11 @@ public class TaxaServiceImpl implements TaxaService {
         taxaRepository.save(taxa);
 
         return taxa;
+    }
+
+    @Override
+    public Taxa buscarPor(Empresa empresa, Operadora operadora, String descricao, BigDecimal valor) {
+        return taxaRepository.por(empresa.getId(), operadora.getId(), descricao, valor)
+                .orElseThrow(() -> new NotificacaoException(String.format("Nenhuma taxa com empresa id %d e operadora id %d encontrado", empresa.getId(), operadora.getId())));
     }
 }

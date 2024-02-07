@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,18 @@ public interface TaxaRepository extends JpaRepository<Taxa, Long> {
 
     @Query(value = "SELECT t FROM Taxa t INNER JOIN FETCH t.contrato c INNER JOIN FETCH c.empresa WHERE t.id = :id")
     Optional<Taxa> porId(@Param(value = "id") Long id);
+
+    @Query(value = "SELECT tx.* FROM contrato c " +
+            "INNER JOIN taxa tx ON tx.contrato_id = c.id " +
+            "WHERE c.empresa_id = :empresaId " +
+            "AND c.operadora_id = :operadoraId " +
+            "AND UPPER(tx.descricao) LIKE :descricao% " +
+            "AND tx.valor = :valor AND tx.ativo = 1 AND c.ativo = 1 " +
+            "LIMIT 1", nativeQuery = true)
+    Optional<Taxa> por(@Param(value = "empresaId") Long empresaId,
+                       @Param(value = "operadoraId") Long operadoraId,
+                       @Param(value = "descricao") String descricao,
+                       @Param(value = "valor") BigDecimal valor);
 
     @Query(value = "SELECT tx.* FROM contrato c " +
             "INNER JOIN empresa emp ON c.empresa_id = emp.id " +

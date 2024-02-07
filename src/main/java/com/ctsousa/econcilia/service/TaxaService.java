@@ -1,9 +1,12 @@
 package com.ctsousa.econcilia.service;
 
+import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Empresa;
+import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,4 +36,6 @@ public interface TaxaService {
     Taxa pesquisarPorId(Long id);
 
     Taxa buscarPorDescricaoEmpresa(String descricao, Empresa empresa);
+
+    Taxa buscarPor(Empresa empresa, Operadora operadora, String descricao, BigDecimal valor);
 }

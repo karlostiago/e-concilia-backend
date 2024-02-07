@@ -4,6 +4,8 @@ import com.ctsousa.econcilia.model.Venda;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,5 +52,11 @@ public abstract class Processador implements Executor {
         this.valorTotalLiquido = BigDecimal.valueOf(0D);
         this.vendas = new ArrayList<>();
         this.quantidade = 0;
+    }
+
+    protected BigDecimal calcularTicketMedio(BigInteger quantidade, BigDecimal valorBruto) {
+        if (quantidade.equals(BigInteger.ZERO)) return BigDecimal.valueOf(0D);
+
+        return valorBruto.divide(new BigDecimal(quantidade), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
     }
 }

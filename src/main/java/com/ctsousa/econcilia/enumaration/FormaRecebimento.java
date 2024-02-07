@@ -1,4 +1,4 @@
-package com.ctsousa.econcilia.processor;
+package com.ctsousa.econcilia.enumaration;
 
 import com.ctsousa.econcilia.util.StringUtil;
 import lombok.Getter;
