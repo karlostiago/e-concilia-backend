@@ -9,14 +9,14 @@ public final class StringUtil {
     }
 
     public static String somenteNumero(final String str) {
-        if (str == null) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
-        return str.replaceAll("[^0-9]", "");
+        return str.replaceAll("\\D", "");
     }
 
     public static String maiuscula(final String str) {
-        if (str == null) {
+        if (str == null || str.isEmpty()) {
             return null;
         }
         return str.toUpperCase();

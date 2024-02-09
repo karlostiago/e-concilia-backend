@@ -1,4 +1,4 @@
-package com.ctsousa.econcilia.filtro;
+package com.ctsousa.econcilia.filter;
 
 import com.ctsousa.econcilia.enumaration.MetodoPagamento;
 import com.ctsousa.econcilia.model.Venda;
