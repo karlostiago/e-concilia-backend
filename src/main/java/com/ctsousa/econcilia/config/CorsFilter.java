@@ -4,11 +4,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
+import javax.annotation.processing.Generated;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Generated("com.ctsousa.econcilia.config.CorsFilter")
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter implements Filter {
