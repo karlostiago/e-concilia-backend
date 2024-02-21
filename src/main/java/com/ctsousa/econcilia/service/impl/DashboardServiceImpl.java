@@ -12,9 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class DashboardServiceImpl implements DashboadService {
@@ -23,6 +21,19 @@ public class DashboardServiceImpl implements DashboadService {
 
     public DashboardServiceImpl(IntegracaoService integracaoService) {
         this.integracaoService = integracaoService;
+    }
+
+    @Override
+    public List<Venda> buscarVendaMensal(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
+        List<Long> empresasId = getEmpresasId(empresaId);
+
+        List<Venda> vendas = new ArrayList<>();
+
+        for (Long idEmpresa : empresasId) {
+            vendas.addAll(buscarVendas(idEmpresa, dtInicial, dtFinal));
+        }
+
+        return vendas;
     }
 
     @Override
@@ -35,13 +46,7 @@ public class DashboardServiceImpl implements DashboadService {
         List<Venda> vendas = new ArrayList<>();
 
         for (Long idEmpresa : empresasId) {
-            List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
-            for (Integracao integracao : integracoes) {
-                ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, dtInicial, dtFinal);
-                Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                processador.processar(processadorFiltro, false);
-                vendas.addAll(processador.getVendas());
-            }
+            vendas.addAll(buscarVendas(idEmpresa, dtInicial, dtFinal));
         }
 
         return vendas;
@@ -51,6 +56,7 @@ public class DashboardServiceImpl implements DashboadService {
     public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Long> empresasId = getEmpresasId(empresaId);
         DashboardDTO dashboardDTO = new DashboardDTO();
+        List<Venda> vendas = new ArrayList<>();
 
         for (Long idEmpresa : empresasId) {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
@@ -70,10 +76,25 @@ public class DashboardServiceImpl implements DashboadService {
                 dashboardDTO.setValorEmRepasse(dashboardDTO.getValorEmRepasse().add(processador.getValorTotalRepasse()));
                 dashboardDTO.setValorComissao(dashboardDTO.getValorComissao().add(processador.getValorTotalComissao()));
                 dashboardDTO.setValorPromocao(dashboardDTO.getValorPromocao().add(processador.getValorTotalPromocao()));
+                vendas.addAll(processador.getVendas());
             }
         }
 
+        dashboardDTO.setVendas(vendas);
+
         return dashboardDTO;
+    }
+
+    private List<Venda> buscarVendas(final Long empresaId, LocalDate dtInicial, LocalDate dtFinal) {
+        List<Venda> vendas = new ArrayList<>();
+        List<Integracao> integracoes = integracaoService.pesquisar(empresaId, null, null);
+        for (Integracao integracao : integracoes) {
+            ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, dtInicial, dtFinal);
+            Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
+            processador.processar(processadorFiltro, false);
+            vendas.addAll(processador.getVendas());
+        }
+        return vendas;
     }
 
     private ProcessadorFiltro getProcessadorFiltro(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal) {

@@ -1,10 +1,12 @@
 package com.ctsousa.econcilia.model.dto;
 
+import com.ctsousa.econcilia.model.Venda;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,6 +31,8 @@ public class DashboardDTO {
     private BigDecimal valorPromocao;
 
     private BigDecimal valorComissaoTransacao;
+
+    private List<Venda> vendas;
 
     public DashboardDTO() {
         this.setValorBrutoVendas(BigDecimal.valueOf(0D));
