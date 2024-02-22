@@ -18,7 +18,7 @@ public class Operadora extends Entidade {
     @Column(name = "descricao", nullable = false, length = 100, unique = true)
     private String descricao;
 
-    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default false ")
+    @Column(name = "ativo", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
     private Boolean ativo;
 
     public Operadora() {

@@ -1,0 +1,30 @@
+spring:
+    datasource:
+        url: jdbc:h2:mem:testdb;MODE=MYSQL
+        driver-class-name: org.h2.Driver
+        username: sa
+        password: password
+        hikari:
+            auto-commit: false
+            connection-timeout: 250
+            max-lifetime: 600000
+            maximum-pool-size: 8
+            minimum-idle: 4
+            pool-name: master
+    jpa:
+        open-in-view: false
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.H2Dialect
+            hibernate.connection.provider_disables_autocommit: true
+            hibernate.generate_statistics: false
+
+ifood:
+    clientid: 1c30306a-27de-4a63-ac93-bc9dcfe82710
+    clientsecret: tf6obs6ajazqd50lmeadjactqy5ldmzlmq1vc5kp51rk67x6y8dn30vlxhhdj6xj5d4kq2nedvmklk6aa6qt8qfgg533v8irdkf
+
+credencial_senha: admin
+importacao_habilitar: false

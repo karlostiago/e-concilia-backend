@@ -20,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Profile("!test")
 public class SecurityConfig {
 
     @Value("${credencial.senha}")

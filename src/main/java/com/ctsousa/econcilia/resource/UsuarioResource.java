@@ -27,7 +27,7 @@ public class UsuarioResource {
     @PostMapping
     @PreAuthorize(Autorizar.CADASTRAR_USUARIO)
     public ResponseEntity<UsuarioDTO> cadastrar(@RequestBody @Valid UsuarioDTO usuarioDTO) {
-        usuarioService.confirmaEmail(usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
+        usuarioService.confirmaEmail(null, usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
         usuarioService.confirmaSenha(usuarioDTO.getSenha(), usuarioDTO.getConfirmaSenha());
         var usuario = usuarioService.salvar(usuarioMapper.paraEntidade(usuarioDTO));
         return ResponseEntity.ok(usuarioMapper.paraDTO(usuario));

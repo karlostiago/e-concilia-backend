@@ -27,7 +27,7 @@ public class Contrato extends Entidade {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "contrato", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Taxa> taxas = new ArrayList<>();
 
-    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default false ")
+    @Column(name = "ativo", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
     private Boolean ativo;
 
     public void adicionaTaxa(Taxa taxa) {

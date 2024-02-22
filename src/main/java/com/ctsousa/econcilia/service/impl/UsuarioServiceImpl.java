@@ -72,7 +72,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario atualizar(Long id, UsuarioDTO usuarioDTO) {
-        confirmaEmail(usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
+        confirmaEmail(id, usuarioDTO.getEmail(), usuarioDTO.getConfirmaEmail());
         confirmaSenha(usuarioDTO.getSenha(), usuarioDTO.getConfirmaSenha());
         usuarioDTO.setSenha(segurancaService.encriptarSenha(usuarioDTO.getSenha()));
 
@@ -96,18 +96,21 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public void confirmaEmail(String email, String confirmacaoEmail) {
-        if (email == null) {
+    public void confirmaEmail(Long id, String email, String confirmacaoEmail) {
+        if (Boolean.FALSE.equals(StringUtil.temValor(email))) {
             throw new NotificacaoException("O campo email não pode ser null");
         }
         if (!email.equalsIgnoreCase(confirmacaoEmail)) {
             throw new NotificacaoException("O campo email não confere com o email do campo confirma email.");
         }
+        if (id != null && usuarioRepository.existsEmail(id, email.toUpperCase())) {
+            throw new NotificacaoException(String.format("Já existe um usuário com o e-mail %s cadastrado.", email));
+        }
     }
 
     @Override
     public void confirmaSenha(String senha, String confirmaSenha) {
-        if (senha == null) {
+        if (Boolean.FALSE.equals(StringUtil.temValor(senha))) {
             throw new NotificacaoException("O campo senha não pode ser null");
         }
         if (!senha.equalsIgnoreCase(confirmaSenha)) {

@@ -57,6 +57,8 @@ public class DashboardResource {
         vendas = dashboadService.buscarVendaMensal(empresaId,
             LocalDate.now().withDayOfMonth(1), LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()));
 
+//        vendas = dashboadService.buscarVendaMensal(empresaId, dtInicial, dtFinal);
+
         return ResponseEntity.ok(dashboardDTO);
     }
 

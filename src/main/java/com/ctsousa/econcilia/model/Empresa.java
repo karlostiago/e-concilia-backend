@@ -31,7 +31,7 @@ public class Empresa extends Entidade {
     @Embedded
     private Contato contato;
 
-    @Column(columnDefinition = "default false")
+    @Column(columnDefinition = "TINYINT(1) DEFAULT 0")
     private boolean ativo;
 
     public Empresa() {

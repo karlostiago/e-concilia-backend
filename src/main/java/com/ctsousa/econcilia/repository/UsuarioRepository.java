@@ -22,4 +22,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Usuario porEmail(@Param(value = "email") String email);
 
     boolean existsByEmail(String email);
+
+    @Query(value = "SELECT COUNT(u) > 0 FROM Usuario u WHERE u.id NOT IN (:id) AND u.email = :email")
+    boolean existsEmail(@Param("id") Long id, @Param("email") String email);
 }

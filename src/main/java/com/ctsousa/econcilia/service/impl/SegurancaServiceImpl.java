@@ -5,7 +5,6 @@ import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.repository.PermissaoRepository;
 import com.ctsousa.econcilia.repository.UsuarioRepository;
 import com.ctsousa.econcilia.service.SegurancaService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +20,8 @@ public class SegurancaServiceImpl implements SegurancaService {
     @Value("${credencial.senha}")
     private String credencial;
 
-    @Getter
     private Usuario usuario;
 
-    @Getter
     private List<String> permissoes;
 
     private final UsuarioRepository usuarioRepository;

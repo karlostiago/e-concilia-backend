@@ -22,12 +22,15 @@ public class GraficoVendaMensalImpl implements GraficoVendaService<GraficoVendaM
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
 
-    private final int ano = LocalDate.now().getYear();
+    private int ano = LocalDate.now().getYear();
 
-    private final int mes = LocalDate.now().getMonthValue();
+    private int mes = LocalDate.now().getMonthValue();
 
     @Override
     public GraficoVendaMensalDTO processar(List<Venda> vendas) {
+        ano = vendas.get(0).getDataPedido().getYear();
+        mes = vendas.get(0).getDataPedido().getMonthValue();
+
         GraficoVendaMensalDTO dto = new GraficoVendaMensalDTO();
         dto.setLabels(getLabels());
 
@@ -36,7 +39,7 @@ public class GraficoVendaMensalImpl implements GraficoVendaService<GraficoVendaM
         Map<Empresa, Map<LocalDate, BigDecimal>> vendasAgrupadas = vendas.stream()
                 .collect(Collectors.groupingBy(Venda::getEmpresa,
                         Collectors.groupingBy(Venda::getDataPedido,
-                                Collectors.reducing(BigDecimal.ZERO, Venda::getValorBruto, BigDecimal::add))));
+                                Collectors.reducing(BigDecimal.valueOf(0D), Venda::getValorBruto, BigDecimal::add))));
 
         for (Map.Entry<Empresa, Map<LocalDate, BigDecimal>> entry : vendasAgrupadas.entrySet()) {
 
@@ -48,9 +51,9 @@ public class GraficoVendaMensalImpl implements GraficoVendaService<GraficoVendaM
 
             Map<LocalDate, BigDecimal> totalizador = inicializaTotalizador();
 
-            valoresOrdenadosPorData.forEach(vEntry -> totalizador.put(vEntry.getKey(), vEntry.getValue()));
+            valoresOrdenadosPorData.forEach(vEntry -> totalizador.put(vEntry.getKey(), vEntry.getValue().setScale(2, RoundingMode.HALF_UP)));
 
-            totalizador.forEach((chave, valor) -> dataSet.getData().add(valor));
+            totalizador.forEach((chave, valor) -> dataSet.getData().add(valor.setScale(2, RoundingMode.HALF_UP)));
 
             datasSet.add(dataSet);
         }
@@ -74,7 +77,7 @@ public class GraficoVendaMensalImpl implements GraficoVendaService<GraficoVendaM
 
         for (int dia = 1; dia <= diasNoMes; dia++) {
             LocalDate data = LocalDate.of(ano, mes, dia);
-            totalizadoresMap.put(data, BigDecimal.ZERO);
+            totalizadoresMap.put(data, BigDecimal.valueOf(0D));
         }
 
         return totalizadoresMap;

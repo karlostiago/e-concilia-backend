@@ -19,7 +19,7 @@ public interface UsuarioService {
 
     Usuario pesquisarPorId(Long id);
 
-    void confirmaEmail(String email, String confirmacaoEmail);
+    void confirmaEmail(Long id, String email, String confirmacaoEmail);
 
     void confirmaSenha(String senha, String confirmaSenha);
 }

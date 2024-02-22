@@ -38,7 +38,7 @@ public class Taxa extends Entidade {
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;
 
-    @Column(name = "ativo", nullable = false, columnDefinition = "boolean default false ")
+    @Column(name = "ativo", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
     private Boolean ativo;
 
     @Column(name = "tipo", nullable = false)
