@@ -1,12 +1,11 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.AbstractApplicationTest;
+import com.ctsousa.econcilia.ApplicationIntegrationTest;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-class TaxaServiceTest extends AbstractApplicationTest {
+class TaxaServiceTest extends ApplicationIntegrationTest {
 
     @Autowired
     TaxaService taxaService;
@@ -25,11 +24,6 @@ class TaxaServiceTest extends AbstractApplicationTest {
     @BeforeEach
     void setup() {
         criarMassaDeDados();
-    }
-
-    @AfterEach
-    void destroy() {
-        deletarMassaDeDados();
     }
 
     @Test

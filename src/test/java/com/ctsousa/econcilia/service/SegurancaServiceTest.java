@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.AbstractApplicationTest;
+import com.ctsousa.econcilia.ApplicationIntegrationTest;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.repository.PermissaoRepository;
 import com.ctsousa.econcilia.repository.UsuarioRepository;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class SegurancaServiceTest extends AbstractApplicationTest {
+class SegurancaServiceTest extends ApplicationIntegrationTest {
 
     @Autowired
     private SegurancaService segurancaService;

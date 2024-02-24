@@ -1,7 +1,7 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
-import com.ctsousa.econcilia.filter.VendaFiltro;
+import com.ctsousa.econcilia.filter.VendaFilter;
 import com.ctsousa.econcilia.integration.ifood.IfoodGateway;
 import com.ctsousa.econcilia.integration.ifood.entity.*;
 import com.ctsousa.econcilia.mapper.impl.*;
@@ -187,7 +187,7 @@ public class IntegracaoIfoodServiceImpl implements IntegracaoIfoodService {
     }
 
     private List<Venda> filtrarVendas(final List<Venda> vendas, final String metodoPagamento, final String bandeira, final String tipoRecebimento) {
-        return new VendaFiltro(vendas, bandeira, metodoPagamento, tipoRecebimento)
+        return new VendaFilter(vendas, bandeira, metodoPagamento, tipoRecebimento)
                 .porBandeira()
                 .porMetodoPagamento()
                 .porMetodoPagamentoBandeira()

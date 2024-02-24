@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.Mapper;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.mapper.EntidadeMapper;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@Mapper
 public class IntegracaoMapper implements EntidadeMapper<Integracao, IntegracaoDTO>, DtoMapper<Integracao, IntegracaoDTO>, ColecaoMapper<Integracao, IntegracaoDTO> {
 
     private final EmpresaMapper empresaMapper;

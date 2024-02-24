@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.AbstractApplicationTest;
+import com.ctsousa.econcilia.ApplicationIntegrationTest;
 import com.ctsousa.econcilia.enumaration.Perfil;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.mapper.impl.UsuarioMapper;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-class UsuarioServiceTest extends AbstractApplicationTest {
+class UsuarioServiceTest extends ApplicationIntegrationTest {
 
     @Autowired
     private UsuarioService usuarioService;
@@ -48,7 +48,7 @@ class UsuarioServiceTest extends AbstractApplicationTest {
     void destroy() {
         permissaoRepository.deleteAll();
         usuarioRepository.deleteAll();
-        empresaRepository.deleteAll();
+        deletarMassaDeDados();
     }
 
     @Test

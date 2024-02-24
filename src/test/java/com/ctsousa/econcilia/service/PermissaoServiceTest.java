@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.AbstractApplicationTest;
+import com.ctsousa.econcilia.ApplicationIntegrationTest;
 import com.ctsousa.econcilia.enumaration.Funcionalidade;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Permissao;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-class PermissaoServiceTest extends AbstractApplicationTest {
+class PermissaoServiceTest extends ApplicationIntegrationTest {
 
     @Autowired
     private PermissaoService permissaoService;

@@ -10,7 +10,7 @@ import java.util.List;
 import static com.ctsousa.econcilia.util.StringUtil.naoTemValor;
 import static com.ctsousa.econcilia.util.StringUtil.temValor;
 
-public class VendaFiltro {
+public class VendaFilter {
 
     private final List<Venda> vendas;
 
@@ -23,7 +23,7 @@ public class VendaFiltro {
     @Getter
     private List<Venda> vendasFiltradas;
 
-    public VendaFiltro(List<Venda> vendas, String bandeira, String metodoPagamento, String tipoRecebimento) {
+    public VendaFilter(List<Venda> vendas, String bandeira, String metodoPagamento, String tipoRecebimento) {
         this.vendas = vendas;
         this.bandeira = bandeira;
         this.metodoPagamento = metodoPagamento;
@@ -31,7 +31,7 @@ public class VendaFiltro {
         this.vendasFiltradas = new ArrayList<>(vendas.size());
     }
 
-    public VendaFiltro porBandeira() {
+    public VendaFilter porBandeira() {
         if (Boolean.TRUE.equals(temValor(bandeira))) {
             vendasFiltradas.addAll(vendas.stream().filter(venda -> {
                         var descBandeira = venda.getPagamento().getBandeira().toUpperCase();
@@ -42,7 +42,7 @@ public class VendaFiltro {
         return this;
     }
 
-    public VendaFiltro porMetodoPagamento() {
+    public VendaFilter porMetodoPagamento() {
         if (Boolean.TRUE.equals(temValor(metodoPagamento))) {
             MetodoPagamento formaPagamento = MetodoPagamento.porDescricao(metodoPagamento);
 
@@ -54,7 +54,7 @@ public class VendaFiltro {
         return this;
     }
 
-    public VendaFiltro porMetodoPagamentoBandeira() {
+    public VendaFilter porMetodoPagamentoBandeira() {
         if (temValor(metodoPagamento) && temValor(bandeira)) {
             MetodoPagamento formaPagamento = MetodoPagamento.porDescricao(metodoPagamento);
             vendasFiltradas = vendas.stream().filter(venda -> {
@@ -70,7 +70,7 @@ public class VendaFiltro {
         return this;
     }
 
-    public VendaFiltro porTipoRecebimento() {
+    public VendaFilter porTipoRecebimento() {
         if (Boolean.TRUE.equals(temValor(tipoRecebimento)) && "loja".equalsIgnoreCase(tipoRecebimento)) {
             vendasFiltradas = vendasFiltradas.stream()
                     .filter(venda -> "merchant".equalsIgnoreCase(venda.getPagamento().getResponsavel()))

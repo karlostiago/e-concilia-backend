@@ -16,169 +16,17 @@ import java.util.List;
 @Component
 public class IntegracaoServiceImpl implements IntegracaoService {
 
-//    private static final String UNDEFINED = "undefined";
-
     private final IntegracaoRepository integracaoRepository;
 
     private final IntegracaoMapper integracaoMapper;
 
     private final IfoodGateway ifoodGateway;
 
-//    private final VendaMapper vendaMapper;
-//
-//    private final AjusteVendaMapper ajusteVendaMapper;
-//
-//    private final PagamentoMapper pagamentoMapper;
-//
-//    private final CancelamentoMapper cancelamentoMapper;
-//
-//    private final CobrancaCanceladaMapper cobrancaCanceladaMapper;
-//
-//    private final ImpostoRendaMapper impostoRendaMapper;
-//
-//    private final OcorrenciaMapper ocorrenciaMapper;
-//
-//    private final RegistroContaReceberMapper registroContaReceberMapper;
-//
-//    private final TaxaManutencaoMapper taxaManutencaoMapper;
-
     public IntegracaoServiceImpl(IntegracaoRepository integracaoRepository, IntegracaoMapper integracaoMapper, IfoodGateway ifoodGateway) {
         this.integracaoRepository = integracaoRepository;
         this.integracaoMapper = integracaoMapper;
         this.ifoodGateway = ifoodGateway;
     }
-
-
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<TaxaManutencao> pesquisarTaxasManutencao(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
-//
-//        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-//
-//        List<MaintenanceFee> maintenanceFees = ifoodGateway.findMaintenanceFees(codigoIntegracao, dtInicial, dtFinal);
-//
-//        if (maintenanceFees.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        return taxaManutencaoMapper.paraLista(maintenanceFees);
-//    }
-//
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<ImpostoRenda> pesquisarImpostoRenda(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
-//
-//        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-//
-//        List<IncomeTaxe> incomeTaxes = ifoodGateway.findIncomeTaxes(codigoIntegracao, dtInicial, dtFinal);
-//
-//        if (incomeTaxes.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        return impostoRendaMapper.paraLista(incomeTaxes);
-//    }
-//
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<RegistroContaReceber> pesquisarRegistroContaReceber(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
-//
-//        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-//
-//        List<ReceivableRecord> receivableRecords = ifoodGateway.findReceivables(codigoIntegracao, dtInicial, dtFinal);
-//
-//        if (receivableRecords.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        return registroContaReceberMapper.paraLista(receivableRecords);
-//    }
-//
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<Ocorrencia> pesquisarOcorrencias(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
-//
-//        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-//
-//        List<Occurrence> occurrences = ifoodGateway.findOccurences(codigoIntegracao, dtInicial, dtFinal);
-//
-//        if (occurrences.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        return ocorrenciaMapper.paraLista(occurrences);
-//    }
-//
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<CobrancaCancelada> pesquisarCobrancaCanceladas(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
-//
-//        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-//
-//        List<ChargeCancellation> chargeCancellations = ifoodGateway.findChargeCancellationBy(codigoIntegracao, dtInicial, dtFinal);
-//
-//        if (chargeCancellations.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        return cobrancaCanceladaMapper.paraLista(chargeCancellations);
-//    }
-//
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<Cancelamento> pesquisarCancelamentos(String codigoIntegracao, String periodoId) {
-//        List<Cancellation> cancellations = ifoodGateway.findCancellationBy(codigoIntegracao, periodoId);
-//
-//        if (cancellations.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        return cancelamentoMapper.paraLista(cancellations);
-//    }
-//
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<Venda> pesquisarVendasIfood(String codigoIntegracao, String metodoPagamento, String bandeira, String tipoRecebimento, LocalDate dtInicial, LocalDate dtFinal) {
-//
-//        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-//
-//        List<Sale> sales = ifoodGateway.findSalesBy(codigoIntegracao, dtInicial, dtFinal);
-//
-//        if (sales.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        List<Venda> vendas = vendaMapper.paraLista(sales);
-//        return filtrarVendas(vendas, metodoPagamento, bandeira, tipoRecebimento);
-//    }
-//
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<AjusteVenda> pesquisarAjusteVendasIfood(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
-//        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-//
-//        List<SaleAdjustment> saleAdjustments = ifoodGateway.findSaleAdjustmentBy(codigoIntegracao, dtInicial, dtFinal);
-//
-//        if (saleAdjustments.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        return ajusteVendaMapper.paraLista(saleAdjustments);
-//    }
-//
-//    @Deprecated(forRemoval = true)
-//    @Override
-//    public List<Pagamento> pesquisarPagamentos(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
-//        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-//
-//        List<Payment> payments = ifoodGateway.findPaymentBy(codigoIntegracao, dtInicial, dtFinal);
-//
-//        if (payments.isEmpty()) {
-//            return new ArrayList<>();
-//        }
-//
-//        return pagamentoMapper.paraLista(payments);
-//    }
 
     @Override
     public Integracao salvar(Integracao integracao) {
@@ -261,21 +109,4 @@ public class IntegracaoServiceImpl implements IntegracaoService {
         return integracaoRepository.findByCodigoIntegracao(codigoIntegracao)
                 .orElseThrow(() -> new NotificacaoException(String.format("Integração com código integração %s não encontrado", codigoIntegracao)));
     }
-
-//    private List<Venda> filtrarVendas(final List<Venda> vendas, final String metodoPagamento, final String bandeira, final String tipoRecebimento) {
-//        return new VendaFiltro(vendas, bandeira, metodoPagamento, tipoRecebimento)
-//                .porBandeira()
-//                .porMetodoPagamento()
-//                .porMetodoPagamentoBandeira()
-//                .porTipoRecebimento()
-//                .getVendasFiltradas();
-//    }
-//
-//    private void validaPeriodoMaior90Dias(final LocalDate dtInicial, final LocalDate dtFinal) {
-//        long dias = ChronoUnit.DAYS.between(dtInicial, dtFinal);
-//
-//        if (dias > 90) {
-//            throw new NotificacaoException("O período não pode ser maior que 90 dias");
-//        }
-//    }
 }

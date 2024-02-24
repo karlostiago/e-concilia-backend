@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.Mapper;
 import com.ctsousa.econcilia.integration.receitaws.json.DadosCnpjJson;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.model.dto.ContatoDTO;
@@ -9,6 +10,7 @@ import com.ctsousa.econcilia.model.dto.EstadoDTO;
 import org.springframework.stereotype.Component;
 
 @Component
+@Mapper
 public class CnpjMapper implements DtoMapper<DadosCnpjJson, EmpresaDTO> {
 
     @Override

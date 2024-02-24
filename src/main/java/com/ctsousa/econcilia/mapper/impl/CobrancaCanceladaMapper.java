@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.Mapper;
 import com.ctsousa.econcilia.integration.ifood.entity.ChargeCancellation;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@Mapper
 public class CobrancaCanceladaMapper implements DtoMapper<ChargeCancellation, CobrancaCancelada>, ColecaoMapper<ChargeCancellation, CobrancaCancelada> {
 
     @Override

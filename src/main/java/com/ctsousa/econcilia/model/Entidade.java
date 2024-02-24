@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.Model;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @MappedSuperclass
+@Model
 public abstract class Entidade implements Serializable {
 
     @Id

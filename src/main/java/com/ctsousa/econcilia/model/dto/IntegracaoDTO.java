@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model.dto;
 
+import com.ctsousa.econcilia.Dto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@Dto
 public class IntegracaoDTO {
 
     private Long id;

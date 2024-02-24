@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.Mapper;
 import com.ctsousa.econcilia.enumaration.Perfil;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 @Component
+@Mapper
 public class UsuarioMapper implements EntidadeMapper<Usuario, UsuarioDTO>, DtoMapper<Usuario, UsuarioDTO>, ColecaoMapper<Usuario, UsuarioDTO> {
 
     private final EmpresaService empresaService;

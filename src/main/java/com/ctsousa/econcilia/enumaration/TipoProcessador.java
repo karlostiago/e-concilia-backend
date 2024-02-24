@@ -10,6 +10,8 @@ public enum TipoProcessador {
 
     IFOOD,
 
+    IFOOD_MOCK,
+
     UBER_EATS;
 
     private Processador processador;
@@ -17,6 +19,7 @@ public enum TipoProcessador {
     public static Processador porOperadora(Operadora operadora) {
         return switch (operadora.getDescricao().toUpperCase()) {
             case "IFOOD" -> getProcessadorFactory().criar(IFOOD);
+            case "IFOOD_MOCK" -> getProcessadorFactory().criar(IFOOD_MOCK);
             case "UBER EATS" -> getProcessadorFactory().criar(UBER_EATS);
             default ->
                 throw new NotificacaoException("Processador " + operadora.getDescricao() + ", não suportado!");

@@ -9,6 +9,7 @@ import com.ctsousa.econcilia.scheduler.TipoImportacao;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,6 +29,7 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
 
     private final VendaRepository vendaRepository;
 
+    @Setter
     @Value("${importacao_habilitar}")
     private boolean habilitar;
 
@@ -41,6 +43,7 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
     @Override
     @Scheduled(fixedRate = QUINZE_MINUTOS)
     public void processar() {
+
         if (!habilitar) {
             log.info("O processo de importação não está habilitado.");
             return;

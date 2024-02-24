@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
+import com.ctsousa.econcilia.Mapper;
 import com.ctsousa.econcilia.integration.ifood.entity.PaymentSplit;
 import com.ctsousa.econcilia.integration.ifood.entity.ReceivableRecord;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+@Mapper
 public class RegistroContaReceberMapper implements DtoMapper<ReceivableRecord, RegistroContaReceber>, ColecaoMapper<ReceivableRecord, RegistroContaReceber> {
 
     @Override

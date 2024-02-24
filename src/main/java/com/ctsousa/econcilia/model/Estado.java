@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.Model;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
 @Getter
 @Setter
 @Embeddable
+@Model
 public class Estado implements Serializable {
 
     @Column(nullable = false, length = 2)

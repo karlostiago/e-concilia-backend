@@ -3,17 +3,14 @@ package com.ctsousa.econcilia;
 import com.ctsousa.econcilia.enumaration.Perfil;
 import com.ctsousa.econcilia.enumaration.TipoValor;
 import com.ctsousa.econcilia.model.*;
-import com.ctsousa.econcilia.repository.ContratoRepository;
-import com.ctsousa.econcilia.repository.EmpresaRepository;
-import com.ctsousa.econcilia.repository.OperadoraRepository;
-import com.ctsousa.econcilia.repository.TaxaRepository;
+import com.ctsousa.econcilia.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @ApplicationTest
-public class AbstractApplicationTest {
+public class ApplicationIntegrationTest extends ApplicationUnitTest {
 
     @Autowired
     protected TaxaRepository taxaRepository;
@@ -27,7 +24,18 @@ public class AbstractApplicationTest {
     @Autowired
     protected EmpresaRepository empresaRepository;
 
+    @Autowired
+    protected IntegracaoRepository integracaoRepository;
+
+    @Autowired
+    protected ImportacaoRepository importacaoRepository;
+
+    @Autowired
+    private VendaRepository vendaRepository;
+
     protected void criarMassaDeDados() {
+        deletarMassaDeDados();
+
         criarSalvarEmpresa();
         criarSalvarOperadora();
         criarSalvarContrato();
@@ -35,6 +43,9 @@ public class AbstractApplicationTest {
     }
 
     protected void deletarMassaDeDados() {
+        vendaRepository.deleteAll();
+        importacaoRepository.deleteAll();
+        integracaoRepository.deleteAll();
         taxaRepository.deleteAll();
         contratoRepository.deleteAll();
         operadoraRepository.deleteAll();
@@ -79,18 +90,42 @@ public class AbstractApplicationTest {
         return empresa;
     }
 
-    private void criarSalvarEmpresa() {
-        empresaRepository.save(getEmpresa());
-    }
-
-    private void criarSalvarOperadora() {
+    protected Operadora getOperadora() {
         Operadora operadora = new Operadora();
         operadora.setDescricao("Operadora teste");
         operadora.setAtivo(Boolean.TRUE);
-        operadoraRepository.save(operadora);
+        return operadora;
     }
 
-    private void criarSalvarContrato() {
+    protected Taxa getTaxa(Contrato contrato) {
+        Taxa taxa = new Taxa();
+        taxa.setTipo(TipoValor.MONETARIO);
+        taxa.setValor(BigDecimal.TEN);
+        taxa.setAtivo(Boolean.TRUE);
+        taxa.setDescricao("Taxa teste 1");
+        taxa.setEntraEmVigor(LocalDate.now());
+        taxa.setValidoAte(LocalDate.now().plusDays(30));
+        taxa.setContrato(contrato);
+        return taxa;
+    }
+
+    protected Integracao getIntegracao(Empresa empresa, Operadora operadora) {
+        Integracao integracao = new Integracao();
+        integracao.setOperadora(operadora);
+        integracao.setEmpresa(empresa);
+        integracao.setCodigoIntegracao("123456");
+        return integracao;
+    }
+
+    protected void criarSalvarEmpresa() {
+        empresaRepository.save(getEmpresa());
+    }
+
+    protected void criarSalvarOperadora() {
+        operadoraRepository.save(getOperadora());
+    }
+
+    protected void criarSalvarContrato() {
         Empresa empresa = empresaRepository.porCnpj("00000000000191");
         Operadora operadora = operadoraRepository.porDescricao("Operadora teste".toUpperCase()).get(0);
 

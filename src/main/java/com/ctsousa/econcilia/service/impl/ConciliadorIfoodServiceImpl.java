@@ -38,7 +38,11 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     public ConciliadorDTO conciliar(String codigoLoja, String metodoPagamento, String bandeira, String tipoRecebimento, LocalDate dtInicial, LocalDate dtFinal) {
         Integracao integracao = integracaoService.pesquisarPorCodigoIntegracao(codigoLoja);
 
-        ProcessadorFiltro processadorFiltro = getProcessadorFiltr(integracao, metodoPagamento, bandeira, tipoRecebimento, dtInicial, dtFinal);
+        if (integracao == null) {
+            throw new NotificacaoException("Não foi encontrada nenhuma empresa para o código integração.::: ");
+        }
+
+        ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, metodoPagamento, bandeira, tipoRecebimento, dtInicial, dtFinal);
         Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
         processador.processar(processadorFiltro, true);
         var vendas = processador.getVendas();
@@ -51,7 +55,7 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
         return conciliadorDTO;
     }
 
-    private ProcessadorFiltro getProcessadorFiltr(Integracao integracao, String metodoPagamento, String bandeira, String tipoRecebimento, LocalDate dtInicial, LocalDate dtFinal) {
+    private ProcessadorFiltro getProcessadorFiltro(Integracao integracao, String metodoPagamento, String bandeira, String tipoRecebimento, LocalDate dtInicial, LocalDate dtFinal) {
         ProcessadorFiltro processadorFiltro = new ProcessadorFiltro();
         processadorFiltro.setCartaoBandeira(Boolean.TRUE.equals(temValor(bandeira)) ? bandeira : null);
         processadorFiltro.setIntegracao(integracao);
@@ -65,10 +69,6 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
     private void conciliarTaxas(final List<Venda> vendas, final Integracao integracao) {
         Empresa empresa;
         Operadora operadora;
-
-        if (integracao == null) {
-            throw new NotificacaoException("Não foi encontrada nenhuma empresa para o código integração.::: ");
-        }
 
         empresa = integracao.getEmpresa();
         operadora = integracao.getOperadora();
