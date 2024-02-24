@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import static com.ctsousa.econcilia.util.StringUtil.somenteNumero;
 @Entity
 @Table(name = "empresa")
 @EqualsAndHashCode(callSuper = false)
+@ExcludedCoverage
 public class Empresa extends Entidade {
 
     @Column(name = "razao_social", nullable = false, length = 100)

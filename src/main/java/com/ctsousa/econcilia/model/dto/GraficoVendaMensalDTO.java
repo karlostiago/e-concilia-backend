@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.model.dto;
 
-import com.ctsousa.econcilia.Dto;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Dto
+@ExcludedCoverage
 public class GraficoVendaMensalDTO {
 
     private List<String> labels;
@@ -18,7 +18,6 @@ public class GraficoVendaMensalDTO {
     private List<DataSetDTO> dataSets;
 
     @Data
-    @Dto
     public static class DataSetDTO {
 
         private String label;

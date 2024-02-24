@@ -11,7 +11,6 @@ import com.ctsousa.econcilia.scheduler.impl.ImportacaoSchedulerIfoodImpl;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,11 +43,6 @@ class ImportacaoSchedulerIfoodTest extends ApplicationIntegrationTest {
         scheduler = importacaoServiceImpl;
 
         criarSalvarEmpresa();
-    }
-
-    @AfterEach
-    void destroy() {
-        deletarMassaDeDados();
     }
 
     @Test

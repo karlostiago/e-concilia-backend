@@ -1,16 +1,17 @@
 package com.ctsousa.econcilia.mapper.impl;
 
-import com.ctsousa.econcilia.Mapper;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import com.ctsousa.econcilia.integration.ifood.entity.Cancellation;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.model.Cancelamento;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Component
-@Mapper
+@ExcludedCoverage
 public class CancelamentoMapper implements DtoMapper<Cancellation, Cancelamento>, ColecaoMapper<Cancellation, Cancelamento> {
 
     @Override
@@ -29,5 +30,11 @@ public class CancelamentoMapper implements DtoMapper<Cancellation, Cancelamento>
         cancelamento.setPeriodoId(cancellation.getPeriodId());
         cancelamento.setPedidoId(cancellation.getOrderId());
         return cancelamento;
+    }
+
+    @Service
+    public static interface CnpjService {
+
+        com.ctsousa.econcilia.integration.receitaws.dto.DadosCnpjJson buscarCNPJ(final String cnpj);
     }
 }

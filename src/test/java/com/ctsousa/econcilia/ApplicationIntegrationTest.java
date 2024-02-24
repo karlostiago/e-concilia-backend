@@ -4,6 +4,7 @@ import com.ctsousa.econcilia.enumaration.Perfil;
 import com.ctsousa.econcilia.enumaration.TipoValor;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.repository.*;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -31,7 +32,18 @@ public class ApplicationIntegrationTest extends ApplicationUnitTest {
     protected ImportacaoRepository importacaoRepository;
 
     @Autowired
+    protected UsuarioRepository usuarioRepository;
+
+    @Autowired
+    protected PermissaoRepository permissaoRepository;
+
+    @Autowired
     private VendaRepository vendaRepository;
+
+    @AfterEach
+    void destroy() {
+        deletarMassaDeDados();
+    }
 
     protected void criarMassaDeDados() {
         deletarMassaDeDados();
@@ -43,6 +55,8 @@ public class ApplicationIntegrationTest extends ApplicationUnitTest {
     }
 
     protected void deletarMassaDeDados() {
+        permissaoRepository.deleteAll();
+        usuarioRepository.deleteAll();
         vendaRepository.deleteAll();
         importacaoRepository.deleteAll();
         integracaoRepository.deleteAll();

@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.model.dto;
 
-import com.ctsousa.econcilia.Dto;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@Dto
+@ExcludedCoverage
 public class ImportacaoDTO implements Serializable {
 
     @NotNull(message = "Campo data inicial é obrigatório.")

@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.model;
 
-import com.ctsousa.econcilia.Model;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-@Model
+@ExcludedCoverage
 public class Cancelamento {
 
     private String nomeComerciante;

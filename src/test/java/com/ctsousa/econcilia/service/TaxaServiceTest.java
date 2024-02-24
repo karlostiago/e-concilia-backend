@@ -19,7 +19,7 @@ import java.util.List;
 class TaxaServiceTest extends ApplicationIntegrationTest {
 
     @Autowired
-    TaxaService taxaService;
+    private TaxaService taxaService;
 
     @BeforeEach
     void setup() {

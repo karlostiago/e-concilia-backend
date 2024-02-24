@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
-import com.ctsousa.econcilia.Mapper;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Mapper
-public class AjusteVendaMapper implements DtoMapper<SaleAdjustment, AjusteVenda>, ColecaoMapper<SaleAdjustment, AjusteVenda> {
+@ExcludedCoverage
+public class AjusteVendaMapper implements DtoMapper<com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment, AjusteVenda>, ColecaoMapper<SaleAdjustment, AjusteVenda> {
 
     @Override
     public List<AjusteVenda> paraLista(List<SaleAdjustment> salesAdjustment) {

@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
-import com.ctsousa.econcilia.Mapper;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import com.ctsousa.econcilia.integration.ifood.entity.Sale;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Mapper
+@ExcludedCoverage
 public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, Venda> {
 
     @Override

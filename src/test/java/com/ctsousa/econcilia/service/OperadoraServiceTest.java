@@ -18,11 +18,6 @@ class OperadoraServiceTest extends ApplicationIntegrationTest {
     @Autowired
     private OperadoraMapper mapper;
 
-    @AfterEach
-    void destroy() {
-        deletarMassaDeDados();
-    }
-
     @Test
     void deveCadastrar() {
         Operadora operadora = criarOperadora();

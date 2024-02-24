@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
 @Entity
 @Table(name = "operadora")
 @EqualsAndHashCode(callSuper = false)
+@ExcludedCoverage
 public class Operadora extends Entidade {
 
     @Column(name = "descricao", nullable = false, length = 100, unique = true)

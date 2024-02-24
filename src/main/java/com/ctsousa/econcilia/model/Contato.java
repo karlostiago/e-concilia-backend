@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.model;
 
-import com.ctsousa.econcilia.Model;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +15,7 @@ import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
 @Getter
 @Setter
 @Embeddable
-@Model
+@ExcludedCoverage
 public class Contato implements Serializable {
 
     @Column(nullable = false, length = 50)

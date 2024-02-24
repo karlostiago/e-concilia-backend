@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.math.RoundingMode;
 @Entity
 @Table(name = "cobranca")
 @EqualsAndHashCode(callSuper = false)
+@ExcludedCoverage
 public class Cobranca extends Entidade {
 
     @Column(name = "valor_bruto", nullable = false, columnDefinition = "decimal(19,2) default 0.0")

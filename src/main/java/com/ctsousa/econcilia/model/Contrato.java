@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "contrato")
 @EqualsAndHashCode(callSuper = false)
+@ExcludedCoverage
 public class Contrato extends Entidade {
 
     @ManyToOne(fetch = FetchType.LAZY)

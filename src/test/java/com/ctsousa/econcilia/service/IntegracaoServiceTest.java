@@ -2,7 +2,7 @@ package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.ApplicationIntegrationTest;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
-import com.ctsousa.econcilia.integration.ifood.IfoodGateway;
+import com.ctsousa.econcilia.integration.ifood.gateway.IfoodGateway;
 import com.ctsousa.econcilia.mapper.impl.IntegracaoMapper;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Integracao;

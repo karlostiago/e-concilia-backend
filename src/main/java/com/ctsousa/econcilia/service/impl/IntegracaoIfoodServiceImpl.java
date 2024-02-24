@@ -2,8 +2,8 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.filter.VendaFilter;
-import com.ctsousa.econcilia.integration.ifood.IfoodGateway;
 import com.ctsousa.econcilia.integration.ifood.entity.*;
+import com.ctsousa.econcilia.integration.ifood.gateway.IfoodGateway;
 import com.ctsousa.econcilia.mapper.impl.*;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.service.IntegracaoIfoodService;

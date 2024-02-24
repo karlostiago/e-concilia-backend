@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
-import com.ctsousa.econcilia.Mapper;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import com.ctsousa.econcilia.enumaration.TipoValor;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Mapper
+@ExcludedCoverage
 public class ContratoMapper implements EntidadeMapper<Contrato, ContratoDTO>, DtoMapper<Contrato, ContratoDTO>, ColecaoMapper<Contrato, ContratoDTO> {
 
     private final EmpresaMapper empresaMapper;

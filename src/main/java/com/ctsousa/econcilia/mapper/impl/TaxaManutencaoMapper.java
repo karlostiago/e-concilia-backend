@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
-import com.ctsousa.econcilia.Mapper;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import com.ctsousa.econcilia.integration.ifood.entity.MaintenanceFee;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Mapper
+@ExcludedCoverage
 public class TaxaManutencaoMapper implements DtoMapper<MaintenanceFee, TaxaManutencao>, ColecaoMapper<MaintenanceFee, TaxaManutencao> {
 
     @Override

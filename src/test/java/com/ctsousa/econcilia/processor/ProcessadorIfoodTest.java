@@ -6,7 +6,6 @@ import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.processor.ifood.ProcessadorIfood;
 import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.TaxaService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +31,6 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         processador = new ProcessadorIfood(integracaoIfoodService, taxaService);
         criarSalvarEmpresa();
         criarSalvarOperadora();
-    }
-
-    @AfterEach
-    void destroy() {
-        deletarMassaDeDados();
     }
 
     @Test

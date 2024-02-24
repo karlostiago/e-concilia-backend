@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.mapper.impl;
 
-import com.ctsousa.econcilia.Mapper;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import com.ctsousa.econcilia.enumaration.Funcionalidade;
 import com.ctsousa.econcilia.enumaration.TipoFuncionalidade;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Mapper
+@ExcludedCoverage
 public class PermissaoMapper implements EntidadeMapper<Permissao, PermissaoDTO>, DtoMapper<Permissao, PermissaoDTO>, ColecaoMapper<Permissao, PermissaoDTO> {
 
     private final UsuarioMapper usuarioMapper;

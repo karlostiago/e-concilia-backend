@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import com.ctsousa.econcilia.enumaration.TipoValor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import static com.ctsousa.econcilia.util.StringUtil.maiuscula;
 @Entity
 @Table(name = "taxa")
 @EqualsAndHashCode(callSuper = false)
+@ExcludedCoverage
 public class Taxa extends Entidade {
 
     @NotNull

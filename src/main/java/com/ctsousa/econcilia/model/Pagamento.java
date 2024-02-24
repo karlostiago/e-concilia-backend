@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "pagamento")
 @EqualsAndHashCode(callSuper = false)
+@ExcludedCoverage
 public class Pagamento extends Entidade {
 
     @Column(name = "periodo_id")

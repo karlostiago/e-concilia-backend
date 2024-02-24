@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.model.dto;
 
-import com.ctsousa.econcilia.Dto;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-@Dto
+@ExcludedCoverage
 public class EmpresaDTO implements Serializable {
 
     private Long id;

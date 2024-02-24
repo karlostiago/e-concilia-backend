@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.model;
 
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import javax.persistence.*;
         @UniqueConstraint(columnNames = {"operadora_id", "codigo_integracao"})
 })
 @EqualsAndHashCode(callSuper = false)
+@ExcludedCoverage
 public class Integracao extends Entidade {
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,6 +1,6 @@
 package com.ctsousa.econcilia.model;
 
-import com.ctsousa.econcilia.Model;
+import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Embeddable
-@Model
+@ExcludedCoverage
 public class Endereco implements Serializable {
 
     @Column(nullable = false, length = 100)

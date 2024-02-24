@@ -7,10 +7,6 @@ import com.ctsousa.econcilia.mapper.impl.UsuarioMapper;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Usuario;
 import com.ctsousa.econcilia.model.dto.UsuarioDTO;
-import com.ctsousa.econcilia.repository.EmpresaRepository;
-import com.ctsousa.econcilia.repository.PermissaoRepository;
-import com.ctsousa.econcilia.repository.UsuarioRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,28 +23,12 @@ class UsuarioServiceTest extends ApplicationIntegrationTest {
     private UsuarioService usuarioService;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private PermissaoRepository permissaoRepository;
-
-    @Autowired
     private UsuarioMapper mapper;
-
-    @Autowired
-    private EmpresaRepository empresaRepository;
 
     @BeforeEach
     void setup() {
         empresaRepository.save(getEmpresa());
         usuarioService.salvar(getUsuario());
-    }
-
-    @AfterEach
-    void destroy() {
-        permissaoRepository.deleteAll();
-        usuarioRepository.deleteAll();
-        deletarMassaDeDados();
     }
 
     @Test
