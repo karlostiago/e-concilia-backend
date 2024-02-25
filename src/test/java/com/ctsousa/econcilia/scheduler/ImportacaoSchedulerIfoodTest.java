@@ -81,8 +81,8 @@ class ImportacaoSchedulerIfoodTest extends ApplicationIntegrationTest {
         importacao.setSituacao(ImportacaoSituacao.AGENDADO);
         importacao.setEmpresa(empresa);
         importacao.setOperadora(operadora);
-        importacao.setDataInicial(LocalDate.now());
-        importacao.setDataFinal(LocalDate.now().plusDays(90));
+        importacao.setDataInicial(LocalDate.of(2024, 2 ,24));
+        importacao.setDataFinal(LocalDate.of(2024, 3 ,25));
         return importacao;
     }
 }
