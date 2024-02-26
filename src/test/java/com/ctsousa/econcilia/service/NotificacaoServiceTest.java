@@ -59,26 +59,36 @@ class NotificacaoServiceTest extends ApplicationIntegrationTest {
     }
 
     @Test
-    void deveRetornarNotificacoesLidas() {
+    void deveRetornarNotificacoesNaoLidas() {
         Notificacao notificacao = getNotificacao(empresa);
-        notificacaoService.salvar(notificacao);
+
         notificacao.setId(null);
-        notificacaoService.salvar(notificacao);
-        notificacao.setId(null);
+        notificacao.setLida(true);
+        notificacao.setResolvida(true);
         notificacaoService.salvar(notificacao);
 
-        Assertions.assertEquals(3, notificacaoService.pesquisarLidas(usuario).size());
+        notificacao.setId(null);
+        notificacao.setLida(false);
+        notificacao.setResolvida(true);
+        notificacaoService.salvar(notificacao);
+
+        Assertions.assertEquals(1, notificacaoService.pesquisar(usuario).size());
     }
 
     @Test
-    void deveRetornarNotificacoesResolvidas() {
+    void deveRetornarNotificacoesNaoResolvidas() {
         Notificacao notificacao = getNotificacao(empresa);
-        notificacao.setId(null);
-        notificacaoService.salvar(notificacao);
-        notificacao.setId(null);
+
+        notificacao.setResolvida(true);
+        notificacao.setLida(true);
         notificacaoService.salvar(notificacao);
 
-        Assertions.assertEquals(2, notificacaoService.pesquisarResolvidas(usuario).size());
+        notificacao.setId(null);
+        notificacao.setResolvida(false);
+        notificacao.setLida(true);
+        notificacaoService.salvar(notificacao);
+
+        Assertions.assertEquals(1, notificacaoService.pesquisar(usuario).size());
     }
 
     @Test
@@ -100,23 +110,25 @@ class NotificacaoServiceTest extends ApplicationIntegrationTest {
     void deveMarcarComoResolvida() {
         Notificacao notificacao = getNotificacao(empresa);
         notificacao.setResolvida(Boolean.FALSE);
+        notificacao.setLida(Boolean.FALSE);
+
         notificacao = notificacaoService.salvar(notificacao);
 
         Assertions.assertFalse(notificacao.getResolvida());
+        Assertions.assertFalse(notificacao.getLida());
 
         notificacaoService.marcarComoResolvida(notificacao.getId());
 
         notificacao = notificacaoService.buscarPorId(notificacao.getId());
 
         Assertions.assertTrue(notificacao.getResolvida());
+        Assertions.assertTrue(notificacao.getLida());
     }
 
     private Notificacao getNotificacao(Empresa empresa) {
         Notificacao notificacao = new Notificacao();
         notificacao.setEmpresa(empresa);
         notificacao.setMensagem("nova mensagem");
-        notificacao.setResolvida(true);
-        notificacao.setLida(true);
         return notificacao;
     }
 }

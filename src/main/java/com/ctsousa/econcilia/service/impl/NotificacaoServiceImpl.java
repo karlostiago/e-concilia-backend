@@ -23,6 +23,17 @@ public class NotificacaoServiceImpl implements NotificacaoService {
     }
 
     @Override
+    public List<Notificacao> pesquisar(Usuario usuario) {
+        List<Empresa> empresas = getEmpresas(usuario);
+        List<Notificacao> notificacoesLidas = pesquisarNaoLidas(empresas);
+        List<Notificacao> notificacoesResolvidas = pesquisarNaoResolvidas(empresas);
+        List<Notificacao> notificacoes = new ArrayList<>(notificacoesLidas.size() + notificacoesResolvidas.size());
+        notificacoes.addAll(notificacoesLidas);
+        notificacoes.addAll(notificacoesResolvidas);
+        return notificacoes;
+    }
+
+    @Override
     public void marcarComoLida(Long id) {
         Notificacao notificacao = buscarPorId(id);
         notificacao.setLida(Boolean.TRUE);
@@ -33,6 +44,7 @@ public class NotificacaoServiceImpl implements NotificacaoService {
     public void marcarComoResolvida(Long id) {
         Notificacao notificacao = buscarPorId(id);
         notificacao.setResolvida(Boolean.TRUE);
+        notificacao.setLida(Boolean.TRUE);
         salvar(notificacao);
     }
 
@@ -51,19 +63,17 @@ public class NotificacaoServiceImpl implements NotificacaoService {
     }
 
     @Override
-    public List<Notificacao> pesquisarLidas(Usuario usuario) {
-        return notificacaoRepository.lidas(getEmpresas(usuario));
-    }
-
-    @Override
-    public List<Notificacao> pesquisarResolvidas(Usuario usuario) {
-        return notificacaoRepository.resolvidas(getEmpresas(usuario));
-    }
-
-    @Override
     public Notificacao buscarPorId(final Long id) {
         return notificacaoRepository.findById(id)
                 .orElseThrow(() -> new NotificacaoException(String.format("Nenhuma notificacao com id %s não encontrado.", id)));
+    }
+
+    private List<Notificacao> pesquisarNaoLidas(List<Empresa> empresas) {
+        return notificacaoRepository.naoLidas(empresas);
+    }
+
+    private List<Notificacao> pesquisarNaoResolvidas(List<Empresa> empresas) {
+        return notificacaoRepository.naoResolvidas(empresas);
     }
 
     private List<Empresa> getEmpresas(Usuario usuario) {

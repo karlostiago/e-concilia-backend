@@ -13,9 +13,7 @@ public interface NotificacaoService {
 
     Notificacao buscarPorId(Long id);
 
-    List<Notificacao> pesquisarLidas(Usuario usuario);
-
-    List<Notificacao> pesquisarResolvidas(Usuario usuario);
+    List<Notificacao> pesquisar(Usuario usuario);
 
     void marcarComoLida(Long id);
 
