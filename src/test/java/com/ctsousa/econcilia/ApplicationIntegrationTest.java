@@ -38,6 +38,9 @@ public class ApplicationIntegrationTest extends ApplicationUnitTest {
     protected PermissaoRepository permissaoRepository;
 
     @Autowired
+    protected NotificacaoRepository notificacaoRepository;
+
+    @Autowired
     private VendaRepository vendaRepository;
 
     @AfterEach
@@ -55,6 +58,7 @@ public class ApplicationIntegrationTest extends ApplicationUnitTest {
     }
 
     protected void deletarMassaDeDados() {
+        notificacaoRepository.deleteAll();
         permissaoRepository.deleteAll();
         usuarioRepository.deleteAll();
         vendaRepository.deleteAll();
