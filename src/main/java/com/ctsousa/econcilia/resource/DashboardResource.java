@@ -57,32 +57,38 @@ public class DashboardResource {
         vendas = dashboadService.buscarVendaMensal(empresaId,
             LocalDate.now().withDayOfMonth(1), LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()));
 
-//        vendas = dashboadService.buscarVendaMensal(empresaId, dtInicial, dtFinal);
-
         return ResponseEntity.ok(dashboardDTO);
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<GraficoVendaUltimo7DiaDTO> buscarVendasUltimos7Dias(@RequestParam(name = "lojaId", required = false) final String empresaId) {
+        if (vendas == null) return ResponseEntity.ok().build();
+
         return ResponseEntity.ok(graficoVendaUltimo7DiaService.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-credito-debito")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<GraficoVendaUltimo7DiaCreditoDebitoDTO> buscarVendasUltimos7DiasCreditoDebito(@RequestParam(name = "lojaId", required = false) final String empresaId) {
+        if (vendas == null) return ResponseEntity.ok().build();
+
         return ResponseEntity.ok(graficoVendaUltimo7DiaCreditoDebitoService.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-percentual-venda-ultimos-7-dias")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<GraficoPercentualVendaUltimo7DiaDTO> buscarPercentualVendasUltimos7Dias(@RequestParam(name = "lojaId", required = false) final String empresaId) {
+        if (vendas == null) return ResponseEntity.ok().build();
+
         return ResponseEntity.ok(graficoPercentualVendaUltimo7DiaFormaPagamento.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-dinheito-pix")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<GraficoVendaUltimo7DiaDinheiroPixDTO> buscarVendasUltimos7DiasDinheiroPix(@RequestParam(name = "lojaId", required = false) final String empresaId) {
+        if (vendas == null) return ResponseEntity.ok().build();
+
         return ResponseEntity.ok(graficoVendaUltimo7DiaDinheiroPixService.processar(vendas));
     }
 
@@ -91,6 +97,8 @@ public class DashboardResource {
     public ResponseEntity<GraficoVendaMensalDTO> buscarVendasMensal(@RequestParam(name = "lojaId", required = false) final String empresaId,
                                                                     @RequestParam(name = "dtInicial", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial,
                                                                     @RequestParam(name = "dtFinal", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal) {
+        if (vendas == null) return ResponseEntity.ok().build();
+
         return ResponseEntity.ok(graficoVendaMensal.processar(vendas));
     }
 }

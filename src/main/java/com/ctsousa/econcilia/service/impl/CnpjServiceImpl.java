@@ -2,7 +2,7 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.integration.receitaws.dto.DadosCnpjJson;
 import com.ctsousa.econcilia.integration.receitaws.service.ReceitaWS;
-import com.ctsousa.econcilia.mapper.impl.CancelamentoMapper;
+import com.ctsousa.econcilia.service.CnpjService;
 import com.ctsousa.econcilia.validation.CnpjValidator;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class CnpjServiceImpl implements CancelamentoMapper.CnpjService {
+public class CnpjServiceImpl implements CnpjService {
 
     private final ReceitaWS receitaWS;
 

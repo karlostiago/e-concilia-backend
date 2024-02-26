@@ -8,6 +8,7 @@ import com.ctsousa.econcilia.processor.Processador;
 import com.ctsousa.econcilia.processor.ProcessadorFiltro;
 import com.ctsousa.econcilia.service.DashboadService;
 import com.ctsousa.econcilia.service.IntegracaoService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
@@ -24,6 +25,7 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     @Override
+    @Cacheable(value = "vendaMensalCache", key = "{#empresaId, #dtInicial, #dtFinal}", sync = true)
     public List<Venda> buscarVendaMensal(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Long> empresasId = getEmpresasId(empresaId);
 
@@ -53,6 +55,7 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     @Override
+    @Cacheable(value = "informacoesCache", key = "{#empresaId, #dtInicial, #dtFinal}", sync = true)
     public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Long> empresasId = getEmpresasId(empresaId);
         DashboardDTO dashboardDTO = new DashboardDTO();

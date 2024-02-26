@@ -4,6 +4,10 @@ server:
         context-path: /econcilia/api
 
 spring:
+    cache:
+        type: caffeine
+        caffeine:
+            spec: expireAfterAccess=480m
     datasource:
         url: jdbc:mysql://${mysql.url}/${mysql.schema}?useSSL=true&serverTimezone=UTC&characterEncoding=UTF-8
         username: ${mysql.username}

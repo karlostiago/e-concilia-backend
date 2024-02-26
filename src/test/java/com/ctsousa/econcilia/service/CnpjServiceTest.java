@@ -2,7 +2,6 @@ package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.integration.receitaws.dto.DadosCnpjJson;
 import com.ctsousa.econcilia.integration.receitaws.service.ReceitaWS;
-import com.ctsousa.econcilia.mapper.impl.CancelamentoMapper;
 import com.ctsousa.econcilia.service.impl.CnpjServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 class CnpjServiceTest {
 
-    private CancelamentoMapper.CnpjService cnpjService;
+    private CnpjService cnpjService;
 
     @BeforeEach
     void setup() {

@@ -1,7 +1,7 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.mapper.impl.CancelamentoMapper;
 import com.ctsousa.econcilia.mapper.impl.CnpjMapper;
+import com.ctsousa.econcilia.service.CnpjService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,7 +19,7 @@ class CnpjResourceTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CancelamentoMapper.CnpjService cnpjService;
+    private CnpjService cnpjService;
 
     @MockBean
     private CnpjMapper mapper;
