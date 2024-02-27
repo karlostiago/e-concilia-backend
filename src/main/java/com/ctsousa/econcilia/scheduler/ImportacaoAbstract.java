@@ -2,15 +2,17 @@ package com.ctsousa.econcilia.scheduler;
 
 import com.ctsousa.econcilia.model.Importacao;
 import com.ctsousa.econcilia.model.Integracao;
+import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.ctsousa.econcilia.util.DataUtil;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ctsousa.econcilia.util.DataUtil.periodos;
 
 public abstract class ImportacaoAbstract {
 
@@ -20,7 +22,7 @@ public abstract class ImportacaoAbstract {
 
     protected Importacao importacao;
 
-    protected List<Periodo> periodos;
+    protected List<PeriodoDTO> periodos;
 
     protected ImportacaoAbstract(ImportacaoService importacaoService, IntegracaoService integracaoService) {
         this.importacaoService = importacaoService;
@@ -44,31 +46,7 @@ public abstract class ImportacaoAbstract {
     }
 
     private void calcularPeriodo(LocalDate periodoInicial, long totalDias) {
-        boolean executa = true;
-
-        if (totalDias <= 30) {
-            periodos.add(new Periodo(periodoInicial, periodoInicial.plusDays(totalDias)));
-            executa = false;
-        }
-
-        while (executa) {
-            LocalDate periodoFinal = periodoInicial.plusDays(30);
-
-            if (!periodos.isEmpty()) {
-                periodoInicial = periodos.get(periodos.size() - 1).getAte()
-                        .plusDays(1);
-
-                periodoFinal = periodoInicial.plusDays(totalDias < 30 ? totalDias : 30)
-                        .minusDays(1);
-            }
-
-            periodos.add(new Periodo(periodoInicial, periodoFinal));
-            totalDias -= 30;
-
-            if (totalDias <= 0) {
-                executa = false;
-            }
-        }
+        periodos = periodos(periodoInicial, totalDias);
     }
 
     public abstract TipoImportacao tipoImportacao();
@@ -85,12 +63,5 @@ public abstract class ImportacaoAbstract {
                 .stream()
                 .filter(imp -> imp.getOperadora().getDescricao().equalsIgnoreCase(tipoImportacao().getDescricao()))
                 .findFirst().orElse(null);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    protected static class Periodo {
-        private LocalDate de;
-        private LocalDate ate;
     }
 }

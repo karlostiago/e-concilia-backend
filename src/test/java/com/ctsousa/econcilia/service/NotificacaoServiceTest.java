@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.ApplicationIntegrationTest;
+import com.ctsousa.econcilia.enumaration.TipoNotificacao;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Notificacao;
@@ -129,6 +130,7 @@ class NotificacaoServiceTest extends ApplicationIntegrationTest {
         Notificacao notificacao = new Notificacao();
         notificacao.setEmpresa(empresa);
         notificacao.setMensagem("nova mensagem");
+        notificacao.setTipoNotificacao(TipoNotificacao.DIRETA.getCodigo());
         return notificacao;
     }
 }

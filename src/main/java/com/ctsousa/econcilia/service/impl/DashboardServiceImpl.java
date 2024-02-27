@@ -25,7 +25,7 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     @Override
-    @Cacheable(value = "vendaMensalCache", key = "{#empresaId, #dtInicial, #dtFinal}", sync = true)
+    @Cacheable(value = "vendaMensalCache", key = "{#empresaId, #dtInicial, #dtFinal}")
     public List<Venda> buscarVendaMensal(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Long> empresasId = getEmpresasId(empresaId);
 
@@ -55,7 +55,7 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     @Override
-    @Cacheable(value = "informacoesCache", key = "{#empresaId, #dtInicial, #dtFinal}", sync = true)
+    @Cacheable(value = "informacoesCache", key = "{#empresaId, #dtInicial, #dtFinal}")
     public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Long> empresasId = getEmpresasId(empresaId);
         DashboardDTO dashboardDTO = new DashboardDTO();

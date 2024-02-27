@@ -4,16 +4,16 @@ import com.ctsousa.econcilia.annotation.ExcludedCoverage;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
+import java.util.List;
+
 @Setter
+@Getter
 @ExcludedCoverage
 public class NotificacaoDTO {
 
-    private EmpresaDTO empresaDTO;
+    private List<MensagemDTO> mensagens;
 
-    private String mensagem;
-
-    private Boolean resolvida;
-
-    private Boolean lida;
+    public int getQuantidade() {
+        return mensagens == null ? 0 : mensagens.size();
+    }
 }

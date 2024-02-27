@@ -2,6 +2,7 @@ package com.ctsousa.econcilia.scheduler.impl;
 
 import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
 import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 import com.ctsousa.econcilia.repository.VendaRepository;
 import com.ctsousa.econcilia.scheduler.ImportacaoAbstract;
 import com.ctsousa.econcilia.scheduler.Scheduler;
@@ -65,8 +66,8 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
         log.info("Importação concluída com sucesso.");
     }
 
-    private void importar(final List<Periodo> periodos, final String codigoIntegeracao) {
-        for (Periodo periodo : periodos) {
+    private void importar(final List<PeriodoDTO> periodos, final String codigoIntegeracao) {
+        for (PeriodoDTO periodo : periodos) {
             log.info("Pesquisando as vendas para empresa {}, operadora {}, no periodo de {} ate {}", importacao.getEmpresa().getRazaoSocial(), importacao.getOperadora().getDescricao(), periodo.getDe(), periodo.getAte());
             List<Venda> vendas = integracaoIfoodService.pesquisarVendas(codigoIntegeracao, null, null, null, periodo.getDe(), periodo.getAte());
 

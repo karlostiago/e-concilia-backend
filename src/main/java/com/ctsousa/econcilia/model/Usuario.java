@@ -49,6 +49,10 @@ public class Usuario extends Entidade {
     public Usuario() {
     }
 
+    public Usuario (final Long id) {
+        setId(id);
+    }
+
     public Usuario(String nomeCompleto) {
         setNomeCompleto(nomeCompleto);
     }
