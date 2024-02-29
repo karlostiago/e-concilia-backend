@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.util;
 
+import com.ctsousa.econcilia.enumaration.Faixa;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 
 import java.time.LocalDate;
@@ -45,6 +46,35 @@ public final class DataUtil {
             if (totalDias <= 0) {
                 executarCalculo = false;
             }
+        }
+
+        return periodos;
+    }
+
+    public static List<PeriodoDTO> periodoAnual(LocalDate dataInicial, Faixa faixa) {
+        LocalDate dtFinal = dataInicial.minusDays(365);
+
+        List<PeriodoDTO> periodos = new ArrayList<>();
+
+        LocalDate dtAtual = dtFinal;
+        LocalDate ultimaData = null;
+
+        while (dtAtual.isBefore(dataInicial)) {
+            var proximaData = dtAtual.plusDays(faixa.getValor());
+
+            if (proximaData.isAfter(dataInicial)) {
+                proximaData = dataInicial;
+            }
+
+            if (!periodos.isEmpty()) {
+                ultimaData = periodos.get(periodos.size() - 1).getAte();
+                if (ultimaData.equals(dtAtual)) {
+                    dtAtual = dtAtual.plusDays(1);
+                }
+            }
+
+            periodos.add(new PeriodoDTO(dtAtual, proximaData));
+            dtAtual = proximaData;
         }
 
         return periodos;

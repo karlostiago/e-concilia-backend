@@ -15,4 +15,6 @@ public interface DashboadService {
     List<Venda> buscarVendasUltimos7Dias(final String empresaId);
 
     List<Venda> buscarVendaMensal(final String empresaId, final LocalDate dtInicial, final LocalDate dtFinal);
+
+    List<Venda> buscarVendaAnual(final String empresaId, final LocalDate dtInicial);
 }

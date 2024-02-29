@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.util;
 
+import com.ctsousa.econcilia.enumaration.Faixa;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,5 +28,13 @@ class DataUtilTest {
     void deveCalcular() {
         List<PeriodoDTO> periodos = DataUtil.periodos(LocalDate.of(2024, 1, 1), 60);
         Assertions.assertEquals(2, periodos.size());
+    }
+
+    @Test
+    void deveCalcularPeriodoAnual() {
+        List<PeriodoDTO> periodos = DataUtil.periodoAnual(LocalDate.of(2024, 2, 27), Faixa.FX_90);
+        Assertions.assertEquals(5, periodos.size());
+        Assertions.assertEquals(LocalDate.of(2023, 2, 27), periodos.get(0).getDe());
+        Assertions.assertEquals(LocalDate.of(2024, 2, 27), periodos.get(periodos.size() - 1).getAte());
     }
 }

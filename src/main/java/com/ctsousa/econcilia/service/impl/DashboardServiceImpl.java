@@ -1,19 +1,24 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.Faixa;
 import com.ctsousa.econcilia.enumaration.TipoProcessador;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
+import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 import com.ctsousa.econcilia.processor.Processador;
 import com.ctsousa.econcilia.processor.ProcessadorFiltro;
 import com.ctsousa.econcilia.service.DashboadService;
 import com.ctsousa.econcilia.service.IntegracaoService;
+import com.ctsousa.econcilia.util.DataUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class DashboardServiceImpl implements DashboadService {
@@ -22,6 +27,28 @@ public class DashboardServiceImpl implements DashboadService {
 
     public DashboardServiceImpl(IntegracaoService integracaoService) {
         this.integracaoService = integracaoService;
+    }
+
+    @Override
+    @Cacheable(value = "vendaAnualCache", key = "{#empresaId, #dtInicial}")
+    public List<Venda> buscarVendaAnual(String empresaId, LocalDate dtInicial) {
+        List<Long> empresasId = getEmpresasId(empresaId);
+        List<PeriodoDTO> periodos = DataUtil.periodoAnual(dtInicial, Faixa.FX_90);
+        List<Venda> vendas = new ArrayList<>();
+
+        for (Long idEmpresa : empresasId) {
+            List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
+            for (Integracao integracao : integracoes) {
+                for (PeriodoDTO periodoDTO : periodos) {
+                    ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, periodoDTO.getDe(), periodoDTO.getAte());
+                    Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
+                    processador.processar(processadorFiltro, false);
+                    vendas.addAll(processador.getVendas());
+                }
+            }
+        }
+
+        return vendas;
     }
 
     @Override
