@@ -47,8 +47,8 @@ public class AbstractGraficoVendaMeioPagamento {
         }
     }
 
-    protected Map<LocalDate, Map<String, BigDecimal>> ultimos7Dias() {
-        var diaAnterior = LocalDate.now().minusDays(1);
+    protected Map<LocalDate, Map<String, BigDecimal>> ultimos7Dias(LocalDate periodo) {
+        var diaAnterior = periodo.minusDays(0);
         return IntStream.range(0, 7)
                 .mapToObj(diaAnterior::minusDays)
                 .collect(Collectors.toMap(data -> data, data -> new HashMap<>()));

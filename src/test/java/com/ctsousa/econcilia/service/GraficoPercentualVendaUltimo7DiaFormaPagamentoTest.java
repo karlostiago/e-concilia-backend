@@ -1,8 +1,8 @@
 package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.ApplicationUnitTest;
-import com.ctsousa.econcilia.model.dto.GraficoPercentualVendaUltimo7DiaDTO;
-import com.ctsousa.econcilia.service.impl.GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl;
+import com.ctsousa.econcilia.model.dto.GraficoPercentualVendaFormaPagamentoDTO;
+import com.ctsousa.econcilia.service.impl.GraficoPercentualVendaFormaPagamentoImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +12,9 @@ class GraficoPercentualVendaUltimo7DiaFormaPagamentoTest extends ApplicationUnit
 
     @Test
     void deveGerarGraficoVenda() {
-        GraficoVendaService<GraficoPercentualVendaUltimo7DiaDTO> grafico = new GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl();
+        GraficoVendaService<GraficoPercentualVendaFormaPagamentoDTO> grafico = new GraficoPercentualVendaFormaPagamentoImpl();
 
-        GraficoPercentualVendaUltimo7DiaDTO graficoDTO = grafico.processar(getVendas());
+        GraficoPercentualVendaFormaPagamentoDTO graficoDTO = grafico.processar(getVendas());
 
         Assertions.assertFalse(graficoDTO.getData().isEmpty());
         Assertions.assertFalse(graficoDTO.getLabels().isEmpty());

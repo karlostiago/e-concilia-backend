@@ -1,7 +1,7 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.model.Venda;
-import com.ctsousa.econcilia.model.dto.GraficoPercentualVendaUltimo7DiaDTO;
+import com.ctsousa.econcilia.model.dto.GraficoPercentualVendaFormaPagamentoDTO;
 import com.ctsousa.econcilia.service.AbstractGraficoVendaMeioPagamento;
 import com.ctsousa.econcilia.service.GraficoVendaService;
 import org.springframework.stereotype.Component;
@@ -15,10 +15,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component
-public class GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl extends AbstractGraficoVendaMeioPagamento implements GraficoVendaService<GraficoPercentualVendaUltimo7DiaDTO>  {
+public class GraficoPercentualVendaFormaPagamentoImpl extends AbstractGraficoVendaMeioPagamento implements GraficoVendaService<GraficoPercentualVendaFormaPagamentoDTO>  {
     @Override
-    public GraficoPercentualVendaUltimo7DiaDTO processar(List<Venda> vendas) {
-        GraficoPercentualVendaUltimo7DiaDTO graficoDTO = new GraficoPercentualVendaUltimo7DiaDTO();
+    public GraficoPercentualVendaFormaPagamentoDTO processar(List<Venda> vendas) {
+
+        GraficoPercentualVendaFormaPagamentoDTO graficoDTO = new GraficoPercentualVendaFormaPagamentoDTO();
         graficoDTO.setLabels(List.of("Crédito", "Débito", "Dinheiro", "Pix", "Outros"));
 
         Map<LocalDate, List<Venda>> vendasMap = vendas.stream()
@@ -41,11 +42,7 @@ public class GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl extends Abstract
         AtomicReference<BigDecimal> valorTotal = new AtomicReference<>(BigDecimal.ZERO);
         BigDecimal percentual = BigDecimal.ZERO;
 
-        totalizadorMap.forEach((localDate, valor) -> {
-            if (localDate.isBefore(LocalDate.now())) {
-                valorTotal.updateAndGet(currentValue -> currentValue.add(valor.get(tipoPagamento)));
-            }
-        });
+        totalizadorMap.forEach((localDate, valor) -> valorTotal.updateAndGet(currentValue -> currentValue.add(valor.get(tipoPagamento))));
 
         if (valorTotal.get().compareTo(BigDecimal.ZERO) > 0) {
             percentual = valorTotal.get().divide(getValorTotal(), RoundingMode.HALF_UP)

@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @ExcludedCoverage
-public class GraficoPercentualVendaUltimo7DiaDTO {
+public class GraficoPercentualVendaFormaPagamentoDTO {
 
     private List<String> labels;
 

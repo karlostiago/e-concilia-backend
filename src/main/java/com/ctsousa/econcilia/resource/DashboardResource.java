@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @RestController
@@ -27,7 +26,7 @@ public class DashboardResource {
 
     private final GraficoVendaUltimo7DiaCreditoDebitoServiceImpl graficoVendaUltimo7DiaCreditoDebitoService;
 
-    private final GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl graficoPercentualVendaUltimo7DiaFormaPagamento;
+    private final GraficoPercentualVendaFormaPagamentoImpl graficoPercentualVendaFormaPagamento;
 
     private final GraficoVendaMensalImpl graficoVendaMensal;
 
@@ -37,13 +36,13 @@ public class DashboardResource {
 
     public DashboardResource(GraficoVendaUltimo7DiaServiceImpl graficoVendaUltimo7DiaService, GraficoVendaUltimo7DiaDinheiroPixServiceImpl graficoVendaUltimo7DiaDinheiroPixService,
                              GraficoVendaUltimo7DiaCreditoDebitoServiceImpl graficoVendaUltimo7DiaCreditoDebitoService, DashboadService dashboadService,
-                             GraficoPercentualVendaUltimo7DiaFormaPagamentoImpl graficoPercentualVendaUltimo7DiaFormaPagamento,
+                             GraficoPercentualVendaFormaPagamentoImpl graficoPercentualVendaFormaPagamento,
                              GraficoVendaMensalImpl graficoVendaMensal) {
         this.graficoVendaUltimo7DiaService = graficoVendaUltimo7DiaService;
         this.graficoVendaUltimo7DiaDinheiroPixService = graficoVendaUltimo7DiaDinheiroPixService;
         this.graficoVendaUltimo7DiaCreditoDebitoService = graficoVendaUltimo7DiaCreditoDebitoService;
         this.dashboadService = dashboadService;
-        this.graficoPercentualVendaUltimo7DiaFormaPagamento = graficoPercentualVendaUltimo7DiaFormaPagamento;
+        this.graficoPercentualVendaFormaPagamento = graficoPercentualVendaFormaPagamento;
         this.graficoVendaMensal = graficoVendaMensal;
     }
 
@@ -53,9 +52,7 @@ public class DashboardResource {
                                                      @RequestParam(name = "dtInicial", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial,
                                                      @RequestParam(name = "dtFinal", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal) {
         DashboardDTO dashboardDTO = dashboadService.carregarInformacoes(empresaId, dtInicial, dtFinal);
-
-        vendas = dashboadService.buscarVendaMensal(empresaId,
-            LocalDate.now().withDayOfMonth(1), LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()));
+        vendas = dashboardDTO.getVendas();
 
         return ResponseEntity.ok(dashboardDTO);
     }
@@ -76,12 +73,12 @@ public class DashboardResource {
         return ResponseEntity.ok(graficoVendaUltimo7DiaCreditoDebitoService.processar(vendas));
     }
 
-    @GetMapping(value = "/buscar-percentual-venda-ultimos-7-dias")
+    @GetMapping(value = "/buscar-percentual-venda-forma-pagamento")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
-    public ResponseEntity<GraficoPercentualVendaUltimo7DiaDTO> buscarPercentualVendasUltimos7Dias() {
+    public ResponseEntity<GraficoPercentualVendaFormaPagamentoDTO> buscarPercentualVendasFormaPagamento() {
         if (vendas == null) return ResponseEntity.ok().build();
 
-        return ResponseEntity.ok(graficoPercentualVendaUltimo7DiaFormaPagamento.processar(vendas));
+        return ResponseEntity.ok(graficoPercentualVendaFormaPagamento.processar(vendas));
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-dinheito-pix")

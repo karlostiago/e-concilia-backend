@@ -18,13 +18,15 @@ public class GraficoVendaUltimo7DiaDinheiroPixServiceImpl extends AbstractGrafic
 
     @Override
     public GraficoVendaUltimo7DiaDinheiroPixDTO processar(List<Venda> vendas) {
+        LocalDate periodo = vendas.get(vendas.size() - 1).getDataPedido();
+
         GraficoVendaUltimo7DiaDinheiroPixDTO graficoDTO = new GraficoVendaUltimo7DiaDinheiroPixDTO();
 
         graficoDTO.setLabels(new ArrayList<>());
         graficoDTO.setDataCash(new ArrayList<>());
         graficoDTO.setDataPix(new ArrayList<>());
 
-        Map<LocalDate, Map<String, BigDecimal>> ultimas7DiasMap = ultimos7Dias();
+        Map<LocalDate, Map<String, BigDecimal>> ultimas7DiasMap = ultimos7Dias(periodo);
         ultimas7DiasMap = ordenacaoCrescente(ultimas7DiasMap);
 
         Map<LocalDate, List<Venda>> vendasMap = vendas.stream()

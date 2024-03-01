@@ -22,11 +22,13 @@ public class GraficoVendaUltimo7DiaServiceImpl implements GraficoVendaService<Gr
 
     @Override
     public GraficoVendaUltimo7DiaDTO processar(List<Venda> vendas) {
+        LocalDate periodo = vendas.get(vendas.size() - 1).getDataPedido();
+
         GraficoVendaUltimo7DiaDTO dto = new GraficoVendaUltimo7DiaDTO();
         dto.setData(new ArrayList<>(vendas.size()));
         dto.setLabels(new ArrayList<>(vendas.size()));
 
-        Map<LocalDate, BigDecimal> ultimas7DiasMap = ultimos7Dias();
+        Map<LocalDate, BigDecimal> ultimas7DiasMap = ultimos7Dias(periodo);
         ultimas7DiasMap = ordenacaoCrescente(ultimas7DiasMap);
 
         Map<LocalDate, List<Venda>> vendasMap = vendas.stream()
@@ -47,8 +49,8 @@ public class GraficoVendaUltimo7DiaServiceImpl implements GraficoVendaService<Gr
         return dto;
     }
 
-    private Map<LocalDate, BigDecimal> ultimos7Dias() {
-        var diaAnterior = LocalDate.now().minusDays(1);
+    private Map<LocalDate, BigDecimal> ultimos7Dias(LocalDate periodo) {
+        var diaAnterior = periodo.minusDays(0);
         return IntStream.range(0, 7)
                 .mapToObj(diaAnterior::minusDays)
                 .collect(Collectors.toMap(data -> data, data -> BigDecimal.ZERO));
