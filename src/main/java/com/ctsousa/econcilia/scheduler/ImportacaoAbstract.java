@@ -2,6 +2,7 @@ package com.ctsousa.econcilia.scheduler;
 
 import com.ctsousa.econcilia.model.Importacao;
 import com.ctsousa.econcilia.model.Integracao;
+import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoService;

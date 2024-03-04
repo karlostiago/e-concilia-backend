@@ -40,7 +40,17 @@ public class IntegracaoIfoodServiceImpl implements IntegracaoIfoodService {
 
     private final IntegracaoService integracaoService;
 
-    public IntegracaoIfoodServiceImpl(IfoodGateway ifoodGateway, VendaMapper vendaMapper, AjusteVendaMapper ajusteVendaMapper, PagamentoMapper pagamentoMapper, CancelamentoMapper cancelamentoMapper, CobrancaCanceladaMapper cobrancaCanceladaMapper, ImpostoRendaMapper impostoRendaMapper, OcorrenciaMapper ocorrenciaMapper, RegistroContaReceberMapper registroContaReceberMapper, TaxaManutencaoMapper taxaManutencaoMapper, IntegracaoService integracaoService) {
+    public IntegracaoIfoodServiceImpl(IfoodGateway ifoodGateway,
+                                      VendaMapper vendaMapper,
+                                      AjusteVendaMapper ajusteVendaMapper,
+                                      PagamentoMapper pagamentoMapper,
+                                      CancelamentoMapper cancelamentoMapper,
+                                      CobrancaCanceladaMapper cobrancaCanceladaMapper,
+                                      ImpostoRendaMapper impostoRendaMapper,
+                                      OcorrenciaMapper ocorrenciaMapper,
+                                      RegistroContaReceberMapper registroContaReceberMapper,
+                                      TaxaManutencaoMapper taxaManutencaoMapper,
+                                      IntegracaoService integracaoService) {
         this.ifoodGateway = ifoodGateway;
         this.vendaMapper = vendaMapper;
         this.ajusteVendaMapper = ajusteVendaMapper;
