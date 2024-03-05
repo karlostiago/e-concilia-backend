@@ -4,8 +4,7 @@ import com.ctsousa.econcilia.ApplicationIntegrationTest;
 import com.ctsousa.econcilia.enumaration.FormaRecebimento;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.processor.ifood.ProcessadorIfood;
-import com.ctsousa.econcilia.service.IntegracaoIfoodService;
-import com.ctsousa.econcilia.service.TaxaService;
+import com.ctsousa.econcilia.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,9 +25,21 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
     @Mock
     private TaxaService taxaService;
 
+    @Mock
+    private VendaService vendaService;
+
+    @Mock
+    private OcorrenciaService ocorrenciaService;
+
+    @Mock
+    private CancelamentoService cancelamentoService;
+
+    @Mock
+    private AjusteVendaService ajusteVendaService;
+
     @BeforeEach
     void setup() {
-        processador = new ProcessadorIfood(integracaoIfoodService, taxaService);
+        processador = new ProcessadorIfood(taxaService, vendaService, ocorrenciaService, cancelamentoService, ajusteVendaService);
         criarSalvarEmpresa();
         criarSalvarOperadora();
     }

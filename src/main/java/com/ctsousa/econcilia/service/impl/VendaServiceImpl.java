@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.filter.VendaFilter;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Operadora;
@@ -30,7 +31,7 @@ public class VendaServiceImpl implements VendaService {
     }
 
     @Override
-    public List<Venda> buscarVendas(Empresa empresa, Operadora operadora, LocalDate dtInicial, LocalDate dtFinal) {
+    public List<Venda> buscar(Empresa empresa, Operadora operadora, LocalDate dtInicial, LocalDate dtFinal, String metodoPagamento, String bandeira, String tipoRecebimento) {
 
         if (empresa == null) {
             throw new NotificacaoException("Deve ser informada uma empresa.");
@@ -50,11 +51,20 @@ public class VendaServiceImpl implements VendaService {
 
         List<Venda> vendas = vendaRepository.buscarPor(empresa, operadora, dtInicial, dtFinal);
 
-        if (vendas.isEmpty()) {
+        if (vendas == null || vendas.isEmpty()) {
             Integracao integracao = integracaoService.pesquisar(empresa, operadora);
-            vendas = integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), null, null, null, dtInicial, dtFinal);
+            vendas = integracaoIfoodService.pesquisarVendas(integracao.getCodigoIntegracao(), dtInicial, dtFinal);
         }
 
-        return vendas;
+        return filtrarVendas(vendas, metodoPagamento, bandeira, tipoRecebimento);
+    }
+
+    private List<Venda> filtrarVendas(final List<Venda> vendas, final String metodoPagamento, final String bandeira, final String tipoRecebimento) {
+        return new VendaFilter(vendas, bandeira, metodoPagamento, tipoRecebimento)
+                .porBandeira()
+                .porMetodoPagamento()
+                .porMetodoPagamentoBandeira()
+                .porTipoRecebimento()
+                .getVendasFiltradas();
     }
 }

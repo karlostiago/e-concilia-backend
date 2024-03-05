@@ -95,7 +95,7 @@ public class ImportacaoSchedulerIfoodImpl extends ImportacaoAbstract implements 
 
     private void buscarSalvarVendas(final PeriodoDTO periodo) {
         log.info("Pesquisando as vendas para empresa {}, operadora {}, no periodo de {} ate {}", importacao.getEmpresa().getRazaoSocial(), importacao.getOperadora().getDescricao(), periodo.getDe(), periodo.getAte());
-        List<Venda> vendas = integracaoIfoodService.pesquisarVendas(codigoIntegracao, null, null, null, periodo.getDe(), periodo.getAte());
+        List<Venda> vendas = integracaoIfoodService.pesquisarVendas(codigoIntegracao, periodo.getDe(), periodo.getAte());
         if (!vendas.isEmpty()) {
             salvarVendas(vendas);
         }

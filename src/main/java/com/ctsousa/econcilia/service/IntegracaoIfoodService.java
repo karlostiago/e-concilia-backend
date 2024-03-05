@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface IntegracaoIfoodService {
 
+    List<Venda> pesquisarVendas(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+
+    @Deprecated(forRemoval = true)
     List<Venda> pesquisarVendas(final String codigoIntegracao, final String metodoPagamento, final String bandeira, final String tipoRecebimento, final LocalDate dtInicial, final LocalDate dtFinal);
 
     List<AjusteVenda> pesquisarAjusteVendas(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);

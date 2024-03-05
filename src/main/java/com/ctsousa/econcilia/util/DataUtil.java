@@ -4,12 +4,20 @@ import com.ctsousa.econcilia.enumaration.Faixa;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public final class DataUtil {
 
     private DataUtil() {
+    }
+
+    public static LocalDate paraLocalDate(String data) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(data, formatter);
     }
 
     public static String diaMes(final LocalDate data) {

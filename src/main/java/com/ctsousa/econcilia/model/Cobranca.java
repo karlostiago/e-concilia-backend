@@ -73,6 +73,12 @@ public class Cobranca extends Entidade {
     @Column(name = "taxa_adquirente_beneficio", nullable = false, columnDefinition = "decimal(19,2) default 0.0")
     private BigDecimal taxaAdquirenteBeneficio = new BigDecimal("0.0");
 
+    public Cobranca() { }
+
+    public Cobranca(Long id) {
+        setId(id);
+    }
+
     public BigDecimal getTotalTaxas() {
         return this.valorBruto
                 .multiply(this.taxaComissao.multiply(BigDecimal.valueOf(100)))

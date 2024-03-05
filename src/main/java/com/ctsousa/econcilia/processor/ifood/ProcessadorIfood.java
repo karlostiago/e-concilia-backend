@@ -4,8 +4,8 @@ import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.processor.Processador;
 import com.ctsousa.econcilia.processor.ProcessadorFiltro;
-import com.ctsousa.econcilia.service.IntegracaoIfoodService;
-import com.ctsousa.econcilia.service.TaxaService;
+import com.ctsousa.econcilia.service.*;
+import com.ctsousa.econcilia.util.DecimalUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -22,13 +22,26 @@ import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
 @Component
 public class ProcessadorIfood extends Processador {
 
-    private final IntegracaoIfoodService integracaoIfoodService;
-
     private final TaxaService taxaService;
 
-    public ProcessadorIfood(IntegracaoIfoodService integracaoIfoodService, TaxaService taxaService) {
-        this.integracaoIfoodService = integracaoIfoodService;
+    private final VendaService vendaService;
+
+    private final OcorrenciaService ocorrenciaService;
+
+    private final CancelamentoService cancelamentoService;
+
+    private final AjusteVendaService ajusteVendaService;
+
+    public ProcessadorIfood(TaxaService taxaService,
+                            VendaService vendaService,
+                            OcorrenciaService ocorrenciaService,
+                            CancelamentoService cancelamentoService,
+                            AjusteVendaService ajusteVendaService) {
         this.taxaService = taxaService;
+        this.vendaService = vendaService;
+        this.ocorrenciaService = ocorrenciaService;
+        this.cancelamentoService = cancelamentoService;
+        this.ajusteVendaService = ajusteVendaService;
     }
 
     @Override
@@ -38,10 +51,13 @@ public class ProcessadorIfood extends Processador {
         var formaRecebimento = processadorFiltro.getFormaRecebimento() != null ? processadorFiltro.getFormaRecebimento().getDescricao() : null;
 
         log.info(" ::: Buscando vendas ::: ");
-        vendas = integracaoIfoodService.pesquisarVendas(
-                processadorFiltro.getIntegracao().getCodigoIntegracao(), processadorFiltro.getFormaPagamento(),
-                processadorFiltro.getCartaoBandeira(), formaRecebimento,
-                processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal());
+        vendas = vendaService.buscar(processadorFiltro.getIntegracao().getEmpresa(),
+                processadorFiltro.getIntegracao().getOperadora(),
+                processadorFiltro.getDtInicial(),
+                processadorFiltro.getDtFinal(),
+                processadorFiltro.getFormaPagamento(),
+                processadorFiltro.getCartaoBandeira(),
+                formaRecebimento);
 
         if (vendas.isEmpty()) {
             log.info(" ::: Finalizado processador IFOOD, nenhuma venda foi encontrada ::: ");
@@ -50,8 +66,7 @@ public class ProcessadorIfood extends Processador {
         }
 
         log.info(" ::: Buscando ocorrencias ::: ");
-        var ocorrencias = integracaoIfoodService.pesquisarOcorrencias(processadorFiltro.getIntegracao().getCodigoIntegracao(),
-                processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal());
+        var ocorrencias = ocorrenciaService.buscar(processadorFiltro.getIntegracao(), processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal());
 
         log.info(" ::: Processando cancelamento se houver ::: ");
         processarCancelamento(processadorFiltro.getIntegracao().getCodigoIntegracao());
@@ -82,10 +97,10 @@ public class ProcessadorIfood extends Processador {
         for (String periodId : periodoIds) {
             if (periodId.isEmpty()) continue;
 
-            List<Cancelamento> cancelamentos = integracaoIfoodService.pesquisarCancelamentos(codigoLoja, periodId);
-            log.info("Total de cancelamentos encontrados ::: {}", cancelamentos.size());
+            List<Cancelamento> cancelamentos = cancelamentoService.buscar(codigoLoja, periodId);
 
             if (!cancelamentos.isEmpty()) {
+                log.info("Total de cancelamentos encontrados ::: {}", cancelamentos.size());
                 for (Cancelamento cancelamento : cancelamentos) {
                     Venda venda = vendaMap.get(cancelamento.getPedidoId());
                     if (venda != null) {
@@ -97,7 +112,7 @@ public class ProcessadorIfood extends Processador {
     }
 
     private void reprocessar(LocalDate dtInicial, LocalDate dtFinal, String lojaId) {
-        List<AjusteVenda> ajusteVendas = integracaoIfoodService.pesquisarAjusteVendas(lojaId, dtInicial, dtFinal);
+        List<AjusteVenda> ajusteVendas = ajusteVendaService.buscar(lojaId, dtInicial, dtFinal);
         log.info("Total de vendas a serem reprocessadas ::: {}", ajusteVendas.size());
 
         if (ajusteVendas.isEmpty()) return;
@@ -259,7 +274,7 @@ public class ProcessadorIfood extends Processador {
 
     private BigDecimal calcularTotalReembolso(List<Venda> vendas) {
         var vendasComTaxaServico = vendas.stream()
-                .filter(venda -> venda.getValorCancelado().equals(BigDecimal.valueOf(0D)))
+                .filter(venda -> DecimalUtil.iqualZero(venda.getValorCancelado()))
                 .filter(venda -> venda.getCobranca().getTaxaServico() != null && venda.getCobranca().getTaxaServico().compareTo(BigDecimal.valueOf(0D)) > 0)
                 .toList();
 
