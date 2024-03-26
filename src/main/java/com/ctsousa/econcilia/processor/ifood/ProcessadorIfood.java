@@ -65,16 +65,16 @@ public class ProcessadorIfood extends Processador {
             return;
         }
 
-        log.info(" ::: Buscando ocorrencias ::: ");
-        var ocorrencias = ocorrenciaService.buscar(processadorFiltro.getIntegracao(), processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal());
-
-        log.info(" ::: Processando cancelamento se houver ::: ");
-        processarCancelamento(processadorFiltro.getIntegracao().getCodigoIntegracao());
-
-        log.info(" ::: Reprocessando vendas ::: ");
-        reprocessar(processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal(), processadorFiltro.getIntegracao().getCodigoIntegracao());
-
         if (executarCalculo) {
+            log.info(" ::: Buscando ocorrencias ::: ");
+            var ocorrencias = ocorrenciaService.buscar(processadorFiltro.getIntegracao(), processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal());
+
+            log.info(" ::: Processando cancelamento se houver ::: ");
+            processarCancelamento(processadorFiltro.getIntegracao().getCodigoIntegracao());
+
+            log.info(" ::: Reprocessando vendas ::: ");
+            reprocessar(processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal(), processadorFiltro.getIntegracao().getCodigoIntegracao());
+
             log.info(" ::: Calculo das vendas iniciado ::: ");
             calcular(ocorrencias);
         }

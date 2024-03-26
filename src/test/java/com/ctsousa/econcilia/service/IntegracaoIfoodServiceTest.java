@@ -217,7 +217,7 @@ class IntegracaoIfoodServiceTest extends ApplicationIntegrationTest {
         sales.add(new Sale());
 
         Assertions.assertEquals(0,
-                integracaoIfoodService.pesquisarVendas(codigoIntegracao, null, null, null, dtInicial, dtFinal).size());
+                integracaoIfoodService.pesquisarVendas(codigoIntegracao, dtInicial, dtFinal).size());
 
         Mockito.when(vendaMapper.paraLista(sales))
                         .thenReturn(List.of(new Venda()));
@@ -229,7 +229,7 @@ class IntegracaoIfoodServiceTest extends ApplicationIntegrationTest {
                 .thenReturn(sales);
 
         Assertions.assertEquals(1,
-                integracaoIfoodService.pesquisarVendas(codigoIntegracao, null, null, null, dtInicial, dtFinal).size());
+                integracaoIfoodService.pesquisarVendas(codigoIntegracao, dtInicial, dtFinal).size());
     }
 
     @Test

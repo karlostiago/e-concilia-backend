@@ -20,9 +20,6 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
     private Processador processador;
 
     @Mock
-    private IntegracaoIfoodService integracaoIfoodService;
-
-    @Mock
     private TaxaService taxaService;
 
     @Mock
@@ -54,10 +51,7 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         filtro.setIntegracao(integracao);
         filtro.setFormaRecebimento(FormaRecebimento.LOJA);
 
-        Mockito.when(integracaoIfoodService.pesquisarVendas(
-                        filtro.getIntegracao().getCodigoIntegracao(), filtro.getFormaPagamento(),
-                        filtro.getCartaoBandeira(), "Loja",
-                        filtro.getDtInicial(), filtro.getDtFinal()))
+        Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
                 .thenReturn(getVendas());
 
         processador.processar(filtro, false);
@@ -88,13 +82,10 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         filtro.setIntegracao(integracao);
         filtro.setFormaRecebimento(FormaRecebimento.LOJA);
 
-        Mockito.when(integracaoIfoodService.pesquisarAjusteVendas("123456", null, null))
+        Mockito.when(ajusteVendaService.buscar("123456",  null, null))
                         .thenReturn(getAjusteVendas());
 
-        Mockito.when(integracaoIfoodService.pesquisarVendas(
-                        filtro.getIntegracao().getCodigoIntegracao(), filtro.getFormaPagamento(),
-                        filtro.getCartaoBandeira(), "Loja",
-                        filtro.getDtInicial(), filtro.getDtFinal()))
+        Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
                 .thenReturn(getVendas());
 
         processador.processar(filtro, false);
@@ -119,13 +110,10 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         cancelamento.setValor(BigDecimal.valueOf(500D));
         cancelamentos.add(cancelamento);
 
-        Mockito.when(integracaoIfoodService.pesquisarCancelamentos("123456", "123456"))
+        Mockito.when(cancelamentoService.buscar("123456", "123456"))
                 .thenReturn(cancelamentos);
 
-        Mockito.when(integracaoIfoodService.pesquisarVendas(
-                        filtro.getIntegracao().getCodigoIntegracao(), filtro.getFormaPagamento(),
-                        filtro.getCartaoBandeira(), "Loja",
-                        filtro.getDtInicial(), filtro.getDtFinal()))
+        Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
                 .thenReturn(getVendas());
 
         processador.processar(filtro, false);
@@ -147,10 +135,7 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         filtro.setIntegracao(integracao);
         filtro.setFormaRecebimento(FormaRecebimento.LOJA);
 
-        Mockito.when(integracaoIfoodService.pesquisarVendas(
-                        filtro.getIntegracao().getCodigoIntegracao(), filtro.getFormaPagamento(),
-                        filtro.getCartaoBandeira(), "Loja",
-                        filtro.getDtInicial(), filtro.getDtFinal()))
+        Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
                 .thenReturn(getVendas());
 
         processador.processar(filtro, true);

@@ -2,6 +2,7 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.dto.DataSetDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaMensalDTO;
 import com.ctsousa.econcilia.service.GraficoVendaService;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,10 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,7 +35,7 @@ public class GraficoVendaMensalImpl implements GraficoVendaService<GraficoVendaM
         GraficoVendaMensalDTO dto = new GraficoVendaMensalDTO();
         dto.setLabels(getLabels());
 
-        List<GraficoVendaMensalDTO.DataSetDTO> datasSet = new ArrayList<>();
+        List<DataSetDTO> datasSet = new ArrayList<>();
 
         Map<Empresa, Map<LocalDate, BigDecimal>> vendasAgrupadas = vendas.stream()
                 .collect(Collectors.groupingBy(Venda::getEmpresa,
@@ -40,7 +44,7 @@ public class GraficoVendaMensalImpl implements GraficoVendaService<GraficoVendaM
 
         for (Map.Entry<Empresa, Map<LocalDate, BigDecimal>> entry : vendasAgrupadas.entrySet()) {
 
-            GraficoVendaMensalDTO.DataSetDTO dataSet = getNovoDataSet(entry.getKey());
+            DataSetDTO dataSet = getNovoDataSet(entry.getKey());
 
             List<Map.Entry<LocalDate, BigDecimal>> valoresOrdenadosPorData = entry.getValue().entrySet()
                     .stream().sorted(Map.Entry.comparingByKey())
@@ -60,8 +64,8 @@ public class GraficoVendaMensalImpl implements GraficoVendaService<GraficoVendaM
         return dto;
     }
 
-    private GraficoVendaMensalDTO.DataSetDTO getNovoDataSet(final Empresa empresa) {
-        GraficoVendaMensalDTO.DataSetDTO dataSet = new GraficoVendaMensalDTO.DataSetDTO();
+    private DataSetDTO getNovoDataSet(final Empresa empresa) {
+        DataSetDTO dataSet = new DataSetDTO();
         dataSet.setLabel(empresa.getRazaoSocial());
         dataSet.setData(new ArrayList<>());
         return dataSet;

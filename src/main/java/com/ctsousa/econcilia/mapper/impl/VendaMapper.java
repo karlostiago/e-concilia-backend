@@ -9,6 +9,7 @@ import com.ctsousa.econcilia.model.Pagamento;
 import com.ctsousa.econcilia.model.Venda;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -64,7 +65,7 @@ public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, 
         cobranca.setTotalCredito(sale.getBilling().getTotalCredit());
         cobranca.setValorTaxaAntecipacao(sale.getBilling().getAnticipationFee());
         cobranca.setTaxaAntecipacao(sale.getBilling().getAnticipationFeeRate());
-        cobranca.setTaxaServico(sale.getBilling().getSmallOrderFee());
+        cobranca.setTaxaServico(sale.getBilling().getSmallOrderFee() != null ? sale.getBilling().getSmallOrderFee() : new BigDecimal("0.0"));
         cobranca.setTaxaAdquirenteBeneficio(sale.getBilling().getBenefitAcquirerFee());
         return cobranca;
     }

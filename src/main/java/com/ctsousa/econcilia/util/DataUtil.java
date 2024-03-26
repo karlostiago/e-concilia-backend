@@ -4,11 +4,10 @@ import com.ctsousa.econcilia.enumaration.Faixa;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public final class DataUtil {
 
@@ -60,29 +59,43 @@ public final class DataUtil {
     }
 
     public static List<PeriodoDTO> periodoAnual(LocalDate dataInicial, Faixa faixa) {
-        LocalDate dtFinal = dataInicial.minusDays(365);
+        LocalDate dtInicial = dataInicial.minusYears(1).withDayOfMonth(1);
+        LocalDate dtFinal = dataInicial.withDayOfMonth(dataInicial.lengthOfMonth());
+        return calcularPeriodos(dtInicial, dtFinal, faixa);
+    }
 
+    public static YearMonth parseMesAno(String mesAno) {
+        String [] periodo = mesAno.split("/");
+
+        Map<String, Month> mesMap = new HashMap<>();
+        for (Month month : Month.values()) {
+            String mesAbreviado = month.getDisplayName(java.time.format.TextStyle.SHORT, Locale.forLanguageTag("pt-BR"));
+            mesAbreviado = mesAbreviado.substring(0, 1).toUpperCase() + mesAbreviado.substring(1);
+            mesAbreviado = mesAbreviado.replace(".", "");
+            mesMap.put(mesAbreviado, month);
+        }
+
+        String mesStr = periodo[0];
+        int ano = Integer.parseInt(periodo[1]);
+
+        Month mes = mesMap.get(mesStr);
+
+        return YearMonth.of(ano, mes);
+    }
+
+    private static List<PeriodoDTO> calcularPeriodos(LocalDate dtInicial, LocalDate dtFinal, Faixa faixa) {
         List<PeriodoDTO> periodos = new ArrayList<>();
+        LocalDate dtInicio = dtInicial;
+        LocalDate dtFim;
 
-        LocalDate dtAtual = dtFinal;
-        LocalDate ultimaData = null;
+        while (dtInicio.isBefore(dtFinal)) {
+            dtFim = dtInicio.plusMonths(faixa.getMeses()).withDayOfMonth(1).minusDays(1);
 
-        while (dtAtual.isBefore(dataInicial)) {
-            var proximaData = dtAtual.plusDays(faixa.getValor());
-
-            if (proximaData.isAfter(dataInicial)) {
-                proximaData = dataInicial;
+            if (dtFim.isAfter(dtFinal)) {
+                dtFim = dtFinal;
             }
-
-            if (!periodos.isEmpty()) {
-                ultimaData = periodos.get(periodos.size() - 1).getAte();
-                if (ultimaData.equals(dtAtual)) {
-                    dtAtual = dtAtual.plusDays(1);
-                }
-            }
-
-            periodos.add(new PeriodoDTO(dtAtual, proximaData));
-            dtAtual = proximaData;
+            periodos.add(new PeriodoDTO(dtInicio, dtFim));
+            dtInicio = dtFim.plusDays(1);
         }
 
         return periodos;

@@ -78,7 +78,7 @@ class ImportacaoSchedulerIfoodTest extends ApplicationIntegrationTest {
         LocalDate dtInicial = LocalDate.of(2024, 2 ,24);
         LocalDate dtFinal = LocalDate.of(2024, 3 ,25);
 
-        Mockito.when(integracaoIfoodService.pesquisarVendas(codigoIntegracao, null, null, null, dtInicial, dtFinal))
+        Mockito.when(integracaoIfoodService.pesquisarVendas(codigoIntegracao, dtInicial, dtFinal))
                 .thenReturn(getVendas());
     }
 

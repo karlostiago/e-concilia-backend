@@ -170,31 +170,6 @@ public class IntegracaoIfoodServiceImpl implements IntegracaoIfoodService {
     }
 
     @Override
-    public List<Venda> pesquisarVendas(String codigoIntegracao, String metodoPagamento, String bandeira, String tipoRecebimento, LocalDate dtInicial, LocalDate dtFinal) {
-
-        validaPeriodoMaior90Dias(dtInicial, dtFinal);
-
-        List<Sale> sales = ifoodGateway.findSalesBy(codigoIntegracao, dtInicial, dtFinal);
-
-        if (sales.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        Integracao integracao = integracaoService.pesquisarPorCodigoIntegracao(codigoIntegracao);
-        Empresa empresa = integracao.getEmpresa();
-        Operadora operadora = integracao.getOperadora();
-
-        List<Venda> vendas = vendaMapper.paraLista(sales);
-        
-        vendas.forEach(venda -> {
-            venda.setEmpresa(empresa);
-            venda.setOperadora(operadora);
-        });
-
-        return filtrarVendas(vendas, metodoPagamento, bandeira, tipoRecebimento);
-    }
-
-    @Override
     public List<AjusteVenda> pesquisarAjusteVendas(String codigoIntegracao, LocalDate dtInicial, LocalDate dtFinal) {
         validaPeriodoMaior90Dias(dtInicial, dtFinal);
 

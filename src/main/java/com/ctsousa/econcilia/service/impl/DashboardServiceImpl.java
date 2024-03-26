@@ -33,7 +33,7 @@ public class DashboardServiceImpl implements DashboadService {
     @Cacheable(value = "vendaAnualCache", key = "{#empresaId, #dtInicial}")
     public List<Venda> buscarVendaAnual(String empresaId, LocalDate dtInicial) {
         List<Long> empresasId = getEmpresasId(empresaId);
-        List<PeriodoDTO> periodos = DataUtil.periodoAnual(dtInicial, Faixa.FX_90);
+        List<PeriodoDTO> periodos = DataUtil.periodoAnual(dtInicial, Faixa.FX_60);
         List<Venda> vendas = new ArrayList<>();
 
         for (Long idEmpresa : empresasId) {
@@ -86,7 +86,6 @@ public class DashboardServiceImpl implements DashboadService {
     public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Long> empresasId = getEmpresasId(empresaId);
         DashboardDTO dashboardDTO = new DashboardDTO();
-        List<Venda> vendas = new ArrayList<>();
 
         for (Long idEmpresa : empresasId) {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
@@ -106,12 +105,10 @@ public class DashboardServiceImpl implements DashboadService {
                 dashboardDTO.setValorEmRepasse(dashboardDTO.getValorEmRepasse().add(processador.getValorTotalRepasse()));
                 dashboardDTO.setValorComissao(dashboardDTO.getValorComissao().add(processador.getValorTotalComissao()));
                 dashboardDTO.setValorPromocao(dashboardDTO.getValorPromocao().add(processador.getValorTotalPromocao()));
-                vendas.addAll(processador.getVendas());
             }
         }
 
-        dashboardDTO.setVendas(vendas);
-
+        dashboardDTO.setVendas(buscarVendaAnual(empresaId, dtFinal));
         return dashboardDTO;
     }
 

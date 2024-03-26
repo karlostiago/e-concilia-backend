@@ -34,7 +34,7 @@ public interface AjusteVendaRepository extends JpaRepository<AjusteVenda, Long> 
             "   cob.* " +
             "   FROM ajuste_venda av " +
             "INNER JOIN venda v ON v.periodo_id = av.periodo_id " +
-            "LEFT OUTER JOIN cobranca cob ON cob.id = av.cobranca_id  " +
+            "INNER JOIN cobranca cob ON cob.id = av.cobranca_id  " +
             "INNER JOIN integracao i ON i.empresa_id = v.empresa_id AND i.operadora_id = v.operadora_id " +
             "WHERE av.data_pedido BETWEEN :dataInicial AND :dataFinal " +
             "  AND i.empresa_id = :empresa " +

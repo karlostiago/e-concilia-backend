@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @ExcludedCoverage
-public class GraficoVendaMensalDTO {
+public class GraficoVendaAnualDTO {
 
     private List<String> labels;
 
