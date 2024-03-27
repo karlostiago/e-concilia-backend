@@ -5,6 +5,7 @@ import com.ctsousa.econcilia.model.dto.DataSetDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaAnualDTO;
 import com.ctsousa.econcilia.service.GraficoVendaService;
 import com.ctsousa.econcilia.util.DataUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -17,11 +18,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class GraficoVendaAnualImpl implements GraficoVendaService<GraficoVendaAnualDTO> {
 
     @Override
     public GraficoVendaAnualDTO processar(List<Venda> vendas) {
+        log.info("Gerando grafico anual ::: total de vendas encontradas ::: {}", vendas.size());
+
         GraficoVendaAnualDTO graficoVendaAnualDTO = new GraficoVendaAnualDTO();
         graficoVendaAnualDTO.setLabels(getLabels(vendas));
 
