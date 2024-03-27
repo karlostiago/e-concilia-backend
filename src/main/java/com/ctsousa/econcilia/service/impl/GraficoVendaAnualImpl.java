@@ -77,7 +77,7 @@ public class GraficoVendaAnualImpl implements GraficoVendaService<GraficoVendaAn
         LocalDate dtAtual = dtMin;
 
         while (!dtAtual.isAfter(dtMax)) {
-            String label = dtAtual.format(DateTimeFormatter.ofPattern("MMM/yyyy", Locale.getDefault()));
+            String label = dtAtual.format(DateTimeFormatter.ofPattern("MMM/yyyy", Locale.forLanguageTag("pt-BR")));
             label = label.substring(0, 1).toUpperCase() + label.substring(1);
             label = label.replace(".", "");
             labels.add(label);
