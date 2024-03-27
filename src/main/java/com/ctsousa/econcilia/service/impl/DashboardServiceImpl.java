@@ -30,58 +30,6 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     @Override
-    @Cacheable(value = "vendaAnualCache", key = "{#empresaId, #dtInicial}")
-    public List<Venda> buscarVendaAnual(String empresaId, LocalDate dtInicial) {
-        List<Long> empresasId = getEmpresasId(empresaId);
-        List<PeriodoDTO> periodos = DataUtil.periodoAnual(dtInicial, Faixa.FX_60);
-        List<Venda> vendas = new ArrayList<>();
-
-        for (Long idEmpresa : empresasId) {
-            List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
-            for (Integracao integracao : integracoes) {
-                for (PeriodoDTO periodoDTO : periodos) {
-                    ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, periodoDTO.getDe(), periodoDTO.getAte());
-                    Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                    processador.processar(processadorFiltro, false);
-                    vendas.addAll(processador.getVendas());
-                }
-            }
-        }
-
-        return vendas;
-    }
-
-    @Override
-    @Cacheable(value = "vendaMensalCache", key = "{#empresaId, #dtInicial, #dtFinal}")
-    public List<Venda> buscarVendaMensal(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
-        List<Long> empresasId = getEmpresasId(empresaId);
-
-        List<Venda> vendas = new ArrayList<>();
-
-        for (Long idEmpresa : empresasId) {
-            vendas.addAll(buscarVendas(idEmpresa, dtInicial, dtFinal));
-        }
-
-        return vendas;
-    }
-
-    @Override
-    public List<Venda> buscarVendasUltimos7Dias(String empresaId) {
-        List<Long> empresasId = getEmpresasId(empresaId);
-
-        var dtInicial = LocalDate.now().minusDays(7);
-        var dtFinal = LocalDate.now();
-
-        List<Venda> vendas = new ArrayList<>();
-
-        for (Long idEmpresa : empresasId) {
-            vendas.addAll(buscarVendas(idEmpresa, dtInicial, dtFinal));
-        }
-
-        return vendas;
-    }
-
-    @Override
     @Cacheable(value = "informacoesCache", key = "{#empresaId, #dtInicial, #dtFinal}")
     public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Long> empresasId = getEmpresasId(empresaId);
@@ -112,15 +60,24 @@ public class DashboardServiceImpl implements DashboadService {
         return dashboardDTO;
     }
 
-    private List<Venda> buscarVendas(final Long empresaId, LocalDate dtInicial, LocalDate dtFinal) {
+    @Cacheable(value = "vendaAnualCache", key = "{#empresaId, #dtInicial}")
+    private List<Venda> buscarVendaAnual(String empresaId, LocalDate dtInicial) {
+        List<Long> empresasId = getEmpresasId(empresaId);
+        List<PeriodoDTO> periodos = DataUtil.periodoAnual(dtInicial, Faixa.FX_60);
         List<Venda> vendas = new ArrayList<>();
-        List<Integracao> integracoes = integracaoService.pesquisar(empresaId, null, null);
-        for (Integracao integracao : integracoes) {
-            ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, dtInicial, dtFinal);
-            Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-            processador.processar(processadorFiltro, false);
-            vendas.addAll(processador.getVendas());
+
+        for (Long idEmpresa : empresasId) {
+            List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
+            for (Integracao integracao : integracoes) {
+                for (PeriodoDTO periodoDTO : periodos) {
+                    ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, periodoDTO.getDe(), periodoDTO.getAte());
+                    Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
+                    processador.processar(processadorFiltro, false);
+                    vendas.addAll(processador.getVendas());
+                }
+            }
         }
+
         return vendas;
     }
 

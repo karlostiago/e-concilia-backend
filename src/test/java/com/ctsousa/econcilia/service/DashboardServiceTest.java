@@ -29,6 +29,7 @@ class DashboardServiceTest extends ApplicationIntegrationTest {
         dashboadService = new DashboardServiceImpl(integracaoService);
     }
 
+    /*
     @Test
     void deveBuscarVendasMensal() {
         String empresaId = "1";
@@ -66,6 +67,7 @@ class DashboardServiceTest extends ApplicationIntegrationTest {
 
         Assertions.assertFalse(vendas.isEmpty());
     }
+    */
 
     @Test
     void deveBuscarCarregarInformacoes() {
