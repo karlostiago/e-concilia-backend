@@ -48,6 +48,7 @@ public class GraficoVendaAnualImpl implements GraficoVendaService<GraficoVendaAn
             dataSetDTO.setData(new ArrayList<>());
 
             for (String label : labels) {
+                log.info("label grafico {}", label);
                 YearMonth key = DataUtil.parseMesAno(label);
                 dataSetDTO.getData().add( entry.getValue().get(key));
             }

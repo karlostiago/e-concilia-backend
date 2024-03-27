@@ -11,6 +11,23 @@ import java.util.*;
 
 public final class DataUtil {
 
+    private static Map<Integer, Month> mes = new HashMap<>();
+
+    static {
+        mes.put(1, Month.JANUARY);
+        mes.put(2, Month.FEBRUARY);
+        mes.put(3, Month.MARCH);
+        mes.put(4, Month.APRIL);
+        mes.put(5, Month.MAY);
+        mes.put(6, Month.JUNE);
+        mes.put(7, Month.JULY);
+        mes.put(8, Month.AUGUST);
+        mes.put(9, Month.SEPTEMBER);
+        mes.put(10, Month.OCTOBER);
+        mes.put(11, Month.NOVEMBER);
+        mes.put(12, Month.DECEMBER);
+    }
+
     private DataUtil() {
     }
 
