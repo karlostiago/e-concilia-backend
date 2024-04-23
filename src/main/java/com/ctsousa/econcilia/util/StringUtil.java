@@ -1,5 +1,8 @@
 package com.ctsousa.econcilia.util;
 
+import java.text.Normalizer;
+import java.util.regex.Pattern;
+
 public final class StringUtil {
 
     private static final String UNDEFINED = "undefined";
@@ -28,5 +31,11 @@ public final class StringUtil {
 
     public static Boolean naoTemValor(final String str) {
         return !temValor(str);
+    }
+
+    public static String removeCaracteresEspeciais(final String str) {
+        String textoNormalizado = Normalizer.normalize(str, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(textoNormalizado).replaceAll("");
     }
 }

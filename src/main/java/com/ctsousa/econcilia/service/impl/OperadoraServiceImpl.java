@@ -37,6 +37,11 @@ public class OperadoraServiceImpl implements OperadoraService {
     }
 
     @Override
+    public Operadora buscarPorDescricao(String descricao) {
+        return getOperadora(descricao);
+    }
+
+    @Override
     public Operadora salvar(Operadora operadora) {
 
         if (operadora == null) {
@@ -66,5 +71,17 @@ public class OperadoraServiceImpl implements OperadoraService {
         } catch (Exception e) {
             throw new NotificacaoException("Operadora não pode ser excluída, pois já está associada a um contrado.");
         }
+    }
+
+    private Operadora getOperadora(final String descricao) {
+        List<Operadora> operadoras = operadoraRepository.porDescricao(descricao);
+
+        for (Operadora operadora : operadoras) {
+            if (operadora.getDescricao().equalsIgnoreCase(descricao)) {
+                return operadora;
+            }
+        }
+
+        return null;
     }
 }

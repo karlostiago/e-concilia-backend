@@ -1,7 +1,11 @@
 package com.ctsousa.econcilia.util;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class DecimalUtil {
 
@@ -15,5 +19,13 @@ public class DecimalUtil {
         }
 
         return false;
+    }
+
+    public static String monetarioPtBr(final BigDecimal valor) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("pt", "BR"));
+        symbols.setCurrencySymbol("");
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
+        return decimalFormat.format(valor);
     }
 }

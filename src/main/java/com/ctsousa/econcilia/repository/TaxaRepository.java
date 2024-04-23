@@ -7,7 +7,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Repository
@@ -47,4 +49,17 @@ public interface TaxaRepository extends JpaRepository<Taxa, Long> {
             "WHERE c.ativo = 1 AND tx.ativo = 1 AND UPPER(tx.descricao) LIKE :descricao% AND c.empresa_id = :empresaId",
     nativeQuery = true)
     Optional<Taxa> por(@Param(value = "descricao") String descricao, @Param(value = "empresaId") Long empresaId);
+
+    @Query(value = "SELECT t.* FROM taxa t " +
+            "INNER JOIN contrato c ON c.id = t.contrato_id " +
+            "INNER JOIN empresa e ON e.id = c.empresa_id " +
+            "INNER JOIN operadora o ON o.id = c.operadora_id " +
+            "WHERE t.entra_em_vigor BETWEEN :dataInicial AND :dataFinal " +
+            "  AND e.id = :empresaId " +
+            "  AND o.id = :operadoraId",
+    nativeQuery = true)
+    List<Taxa> por(@Param(value = "dataInicial") LocalDate dataInicial,
+                   @Param(value = "dataFinal") LocalDate dataFinal,
+                   @Param(value = "empresaId") Long empresaId,
+                   @Param(value = "operadoraId") Long operadoraId);
 }

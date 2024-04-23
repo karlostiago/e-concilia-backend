@@ -117,4 +117,9 @@ public final class DataUtil {
 
         return periodos;
     }
+
+    public static String paraPtBr(final LocalDate data) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return data.format(formatter);
+    }
 }

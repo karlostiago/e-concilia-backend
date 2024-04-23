@@ -2,17 +2,19 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.mapper.impl.ContratoMapper;
-import com.ctsousa.econcilia.model.Contrato;
-import com.ctsousa.econcilia.model.Empresa;
-import com.ctsousa.econcilia.model.Operadora;
-import com.ctsousa.econcilia.model.Taxa;
+import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.ContratoDTO;
 import com.ctsousa.econcilia.repository.ContratoRepository;
+import com.ctsousa.econcilia.repository.IntegracaoBufferRepository;
 import com.ctsousa.econcilia.service.ContratoService;
+import com.ctsousa.econcilia.service.IntegracaoBufferService;
 import com.ctsousa.econcilia.service.TaxaService;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.ctsousa.econcilia.util.StringUtil.somenteNumero;
 
 @Component
 public class ContratoServiceImpl implements ContratoService {
@@ -23,10 +25,13 @@ public class ContratoServiceImpl implements ContratoService {
 
     private final ContratoMapper contratoMapper;
 
-    public ContratoServiceImpl(ContratoRepository contratoRepository, TaxaService taxaService, ContratoMapper contratoMapper) {
+    private final IntegracaoBufferService integracaoBufferService;
+
+    public ContratoServiceImpl(ContratoRepository contratoRepository, TaxaService taxaService, ContratoMapper contratoMapper, IntegracaoBufferService integracaoBufferService) {
         this.contratoRepository = contratoRepository;
         this.taxaService = taxaService;
         this.contratoMapper = contratoMapper;
+        this.integracaoBufferService = integracaoBufferService;
     }
 
     @Override
@@ -37,6 +42,8 @@ public class ContratoServiceImpl implements ContratoService {
         }
 
         validaTaxas(contrato.getTaxas());
+
+        adicionaIntegracaoBuffer(contrato);
 
         return contratoRepository.save(contrato);
     }
@@ -108,5 +115,14 @@ public class ContratoServiceImpl implements ContratoService {
         taxaService.verificaDuplicidade(taxas);
         taxaService.validaEntraEmVigor(taxas);
         taxas.forEach(taxaService::validar);
+    }
+
+    private void adicionaIntegracaoBuffer(final Contrato contrato) {
+        IntegracaoBuffer integracaoBuffer = new IntegracaoBuffer();
+        integracaoBuffer.setNomeEmpresa(contrato.getEmpresa().getRazaoSocial());
+        integracaoBuffer.setNomeOperadora(contrato.getOperadora().getDescricao());
+        integracaoBuffer.setCnpj(somenteNumero(contrato.getEmpresa().getCnpj()));
+        integracaoBuffer.setDataHora(LocalDateTime.now());
+        integracaoBufferService.salvar(integracaoBuffer);
     }
 }

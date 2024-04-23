@@ -1,17 +1,14 @@
 package com.ctsousa.econcilia.service;
 
-import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service
-public interface TaxaService {
+public interface TaxaService extends GeradorRelatorioCSVService {
 
     void validar(Taxa taxa);
 

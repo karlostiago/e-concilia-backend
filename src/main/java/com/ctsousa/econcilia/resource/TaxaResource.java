@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.resource;
 
+import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.mapper.impl.TaxaMapper;
 import com.ctsousa.econcilia.model.Taxa;
 import com.ctsousa.econcilia.model.dto.TaxaDTO;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController

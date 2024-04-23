@@ -15,6 +15,8 @@ public interface OperadoraService {
 
     List<Operadora> pesquisar(String descricao);
 
+    Operadora buscarPorDescricao(String descricao);
+
     Operadora atualizar(Long id, OperadoraDTO operadoraDTO);
 
     void deletar(Long id);

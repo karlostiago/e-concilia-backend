@@ -1,7 +1,6 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
-import com.ctsousa.econcilia.model.Contrato;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
@@ -15,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.ctsousa.econcilia.util.DataUtil.paraPtBr;
+import static com.ctsousa.econcilia.util.DecimalUtil.monetarioPtBr;
 
 @Component
 public class TaxaServiceImpl implements TaxaService {
@@ -147,5 +149,25 @@ public class TaxaServiceImpl implements TaxaService {
     public Taxa buscarPor(Empresa empresa, Operadora operadora, String descricao, BigDecimal valor) {
         return taxaRepository.por(empresa.getId(), operadora.getId(), descricao, valor)
                 .orElseThrow(() -> new NotificacaoException(String.format("Nenhuma taxa com empresa id %d e operadora id %d encontrado", empresa.getId(), operadora.getId())));
+    }
+
+    @Override
+    public byte [] gerarCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
+        List<Taxa> taxas = taxaRepository.por(dataInicial, dataFinal, empresa.getId(), operadora.getId());
+
+        if (taxas.isEmpty()) return new byte[0];
+
+        StringBuilder csvBuilder = new StringBuilder();
+        csvBuilder.append("Descrição;Valor;Data inicio;Data final;Tipo\n");
+
+        for (Taxa taxa : taxas) {
+            csvBuilder.append(taxa.getDescricao()).append(";")
+                    .append(monetarioPtBr(taxa.getValor())).append(";")
+                    .append(paraPtBr(taxa.getEntraEmVigor())).append(";")
+                    .append(paraPtBr(taxa.getValidoAte())).append(";")
+                    .append(taxa.getTipo().name()).append("\n");
+        }
+
+        return csvBuilder.toString().getBytes();
     }
 }

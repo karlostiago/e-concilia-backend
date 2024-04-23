@@ -57,7 +57,10 @@ public enum Funcionalidade {
 
     ROLE_MENU_IMPORTACAO(10, TipoFuncionalidade.MENU),
     ROLE_AGENDAR_IMPORTACAO(10, TipoFuncionalidade.AGENDAR),
-    ROLE_PESQUISAR_IMPORTACAO(10, TipoFuncionalidade.PESQUISAR);
+    ROLE_PESQUISAR_IMPORTACAO(10, TipoFuncionalidade.PESQUISAR),
+
+    ROLE_MENU_RELATORIO(11, TipoFuncionalidade.MENU),
+    ROLE_PESQUISAR_RELATORIO(11, TipoFuncionalidade.PESQUISAR);
 
     private final Integer codigo;
 
