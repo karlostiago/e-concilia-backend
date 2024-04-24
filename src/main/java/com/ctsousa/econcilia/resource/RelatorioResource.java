@@ -2,6 +2,7 @@ package com.ctsousa.econcilia.resource;
 
 import com.ctsousa.econcilia.enumaration.TipoRelatorio;
 import com.ctsousa.econcilia.filter.RelatorioFilter;
+import com.ctsousa.econcilia.service.ConsolidacaoService;
 import com.ctsousa.econcilia.service.GeradorRelatorioCSVService;
 import com.ctsousa.econcilia.service.TaxaService;
 import com.ctsousa.econcilia.service.VendaService;
@@ -23,9 +24,12 @@ public class RelatorioResource {
 
     private final VendaService vendaService;
 
-    public RelatorioResource(TaxaService taxaService, VendaService vendaService) {
+    private final ConsolidacaoService consolidacaoService;
+
+    public RelatorioResource(TaxaService taxaService, VendaService vendaService, ConsolidacaoService consolidacaoService) {
         this.taxaService = taxaService;
         this.vendaService = vendaService;
+        this.consolidacaoService = consolidacaoService;
     }
 
     @GetMapping(value = "/gerar/csv/taxas")
@@ -50,6 +54,20 @@ public class RelatorioResource {
                                                 @RequestParam String tipo) {
 
         byte [] bytes = gerarBytes(vendaService, dataInicial, dataFinal, empresaId, operadoraId, tipo);
+
+        return ResponseEntity.ok()
+                .headers(getHeaders())
+                .body(bytes);
+    }
+
+    @GetMapping(value = "/gerar/csv/conciliacao")
+    public ResponseEntity<byte[]> gerarCSVConciliacao(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
+                                                 @RequestParam Long empresaId,
+                                                 @RequestParam Long operadoraId,
+                                                 @RequestParam String tipo) {
+
+        byte [] bytes = gerarBytes(consolidacaoService, dataInicial, dataFinal, empresaId, operadoraId, tipo);
 
         return ResponseEntity.ok()
                 .headers(getHeaders())

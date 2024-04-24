@@ -16,7 +16,7 @@ class ProcessadorUberEatsTest {
 
     @Test
     void deveRetornarOperacaoNaoSuportada() {
-        var thrown = Assertions.assertThrows(UnsupportedOperationException.class, () -> processador.processar(null, false));
+        var thrown = Assertions.assertThrows(UnsupportedOperationException.class, () -> processador.processar(null, false, false));
 
         Assertions.assertEquals("Operação não suportada por esse processador.", thrown.getMessage());
     }

@@ -22,4 +22,13 @@ public class ProcessadorFiltro {
     private LocalDate dtInicial;
 
     private LocalDate dtFinal;
+
+    public ProcessadorFiltro() {
+    }
+
+    public ProcessadorFiltro(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal) {
+        this.integracao = integracao;
+        this.dtInicial = dtInicial;
+        this.dtFinal = dtFinal;
+    }
 }

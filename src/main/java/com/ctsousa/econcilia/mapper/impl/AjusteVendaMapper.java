@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @ExcludedCoverage
-public class AjusteVendaMapper implements DtoMapper<com.ctsousa.econcilia.integration.ifood.entity.SaleAdjustment, AjusteVenda>, ColecaoMapper<SaleAdjustment, AjusteVenda> {
+public class AjusteVendaMapper implements DtoMapper<SaleAdjustment, AjusteVenda>, ColecaoMapper<SaleAdjustment, AjusteVenda> {
 
     @Override
     public List<AjusteVenda> paraLista(List<SaleAdjustment> salesAdjustment) {

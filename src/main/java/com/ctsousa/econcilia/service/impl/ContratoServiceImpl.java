@@ -5,7 +5,6 @@ import com.ctsousa.econcilia.mapper.impl.ContratoMapper;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.ContratoDTO;
 import com.ctsousa.econcilia.repository.ContratoRepository;
-import com.ctsousa.econcilia.repository.IntegracaoBufferRepository;
 import com.ctsousa.econcilia.service.ContratoService;
 import com.ctsousa.econcilia.service.IntegracaoBufferService;
 import com.ctsousa.econcilia.service.TaxaService;

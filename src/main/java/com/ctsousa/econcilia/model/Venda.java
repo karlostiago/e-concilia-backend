@@ -106,6 +106,7 @@ public class Venda extends Entidade {
 
     @Override
     public String toString() {
-        return "[PedidoId]:: " + pedidoId;
+        return "[PedidoId]:: " + pedidoId +
+               "[DataPedido]:: " + dataPedido;
     }
 }

@@ -100,6 +100,26 @@ public final class DataUtil {
         return YearMonth.of(ano, mes);
     }
 
+    public static String paraPtBr(final LocalDate data) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return data.format(formatter);
+    }
+
+    public static boolean ultimoDiaMes(final LocalDate data) {
+        int diaAtual = data.getDayOfMonth();
+        int ultimoDiaMes = data.lengthOfMonth();
+        return diaAtual == ultimoDiaMes;
+    }
+
+    public static LocalDate getUltimoDiaMes(final LocalDate data) {
+        LocalDate primeiroDiaProximoMes = data.plusMonths(1);
+        return primeiroDiaProximoMes.minusDays(1);
+    }
+
+    public static LocalDate getPrimeiroDiaMes(final LocalDate data) {
+        return data.withDayOfMonth(1);
+    }
+
     private static List<PeriodoDTO> calcularPeriodos(LocalDate dtInicial, LocalDate dtFinal, Faixa faixa) {
         List<PeriodoDTO> periodos = new ArrayList<>();
         LocalDate dtInicio = dtInicial;
@@ -116,10 +136,5 @@ public final class DataUtil {
         }
 
         return periodos;
-    }
-
-    public static String paraPtBr(final LocalDate data) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return data.format(formatter);
     }
 }

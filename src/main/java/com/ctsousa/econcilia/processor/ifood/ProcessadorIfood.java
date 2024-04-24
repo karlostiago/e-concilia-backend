@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
+import static com.ctsousa.econcilia.util.DataUtil.getPrimeiroDiaMes;
+import static com.ctsousa.econcilia.util.DataUtil.getUltimoDiaMes;
 
 @Slf4j
 @Component
@@ -32,32 +34,26 @@ public class ProcessadorIfood extends Processador {
 
     private final AjusteVendaService ajusteVendaService;
 
+    private final ConsolidacaoService consolidacaoService;
+
     public ProcessadorIfood(TaxaService taxaService,
                             VendaService vendaService,
                             OcorrenciaService ocorrenciaService,
                             CancelamentoService cancelamentoService,
-                            AjusteVendaService ajusteVendaService) {
+                            AjusteVendaService ajusteVendaService, ConsolidacaoService consolidacaoService) {
         this.taxaService = taxaService;
         this.vendaService = vendaService;
         this.ocorrenciaService = ocorrenciaService;
         this.cancelamentoService = cancelamentoService;
         this.ajusteVendaService = ajusteVendaService;
+        this.consolidacaoService = consolidacaoService;
     }
 
     @Override
-    public void processar(ProcessadorFiltro processadorFiltro, boolean executarCalculo) {
+    public void processar(ProcessadorFiltro processadorFiltro, boolean executarCalculo, boolean consolidar) {
         log.info(" ::: Iniciando processador IFOOD ::: ");
 
-        var formaRecebimento = processadorFiltro.getFormaRecebimento() != null ? processadorFiltro.getFormaRecebimento().getDescricao() : null;
-
-        log.info(" ::: Buscando vendas ::: ");
-        vendas = vendaService.buscar(processadorFiltro.getIntegracao().getEmpresa(),
-                processadorFiltro.getIntegracao().getOperadora(),
-                processadorFiltro.getDtInicial(),
-                processadorFiltro.getDtFinal(),
-                processadorFiltro.getFormaPagamento(),
-                processadorFiltro.getCartaoBandeira(),
-                formaRecebimento);
+        carregarVendas(processadorFiltro);
 
         if (vendas.isEmpty()) {
             log.info(" ::: Finalizado processador IFOOD, nenhuma venda foi encontrada ::: ");
@@ -76,10 +72,23 @@ public class ProcessadorIfood extends Processador {
             reprocessar(processadorFiltro.getDtInicial(), processadorFiltro.getDtFinal(), processadorFiltro.getIntegracao().getCodigoIntegracao());
 
             log.info(" ::: Calculo das vendas iniciado ::: ");
-            calcular(ocorrencias);
+            calcular(ocorrencias, consolidar);
         }
 
         log.info(" ::: Finalizado processador IFOOD ::: ");
+    }
+
+    private void carregarVendas(ProcessadorFiltro processadorFiltro) {
+        var formaRecebimento = processadorFiltro.getFormaRecebimento() != null ? processadorFiltro.getFormaRecebimento().getDescricao() : null;
+
+        log.info(" ::: Buscando vendas ::: ");
+        vendas = vendaService.buscar(processadorFiltro.getIntegracao().getEmpresa(),
+                processadorFiltro.getIntegracao().getOperadora(),
+                processadorFiltro.getDtInicial(),
+                processadorFiltro.getDtFinal(),
+                processadorFiltro.getFormaPagamento(),
+                processadorFiltro.getCartaoBandeira(),
+                formaRecebimento);
     }
 
     private void processarCancelamento(String codigoLoja) {
@@ -130,9 +139,10 @@ public class ProcessadorIfood extends Processador {
         }
     }
 
-    private void calcular(List<Ocorrencia> ocorrencias) {
+    private void calcular(List<Ocorrencia> ocorrencias, boolean consolidar) {
         var empresa = vendas.get(0).getEmpresa();
         var operadora = vendas.get(0).getOperadora();
+        var periodo = vendas.get(0).getDataPedido();
 
         var valorTotalRepasse = BigDecimal.valueOf(0D);
         var valorTotalBrutoParcial = BigDecimal.valueOf(0D);
@@ -168,13 +178,16 @@ public class ProcessadorIfood extends Processador {
             valorTotalLiquido = valorTotalLiquido.add(venda.getValorLiquido());
         }
 
-        var valorTotalMensalidade = calcularTaxaMensalidade(empresa, valorTotalBrutoParcial);
+        boolean temTaxaManutencao = consolidacaoService.temMensalidade(empresa, operadora, getPrimeiroDiaMes(periodo), getUltimoDiaMes(periodo));
+
+        var valorBruto = consolidacaoService.buscarValorBruto(empresa, operadora, getPrimeiroDiaMes(periodo), getUltimoDiaMes(periodo));
+        var valorTotalMensalidade = temTaxaManutencao ? BigDecimal.valueOf(0D) : calcularTaxaMensalidade(empresa, valorBruto);
 
         var valorTotalOcorrencia = somar(ocorrencias.stream()
                 .map(Ocorrencia::getValor)
                 .toList());
 
-        var valorOutrosLancamentos = calcularOutrosLancamentos(vendas, ocorrencias, valorTotalBrutoParcial);
+        var valorOutrosLancamentos = calcularOutrosLancamentos(vendas, ocorrencias, valorTotalMensalidade);
 
         valorTotalRepasse = valorTotalRepasse
                 .subtract(valorTotalMensalidade)
@@ -202,6 +215,16 @@ public class ProcessadorIfood extends Processador {
         this.valorTotalPedido = valorTotalPedido;
         this.valorTotalLiquido = valorTotalLiquido;
         this.quantidade = vendas.size();
+        this.valorTotalTaxaService = valorTotalPedidoMinimo;
+        this.valorTotalManutencao = valorTotalMensalidade;
+        this.empresa = empresa;
+        this.operadora = operadora;
+        this.periodo = periodo;
+
+        if (consolidar) {
+            log.info(" ::: Consolidando vendas ::: ");
+            consolidacaoService.consolidar(this);
+        }
     }
 
     private BigDecimal calcularValorComissao(Cobranca cobranca, BigDecimal valorComissao) {
@@ -237,9 +260,23 @@ public class ProcessadorIfood extends Processador {
         return BigDecimal.valueOf(0D);
     }
 
-    private BigDecimal calcularOutrosLancamentos(List<Venda> vendas, List<Ocorrencia> ocorrencias, BigDecimal totalBruto) {
+    private BigDecimal calcularTaxaMensalidade(Empresa empresa, BigDecimal totalBruto) {
+        Taxa taxa = new Taxa();
+        taxa.setValor(BigDecimal.valueOf(0D));
+
+        try {
+            if (totalBruto.compareTo(BigDecimal.valueOf(1800D)) > 0) {
+                taxa = taxaService.buscarPorDescricaoEmpresa("MEN", empresa);
+            }
+        } catch(NotificacaoException e) {
+            // Nao precisa de tratamento
+        }
+
+        return taxa.getValor();
+    }
+
+    private BigDecimal calcularOutrosLancamentos(List<Venda> vendas, List<Ocorrencia> ocorrencias, BigDecimal taxaMensalidade) {
         var valorReembolso = calcularTotalReembolso(vendas);
-        var taxaMensalidade = calcularTaxaMensalidade(vendas.get(0).getEmpresa(), totalBruto);
 
         var totalOcorrencia = somar(ocorrencias.stream()
                 .map(Ocorrencia::getValor)
@@ -255,21 +292,6 @@ public class ProcessadorIfood extends Processador {
                 .subtract(valorReembolso)
                 .subtract(taxaBeneficioAdquirente)
                 .add(totalOcorrencia);
-    }
-
-    private BigDecimal calcularTaxaMensalidade(Empresa empresa, BigDecimal totalBruto) {
-        Taxa taxa = new Taxa();
-        taxa.setValor(BigDecimal.valueOf(0D));
-
-        try {
-            if (totalBruto.compareTo(BigDecimal.valueOf(1800D)) > 0) {
-                taxa = taxaService.buscarPorDescricaoEmpresa("MEN", empresa);
-            }
-        } catch(NotificacaoException e) {
-            // Nao precisa de tratamento
-        }
-
-        return taxa.getValor();
     }
 
     private BigDecimal calcularTotalReembolso(List<Venda> vendas) {

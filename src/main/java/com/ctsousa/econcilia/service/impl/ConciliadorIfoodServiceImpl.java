@@ -44,7 +44,7 @@ public class ConciliadorIfoodServiceImpl implements ConciliadorIfoodService {
 
         ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, metodoPagamento, bandeira, tipoRecebimento, dtInicial, dtFinal);
         Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-        processador.processar(processadorFiltro, true);
+        processador.processar(processadorFiltro, true, false);
         var vendas = processador.getVendas();
 
         conciliarTaxas(vendas, integracao);

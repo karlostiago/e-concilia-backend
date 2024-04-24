@@ -21,7 +21,7 @@ public class ProcessadorIfoodMock extends Processador {
     private static final Random random = new Random();
 
     @Override
-    public void processar(ProcessadorFiltro processadorFiltro, boolean executarCalculo) {
+    public void processar(ProcessadorFiltro processadorFiltro, boolean executarCalculo, boolean consolidar) {
         vendas = new ArrayList<>(1);
 
         Pagamento pagamento = new Pagamento();

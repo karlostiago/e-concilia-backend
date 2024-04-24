@@ -39,9 +39,9 @@ public class DashboardServiceImpl implements DashboadService {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
 
-                ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, dtInicial, dtFinal);
+                ProcessadorFiltro processadorFiltro = new ProcessadorFiltro(integracao, dtInicial, dtFinal);
                 Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                processador.processar(processadorFiltro, true);
+                processador.processar(processadorFiltro, true, false);
 
                 dashboardDTO.setValorBrutoVendas(dashboardDTO.getValorBrutoVendas().add(processador.getValorTotalBruto()));
                 dashboardDTO.setQuantidadeVendas(dashboardDTO.getQuantidadeVendas().add(BigInteger.valueOf(processador.getQuantidade())));
@@ -70,23 +70,15 @@ public class DashboardServiceImpl implements DashboadService {
             List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
             for (Integracao integracao : integracoes) {
                 for (PeriodoDTO periodoDTO : periodos) {
-                    ProcessadorFiltro processadorFiltro = getProcessadorFiltro(integracao, periodoDTO.getDe(), periodoDTO.getAte());
+                    ProcessadorFiltro processadorFiltro = new ProcessadorFiltro(integracao, periodoDTO.getDe(), periodoDTO.getAte());
                     Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                    processador.processar(processadorFiltro, false);
+                    processador.processar(processadorFiltro, false, false);
                     vendas.addAll(processador.getVendas());
                 }
             }
         }
 
         return vendas;
-    }
-
-    private ProcessadorFiltro getProcessadorFiltro(Integracao integracao, LocalDate dtInicial, LocalDate dtFinal) {
-        ProcessadorFiltro processadorFiltro = new ProcessadorFiltro();
-        processadorFiltro.setIntegracao(integracao);
-        processadorFiltro.setDtInicial(dtInicial);
-        processadorFiltro.setDtFinal(dtFinal);
-        return processadorFiltro;
     }
 
     private List<Long> getEmpresasId(final String empresasId) {

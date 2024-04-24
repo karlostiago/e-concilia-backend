@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.enumaration;
 
+import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.filter.RelatorioFilter;
 import com.ctsousa.econcilia.service.GeradorRelatorioCSVService;
 
@@ -15,7 +16,7 @@ public enum TipoRelatorio {
     PDF {
         @Override
         public byte[] gerar(GeradorRelatorioCSVService service, RelatorioFilter relatorioFilter) {
-            return service.gerarCSV(relatorioFilter.getDataInicial(), relatorioFilter.getDataFinal(), relatorioFilter.getEmpresa(), relatorioFilter.getOperadora());
+            throw new UnsupportedOperationException("Operação não suportada.");
         }
     };
 

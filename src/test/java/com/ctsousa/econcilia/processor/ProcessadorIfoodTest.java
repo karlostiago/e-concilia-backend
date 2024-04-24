@@ -34,9 +34,12 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
     @Mock
     private AjusteVendaService ajusteVendaService;
 
+    @Mock
+    private ConsolidacaoService consolidacaoService;
+
     @BeforeEach
     void setup() {
-        processador = new ProcessadorIfood(taxaService, vendaService, ocorrenciaService, cancelamentoService, ajusteVendaService);
+        processador = new ProcessadorIfood(taxaService, vendaService, ocorrenciaService, cancelamentoService, ajusteVendaService, consolidacaoService);
         criarSalvarEmpresa();
         criarSalvarOperadora();
     }
@@ -54,7 +57,7 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
                 .thenReturn(getVendas());
 
-        processador.processar(filtro, false);
+        processador.processar(filtro, false, false);
         Assertions.assertFalse(processador.vendas.isEmpty());
     }
 
@@ -68,7 +71,7 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         filtro.setIntegracao(integracao);
         filtro.setFormaRecebimento(FormaRecebimento.LOJA);
 
-        processador.processar(filtro, false);
+        processador.processar(filtro, false, false);
         Assertions.assertTrue(processador.vendas.isEmpty());
     }
 
@@ -88,7 +91,7 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
                 .thenReturn(getVendas());
 
-        processador.processar(filtro, true);
+        processador.processar(filtro, true, false);
 
         Assertions.assertEquals(2,  processador.vendas.stream()
                 .filter(Venda::getReprocessada).toList().size());
@@ -116,7 +119,7 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
                 .thenReturn(getVendas());
 
-        processador.processar(filtro, true);
+        processador.processar(filtro, true, false);
 
         Assertions.assertEquals(1,  processador.vendas.stream()
                 .filter(venda -> venda.getCobranca().getValorCancelado().compareTo(BigDecimal.ZERO) > 0)
@@ -138,7 +141,7 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
                 .thenReturn(getVendas());
 
-        processador.processar(filtro, true);
+        processador.processar(filtro, true, false);
 
         Assertions.assertEquals(BigDecimal.valueOf(3847.92D), processador.getValorTotalBruto());
         Assertions.assertEquals(BigDecimal.valueOf(769.58D), processador.getValorTotalTicketMedio());

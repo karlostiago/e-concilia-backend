@@ -1,11 +1,14 @@
 package com.ctsousa.econcilia.processor;
 
+import com.ctsousa.econcilia.model.Empresa;
+import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Venda;
 import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +37,17 @@ public abstract class Processador implements Executor {
 
     protected BigDecimal valorTotalLiquido;
 
+    protected BigDecimal valorTotalTaxaService;
+
+    protected BigDecimal valorTotalManutencao;
+
     protected Integer quantidade;
+
+    protected Empresa empresa;
+
+    protected Operadora operadora;
+
+    protected LocalDate periodo;
 
     protected List<Venda> vendas;
 
@@ -50,6 +63,8 @@ public abstract class Processador implements Executor {
         this.valorTotalPromocao = BigDecimal.valueOf(0D);
         this.valorTotalPedido = BigDecimal.valueOf(0D);
         this.valorTotalLiquido = BigDecimal.valueOf(0D);
+        this.valorTotalTaxaService = BigDecimal.valueOf(0D);
+        this.valorTotalManutencao = BigDecimal.valueOf(0D);
         this.vendas = new ArrayList<>();
         this.quantidade = 0;
     }
