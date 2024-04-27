@@ -1,10 +1,15 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.TipoRelatorio;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
+import com.ctsousa.econcilia.model.dto.RelatorioDTO;
+import com.ctsousa.econcilia.model.dto.RelatorioTaxaDTO;
 import com.ctsousa.econcilia.repository.TaxaRepository;
+import com.ctsousa.econcilia.service.EmpresaService;
+import com.ctsousa.econcilia.service.RelatorioService;
 import com.ctsousa.econcilia.service.TaxaService;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +28,14 @@ public class TaxaServiceImpl implements TaxaService {
 
     private final TaxaRepository taxaRepository;
 
-    public TaxaServiceImpl(TaxaRepository taxaRepository) {
+    private final RelatorioService relatorioService;
+
+    private final EmpresaService empresaService;
+
+    public TaxaServiceImpl(TaxaRepository taxaRepository, RelatorioService relatorioService, EmpresaService empresaService) {
         this.taxaRepository = taxaRepository;
+        this.relatorioService = relatorioService;
+        this.empresaService = empresaService;
     }
 
     @Override
@@ -152,22 +163,29 @@ public class TaxaServiceImpl implements TaxaService {
     }
 
     @Override
-    public byte [] gerarCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
-        List<Taxa> taxas = taxaRepository.por(dataInicial, dataFinal, empresa.getId(), operadora.getId());
-
-        if (taxas.isEmpty()) return new byte[0];
+    public byte[] gerarDadosCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
+        empresa = empresaService.pesquisarPorId(empresa.getId());
+        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.TAXA, taxaRepository, dataInicial, dataFinal, empresa, operadora);
 
         StringBuilder csvBuilder = new StringBuilder();
-        csvBuilder.append("Descrição;Valor;Data inicio;Data final;Tipo\n");
+        csvBuilder.append("Descrição;Valor;Data inicio;Data final;Tipo;Ativo\n");
 
-        for (Taxa taxa : taxas) {
-            csvBuilder.append(taxa.getDescricao()).append(";")
-                    .append(monetarioPtBr(taxa.getValor())).append(";")
-                    .append(paraPtBr(taxa.getEntraEmVigor())).append(";")
-                    .append(paraPtBr(taxa.getValidoAte())).append(";")
-                    .append(taxa.getTipo().name()).append("\n");
+        for (RelatorioTaxaDTO documento : relatorioDTO.getTaxas()) {
+            csvBuilder.append(documento.getDescricao()).append(";")
+                    .append(documento.getValor()).append(";")
+                    .append(documento.getEntraEmVigor()).append(";")
+                    .append(documento.getValidoAte()).append(";")
+                    .append(documento.getTipo()).append(";")
+                    .append(documento.getAtivo()).append("\n");
         }
 
         return csvBuilder.toString().getBytes();
+    }
+
+    @Override
+    public List<RelatorioTaxaDTO> gerarDadosPDF(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
+        empresa = empresaService.pesquisarPorId(empresa.getId());
+        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.TAXA, taxaRepository, dataInicial, dataFinal, empresa, operadora);
+        return relatorioDTO.getTaxas();
     }
 }

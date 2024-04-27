@@ -3,12 +3,14 @@ package com.ctsousa.econcilia.service;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
+import com.ctsousa.econcilia.model.dto.RelatorioConsolidadoDTO;
+import com.ctsousa.econcilia.model.dto.RelatorioTaxaDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface TaxaService extends GeradorRelatorioCSVService {
+public interface TaxaService {
 
     void validar(Taxa taxa);
 
@@ -35,4 +37,8 @@ public interface TaxaService extends GeradorRelatorioCSVService {
     Taxa buscarPorDescricaoEmpresa(String descricao, Empresa empresa);
 
     Taxa buscarPor(Empresa empresa, Operadora operadora, String descricao, BigDecimal valor);
+
+    byte [] gerarDadosCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora);
+
+    List<RelatorioTaxaDTO> gerarDadosPDF(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora);
 }

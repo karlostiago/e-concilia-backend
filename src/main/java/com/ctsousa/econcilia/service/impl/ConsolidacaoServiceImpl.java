@@ -1,21 +1,24 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.TipoRelatorio;
 import com.ctsousa.econcilia.mapper.impl.ConsolidadoMapper;
 import com.ctsousa.econcilia.model.Consolidado;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.dto.ConsolidadoDTO;
+import com.ctsousa.econcilia.model.dto.RelatorioConsolidadoDTO;
+import com.ctsousa.econcilia.model.dto.RelatorioDTO;
 import com.ctsousa.econcilia.processor.Processador;
 import com.ctsousa.econcilia.repository.ConsolidadoRepository;
 import com.ctsousa.econcilia.service.ConsolidacaoService;
+import com.ctsousa.econcilia.service.EmpresaService;
+import com.ctsousa.econcilia.service.RelatorioService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
-
-import static com.ctsousa.econcilia.util.DecimalUtil.monetarioPtBr;
 
 @Component
 public class ConsolidacaoServiceImpl implements ConsolidacaoService {
@@ -24,9 +27,15 @@ public class ConsolidacaoServiceImpl implements ConsolidacaoService {
 
     private final ConsolidadoRepository consolidadoRepository;
 
-    public ConsolidacaoServiceImpl(ConsolidadoMapper mapper, ConsolidadoRepository consolidadoRepository) {
+    private final EmpresaService empresaService;
+
+    private final RelatorioService relatorioService;
+
+    public ConsolidacaoServiceImpl(ConsolidadoMapper mapper, ConsolidadoRepository consolidadoRepository, EmpresaService empresaService, RelatorioService relatorioService) {
         this.mapper = mapper;
         this.consolidadoRepository = consolidadoRepository;
+        this.empresaService = empresaService;
+        this.relatorioService = relatorioService;
     }
 
     @Override
@@ -69,32 +78,38 @@ public class ConsolidacaoServiceImpl implements ConsolidacaoService {
     }
 
     @Override
-    public byte[] gerarCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
-        List<Object[]> consolidados = consolidadoRepository.por(dataInicial, dataFinal, empresa.getId(), operadora.getId());
-
-        if (consolidados.isEmpty()) return new byte[0];
+    public byte[] gerarDadosCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
+        empresa = empresaService.pesquisarPorId(empresa.getId());
+        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.CONSOLIDACAO, consolidadoRepository,dataInicial, dataFinal, empresa, operadora);
 
         StringBuilder csvBuilder = new StringBuilder();
         csvBuilder.append("Período da venda;Nome cliente;Quantidade vendas;Total bruto;Ticket médio;Valor antecipado;Taxa entrega;Promoção;Transação pagamento;Comissão;Cancelamento;Taxa serviço;Taxa manutenção;Repasse\n");
 
-        for (Object [] consolidado : consolidados) {
-            csvBuilder.append(consolidado[0]).append(";")
-                    .append(consolidado[1]).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[2])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[3])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[4])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[5])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[6])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[7])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[8])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[9])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[10])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[11])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[12])).append(";")
-                    .append(monetarioPtBr((BigDecimal) consolidado[13])).append("\n");
+        for (RelatorioConsolidadoDTO documento : relatorioDTO.getConsolidados()) {
+            csvBuilder.append(documento.getPeriodo() == null ? "" : documento.getPeriodo()).append(";")
+                    .append(empresa.getRazaoSocial()).append(";")
+                    .append(documento.getQuantidadeVenda()).append(";")
+                    .append(documento.getTotalBruto()).append(";")
+                    .append(documento.getTicketMedio()).append(";")
+                    .append(documento.getValorAntecipado()).append(";")
+                    .append(documento.getTotalTaxaEntrega()).append(";")
+                    .append(documento.getTotalPromocao()).append(";")
+                    .append(documento.getTotalTransacaoPagamento()).append(";")
+                    .append(documento.getTotalComissao()).append(";")
+                    .append(documento.getTotalCancelado()).append(";")
+                    .append(documento.getTotalTaxaServico()).append(";")
+                    .append(documento.getTotalTaxaManutencao()).append(";")
+                    .append(documento.getTotalRepasse()).append("\n");
         }
 
         return csvBuilder.toString().getBytes();
+    }
+
+    @Override
+    public List<RelatorioConsolidadoDTO> gerarDadosPDF(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
+        empresa = empresaService.pesquisarPorId(empresa.getId());
+        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.CONSOLIDACAO, consolidadoRepository, dataInicial, dataFinal, empresa, operadora);
+        return relatorioDTO.getConsolidados();
     }
 
     private boolean naoConsolidado(final Processador processador) {

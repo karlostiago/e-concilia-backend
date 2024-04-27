@@ -1,24 +1,20 @@
 package com.ctsousa.econcilia.service.impl;
 
+import com.ctsousa.econcilia.enumaration.TipoRelatorio;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.filter.VendaFilter;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.dto.RelatorioDTO;
+import com.ctsousa.econcilia.model.dto.RelatorioVendaDTO;
 import com.ctsousa.econcilia.repository.VendaRepository;
-import com.ctsousa.econcilia.service.IntegracaoIfoodService;
-import com.ctsousa.econcilia.service.IntegracaoService;
-import com.ctsousa.econcilia.service.VendaService;
-import com.ctsousa.econcilia.util.DataUtil;
+import com.ctsousa.econcilia.service.*;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
-
-import static com.ctsousa.econcilia.util.DecimalUtil.monetarioPtBr;
 
 @Component
 public class VendaServiceImpl implements VendaService {
@@ -29,10 +25,16 @@ public class VendaServiceImpl implements VendaService {
 
     private final IntegracaoService integracaoService;
 
-    public VendaServiceImpl(IntegracaoIfoodService integracaoIfoodService, VendaRepository vendaRepository, IntegracaoService integracaoService) {
+    private final RelatorioService relatorioService;
+
+    private final EmpresaService empresaService;
+
+    public VendaServiceImpl(IntegracaoIfoodService integracaoIfoodService, VendaRepository vendaRepository, IntegracaoService integracaoService, RelatorioService relatorioService, EmpresaService empresaService) {
         this.integracaoIfoodService = integracaoIfoodService;
         this.vendaRepository = vendaRepository;
         this.integracaoService = integracaoService;
+        this.relatorioService = relatorioService;
+        this.empresaService = empresaService;
     }
 
     @Override
@@ -74,30 +76,36 @@ public class VendaServiceImpl implements VendaService {
     }
 
     @Override
-    public byte[] gerarCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
-        List<Object[]> vendas = vendaRepository.por(dataInicial, dataFinal, empresa.getId(), operadora.getId());
-
-        if (vendas.isEmpty()) return new byte[0];
+    public byte[] gerarDadosCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
+        empresa = empresaService.pesquisarPorId(empresa.getId());
+        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.VENDA, vendaRepository, dataInicial, dataFinal, empresa, operadora);
 
         StringBuilder csvBuilder = new StringBuilder();
         csvBuilder.append("Data pedido;Número documento;Razão social;Forma pagamento;Responsável;Valor bruto;Valor parcial;Valor cancelado;Valor comissão;Valor taxa entrega;Valor taxa serviço;Taxa comissão;Taxa comissão pagamento\n");
 
-        for (Object [] venda : vendas) {
-            csvBuilder.append(DataUtil.paraPtBr(((Date) venda[0]).toLocalDate())).append(";")
-                    .append(venda[1]).append(";")
-                    .append(venda[2]).append(";")
-                    .append(venda[3]).append(";")
-                    .append(venda[4]).append(";")
-                    .append(monetarioPtBr((BigDecimal) venda[5])).append(";")
-                    .append(monetarioPtBr((BigDecimal)venda[6])).append(";")
-                    .append(monetarioPtBr((BigDecimal)venda[7])).append(";")
-                    .append(monetarioPtBr((BigDecimal)venda[8])).append(";")
-                    .append(monetarioPtBr((BigDecimal)venda[9])).append(";")
-                    .append(monetarioPtBr((BigDecimal)venda[10])).append(";")
-                    .append(monetarioPtBr(((BigDecimal)venda[11]).multiply((BigDecimal.valueOf(100D))))).append("%").append(";")
-                    .append(monetarioPtBr(((BigDecimal)venda[12]).multiply(BigDecimal.valueOf(100D)))).append("%").append("\n");
+        for (RelatorioVendaDTO documento : relatorioDTO.getVendas()) {
+            csvBuilder.append(documento.getDataPedido()).append(";")
+                    .append(documento.getNumeroDocumento()).append(";")
+                    .append(documento.getRazaoSocial()).append(";")
+                    .append(documento.getFormaPagamento()).append(";")
+                    .append(documento.getResponsavel()).append(";")
+                    .append(documento.getValorBruto()).append(";")
+                    .append(documento.getValorParcial()).append(";")
+                    .append(documento.getValorCancelado()).append(";")
+                    .append(documento.getValorComissao()).append(";")
+                    .append(documento.getValorTaxaEntrega()).append(";")
+                    .append(documento.getValorTaxaServico()).append(";")
+                    .append(documento.getTaxaComissao()).append("%").append(";")
+                    .append(documento.getTaxaComissaoPagamento()).append("%").append("\n");
         }
 
         return csvBuilder.toString().getBytes();
+    }
+
+    @Override
+    public List<RelatorioVendaDTO> gerarDadosPDF(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
+        empresa = empresaService.pesquisarPorId(empresa.getId());
+        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.VENDA, vendaRepository, dataInicial, dataFinal, empresa, operadora);
+        return relatorioDTO.getVendas();
     }
 }

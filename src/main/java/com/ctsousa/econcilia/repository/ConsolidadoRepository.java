@@ -32,12 +32,13 @@ public interface ConsolidadoRepository extends JpaRepository<Consolidado, Long> 
                                  @Param(value = "periodoInicial") LocalDate periodoInicial,
                                  @Param(value = "periodoFinal") LocalDate periodoFinal);
 
-    @Query(value = "SELECT " +
-            "   DATE_FORMAT(c.periodo, '%m-%Y') AS PERIODO, " +
+    @Query(value =
+            "SELECT " +
+            "   c.periodo AS PERIODO, " +
             "   emp.razao_social AS NOME_CLIENTE, " +
             "   SUM(c.quantidade_venda) AS QUANTIDADE_VENDAS, " +
             "   SUM(c.total_bruto) AS TOTAL_BRUTO, " +
-            "   SUM(c.total_bruto) / SUM(quantidade_venda)  AS TICKET_MEDIO, " +
+            "   SUM(c.total_bruto) / SUM(quantidade_venda) AS TICKET_MEDIO, " +
             "   SUM(c.total_recebido) AS VALOR_ANTECIPADO, " +
             "   SUM(c.total_taxa_entrega) AS TAXA_ENTREGA, " +
             "   SUM(c.total_promocao) AS PROMOCAO, " +
@@ -48,11 +49,33 @@ public interface ConsolidadoRepository extends JpaRepository<Consolidado, Long> 
             "   SUM(c.total_taxa_manutencao * -1) AS TAXA_MANUTENCAO, " +
             "   SUM(c.total_repasse) AS REPASSE " +
             "FROM consolidado c " +
-            "INNER JOIN empresa emp ON emp.id = c.empresa_id  " +
+            "INNER JOIN empresa emp ON emp.id = c.empresa_id " +
             "WHERE c.periodo BETWEEN :dataInicial AND :dataFinal " +
             "  AND c.empresa_id = :empresaId " +
             "  AND c.operadora_id = :operadoraId " +
-            "GROUP BY emp.razao_social, DATE_FORMAT(c.periodo, '%m-%Y') ",
+            "GROUP BY emp.razao_social, c.periodo " +
+            "UNION " +
+            "SELECT " +
+            "   NULL AS PERIODO, " +
+            "   emp.razao_social AS NOME_CLIENTE, " +
+            "   SUM(c.quantidade_venda) AS QUANTIDADE_VENDAS, " +
+            "   SUM(c.total_bruto) AS TOTAL_BRUTO, " +
+            "   SUM(c.total_bruto) / SUM(quantidade_venda) AS TICKET_MEDIO, " +
+            "   SUM(c.total_recebido) AS VALOR_ANTECIPADO, " +
+            "   SUM(c.total_taxa_entrega) AS TAXA_ENTREGA, " +
+            "   SUM(c.total_promocao) AS PROMOCAO, " +
+            "   SUM(c.total_transacao_pagamento) AS TRANSACAO_PAGAMENTO, " +
+            "   SUM(c.total_comissao) AS COMISSAO, " +
+            "   SUM(c.total_cancelado) AS CANCELAMENTO, " +
+            "   SUM(c.total_taxa_servico * -1) AS TAXA_SERVICO, " +
+            "   SUM(c.total_taxa_manutencao * -1) AS TAXA_MANUTENCAO, " +
+            "   SUM(c.total_repasse) AS REPASSE " +
+            "FROM consolidado c " +
+            "INNER JOIN empresa emp ON emp.id = c.empresa_id " +
+            "WHERE c.periodo BETWEEN :dataInicial AND :dataFinal " +
+            "  AND c.empresa_id = :empresaId " +
+            "  AND c.operadora_id = :operadoraId " +
+            "GROUP BY emp.razao_social",
             nativeQuery = true)
     List<Object[]> por(@Param(value = "dataInicial") LocalDate dataInicial,
                        @Param(value = "dataFinal") LocalDate dataFinal,

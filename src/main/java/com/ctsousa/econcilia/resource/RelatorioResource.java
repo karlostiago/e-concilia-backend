@@ -1,9 +1,11 @@
 package com.ctsousa.econcilia.resource;
 
-import com.ctsousa.econcilia.enumaration.TipoRelatorio;
-import com.ctsousa.econcilia.filter.RelatorioFilter;
+import com.ctsousa.econcilia.model.Empresa;
+import com.ctsousa.econcilia.model.Operadora;
+import com.ctsousa.econcilia.model.dto.RelatorioConsolidadoDTO;
+import com.ctsousa.econcilia.model.dto.RelatorioTaxaDTO;
+import com.ctsousa.econcilia.model.dto.RelatorioVendaDTO;
 import com.ctsousa.econcilia.service.ConsolidacaoService;
-import com.ctsousa.econcilia.service.GeradorRelatorioCSVService;
 import com.ctsousa.econcilia.service.TaxaService;
 import com.ctsousa.econcilia.service.VendaService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/relatorios")
@@ -39,51 +42,78 @@ public class RelatorioResource {
                                         @RequestParam Long operadoraId,
                                         @RequestParam String tipo) {
 
-        byte [] bytes = gerarBytes(taxaService, dataInicial, dataFinal, empresaId, operadoraId, tipo);
+        Empresa empresa = new Empresa(empresaId);
+        Operadora operadora = new Operadora(operadoraId);
+        byte [] bytes = taxaService.gerarDadosCSV(dataInicial, dataFinal, empresa, operadora);
 
         return ResponseEntity.ok()
                 .headers(getHeaders())
                 .body(bytes);
+    }
+
+    @GetMapping(value = "/gerar/pdf/taxas")
+    public ResponseEntity<List<RelatorioTaxaDTO>> gerarPDFTaxas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
+                                                @RequestParam Long empresaId,
+                                                @RequestParam Long operadoraId) {
+
+        Empresa empresa = new Empresa(empresaId);
+        Operadora operadora = new Operadora(operadoraId);
+        List<RelatorioTaxaDTO> taxasDTO = taxaService.gerarDadosPDF(dataInicial, dataFinal, empresa, operadora);
+        return ResponseEntity.ok(taxasDTO);
     }
 
     @GetMapping(value = "/gerar/csv/vendas")
     public ResponseEntity<byte[]> gerarCSVVendas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
                                                 @RequestParam Long empresaId,
-                                                @RequestParam Long operadoraId,
-                                                @RequestParam String tipo) {
+                                                @RequestParam Long operadoraId) {
 
-        byte [] bytes = gerarBytes(vendaService, dataInicial, dataFinal, empresaId, operadoraId, tipo);
+        Empresa empresa = new Empresa(empresaId);
+        Operadora operadora = new Operadora(operadoraId);
+        byte [] bytes = vendaService.gerarDadosCSV(dataInicial, dataFinal, empresa, operadora);
 
         return ResponseEntity.ok()
                 .headers(getHeaders())
                 .body(bytes);
+    }
+
+    @GetMapping(value = "/gerar/pdf/vendas")
+    public ResponseEntity<List<RelatorioVendaDTO>> gerarPDFVendas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+                                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
+                                                                 @RequestParam Long empresaId,
+                                                                 @RequestParam Long operadoraId) {
+
+        Empresa empresa = new Empresa(empresaId);
+        Operadora operadora = new Operadora(operadoraId);
+        List<RelatorioVendaDTO> vendasDTO = vendaService.gerarDadosPDF(dataInicial, dataFinal, empresa, operadora);
+        return ResponseEntity.ok(vendasDTO);
     }
 
     @GetMapping(value = "/gerar/csv/conciliacao")
     public ResponseEntity<byte[]> gerarCSVConciliacao(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
                                                  @RequestParam Long empresaId,
-                                                 @RequestParam Long operadoraId,
-                                                 @RequestParam String tipo) {
+                                                 @RequestParam Long operadoraId) {
 
-        byte [] bytes = gerarBytes(consolidacaoService, dataInicial, dataFinal, empresaId, operadoraId, tipo);
+        Empresa empresa = new Empresa(empresaId);
+        Operadora operadora = new Operadora(operadoraId);
+        byte [] bytes = consolidacaoService.gerarDadosCSV(dataInicial, dataFinal, empresa, operadora);
 
         return ResponseEntity.ok()
                 .headers(getHeaders())
                 .body(bytes);
     }
 
-    private byte [] gerarBytes(GeradorRelatorioCSVService service, LocalDate dataInicial, LocalDate dataFinal, Long empresaId, Long operadoraId, String tipo) {
-        byte [] bytes = {};
-
-        TipoRelatorio tipoRelatorio = TipoRelatorio.porDescricao(tipo);
-        RelatorioFilter filtro = new RelatorioFilter(dataInicial, dataFinal, empresaId, operadoraId, tipoRelatorio);
-
-        if (tipoRelatorio != null)
-            bytes = tipoRelatorio.gerar(service, filtro);
-
-        return bytes;
+    @GetMapping(value = "/gerar/pdf/conciliacao")
+    public ResponseEntity<List<RelatorioConsolidadoDTO>> gerarPDFConciliacao(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+                                                                             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
+                                                                             @RequestParam Long empresaId,
+                                                                             @RequestParam Long operadoraId) {
+        Empresa empresa = new Empresa(empresaId);
+        Operadora operadora = new Operadora(operadoraId);
+        List<RelatorioConsolidadoDTO> consolidadoDTOS = consolidacaoService.gerarDadosPDF(dataInicial, dataFinal, empresa, operadora);
+        return ResponseEntity.ok(consolidadoDTOS);
     }
 
     private HttpHeaders getHeaders() {
