@@ -2,7 +2,7 @@ package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
-import com.ctsousa.econcilia.model.dto.RelatorioConsolidadoDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
 import com.ctsousa.econcilia.processor.Processador;
 import org.springframework.stereotype.Service;
 

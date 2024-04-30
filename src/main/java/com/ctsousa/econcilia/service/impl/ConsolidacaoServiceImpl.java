@@ -6,13 +6,13 @@ import com.ctsousa.econcilia.model.Consolidado;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.dto.ConsolidadoDTO;
-import com.ctsousa.econcilia.model.dto.RelatorioConsolidadoDTO;
-import com.ctsousa.econcilia.model.dto.RelatorioDTO;
 import com.ctsousa.econcilia.processor.Processador;
+import com.ctsousa.econcilia.report.Relatorio;
+import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioDTO;
 import com.ctsousa.econcilia.repository.ConsolidadoRepository;
 import com.ctsousa.econcilia.service.ConsolidacaoService;
 import com.ctsousa.econcilia.service.EmpresaService;
-import com.ctsousa.econcilia.service.RelatorioService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -29,9 +29,9 @@ public class ConsolidacaoServiceImpl implements ConsolidacaoService {
 
     private final EmpresaService empresaService;
 
-    private final RelatorioService relatorioService;
+    private final Relatorio relatorioService;
 
-    public ConsolidacaoServiceImpl(ConsolidadoMapper mapper, ConsolidadoRepository consolidadoRepository, EmpresaService empresaService, RelatorioService relatorioService) {
+    public ConsolidacaoServiceImpl(ConsolidadoMapper mapper, ConsolidadoRepository consolidadoRepository, EmpresaService empresaService, Relatorio relatorioService) {
         this.mapper = mapper;
         this.consolidadoRepository = consolidadoRepository;
         this.empresaService = empresaService;

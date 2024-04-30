@@ -15,6 +15,8 @@ public interface IntegracaoIfoodService {
 
     List<Cancelamento> pesquisarCancelamentos(final String codigoIntegracao, final String periodoId);
 
+    List<Cancelamento> pesquisarCancelamentos(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
+
     List<CobrancaCancelada> pesquisarCobrancaCanceladas(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);
 
     List<TaxaManutencao> pesquisarTaxasManutencao(final String codigoIntegracao, final LocalDate dtInicial, final LocalDate dtFinal);

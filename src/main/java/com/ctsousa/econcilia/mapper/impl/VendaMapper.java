@@ -26,7 +26,7 @@ public class VendaMapper implements DtoMapper<Sale, Venda>, ColecaoMapper<Sale, 
     @Override
     public Venda paraDTO(Sale sale) {
         Venda venda = new Venda();
-        venda.setPeriodoId(sale.getPeriodId());
+        venda.setPeriodoId(sale.getPeriodId() != null ? sale.getPeriodId() : "");
         venda.setDataPedido(sale.getOrderDate());
         venda.setPedidoId(sale.getOrderId());
         venda.setModeloNegocio(sale.getBusinessModelOrder());

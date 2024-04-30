@@ -5,9 +5,11 @@ import com.ctsousa.econcilia.model.Cobranca;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -19,6 +21,11 @@ import static com.ctsousa.econcilia.util.DataUtil.paraLocalDate;
 
 @Repository
 public interface AjusteVendaRepository extends JpaRepository<AjusteVenda, Long> {
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM AjusteVenda a WHERE YEAR(a.dataPedido) = YEAR(:dataPedido) AND MONTH(a.dataPedido) = MONTH(:dataPedido)")
+    void deleteAjusteVendas(@Param(value = "dataPedido") LocalDate dataPedido);
 
     @Query(value = "SELECT DISTINCT " +
             "   av.id AS ajuste_id, " +

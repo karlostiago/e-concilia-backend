@@ -1,4 +1,4 @@
-package com.ctsousa.econcilia.model.dto;
+package com.ctsousa.econcilia.report.dto;
 
 import lombok.Getter;
 import lombok.Setter;

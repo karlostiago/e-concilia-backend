@@ -10,7 +10,7 @@ import com.ctsousa.econcilia.repository.AjusteVendaRepository;
 import com.ctsousa.econcilia.repository.CancelamentoRepository;
 import com.ctsousa.econcilia.repository.OcorrenciaRepository;
 import com.ctsousa.econcilia.repository.VendaRepository;
-import com.ctsousa.econcilia.scheduler.impl.ImportacaoSchedulerIfoodImpl;
+import com.ctsousa.econcilia.scheduler.impl.ImportacaoProgramadaSchedulerIfoodImpl;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
@@ -50,7 +50,7 @@ class ImportacaoSchedulerIfoodTest extends ApplicationIntegrationTest {
 
     @BeforeEach
     void setup() {
-        ImportacaoSchedulerIfoodImpl importacaoServiceImpl = new ImportacaoSchedulerIfoodImpl(importacaoService, integracaoService, vendaRepository, integracaoIfoodService, cancelamentoRepository, ajusteVendaRepository, ocorrenciaRepository);
+        ImportacaoProgramadaSchedulerIfoodImpl importacaoServiceImpl = null;//new ImportacaoProgramadaSchedulerIfoodImpl(importacaoService, integracaoService, vendaRepository, integracaoIfoodService, cancelamentoRepository, ajusteVendaRepository, ocorrenciaRepository);
         importacaoServiceImpl.setHabilitar(true);
         scheduler = importacaoServiceImpl;
 

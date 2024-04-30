@@ -4,9 +4,11 @@ import com.ctsousa.econcilia.model.Consolidado;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,6 +33,13 @@ public interface ConsolidadoRepository extends JpaRepository<Consolidado, Long> 
                                  @Param(value = "operadora") Operadora operadora,
                                  @Param(value = "periodoInicial") LocalDate periodoInicial,
                                  @Param(value = "periodoFinal") LocalDate periodoFinal);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Consolidado c WHERE YEAR(c.periodo) = YEAR(:periodo) AND MONTH(c.periodo) = MONTH(:periodo) AND c.operadora = :operadora AND c.empresa = :empresa")
+    void deleteConsolidados(@Param(value = "empresa") Empresa empresa,
+                            @Param(value = "operadora") Operadora operadora,
+                            @Param(value = "periodo") LocalDate periodo);
 
     @Query(value =
             "SELECT " +

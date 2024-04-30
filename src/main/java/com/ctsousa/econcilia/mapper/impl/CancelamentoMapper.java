@@ -26,7 +26,7 @@ public class CancelamentoMapper implements DtoMapper<Cancellation, Cancelamento>
         cancelamento.setComercianteId(cancellation.getMerchantId());
         cancelamento.setNomeComerciante(cancellation.getMerchantName());
         cancelamento.setValor(cancellation.getAmount());
-        cancelamento.setPeriodoId(cancellation.getPeriodId());
+        cancelamento.setPeriodoId(cancellation.getPeriodId() != null ? cancellation.getPeriodId() : "");
         cancelamento.setPedidoId(cancellation.getOrderId());
         return cancelamento;
     }

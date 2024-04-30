@@ -5,11 +5,11 @@ import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
-import com.ctsousa.econcilia.model.dto.RelatorioDTO;
-import com.ctsousa.econcilia.model.dto.RelatorioTaxaDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioTaxaDTO;
 import com.ctsousa.econcilia.repository.TaxaRepository;
 import com.ctsousa.econcilia.service.EmpresaService;
-import com.ctsousa.econcilia.service.RelatorioService;
+import com.ctsousa.econcilia.report.Relatorio;
 import com.ctsousa.econcilia.service.TaxaService;
 import org.springframework.stereotype.Component;
 
@@ -20,19 +20,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.ctsousa.econcilia.util.DataUtil.paraPtBr;
-import static com.ctsousa.econcilia.util.DecimalUtil.monetarioPtBr;
-
 @Component
 public class TaxaServiceImpl implements TaxaService {
 
     private final TaxaRepository taxaRepository;
 
-    private final RelatorioService relatorioService;
+    private final Relatorio relatorioService;
 
     private final EmpresaService empresaService;
 
-    public TaxaServiceImpl(TaxaRepository taxaRepository, RelatorioService relatorioService, EmpresaService empresaService) {
+    public TaxaServiceImpl(TaxaRepository taxaRepository, Relatorio relatorioService, EmpresaService empresaService) {
         this.taxaRepository = taxaRepository;
         this.relatorioService = relatorioService;
         this.empresaService = empresaService;

@@ -11,23 +11,6 @@ import java.util.*;
 
 public final class DataUtil {
 
-    private static Map<Integer, Month> mes = new HashMap<>();
-
-    static {
-        mes.put(1, Month.JANUARY);
-        mes.put(2, Month.FEBRUARY);
-        mes.put(3, Month.MARCH);
-        mes.put(4, Month.APRIL);
-        mes.put(5, Month.MAY);
-        mes.put(6, Month.JUNE);
-        mes.put(7, Month.JULY);
-        mes.put(8, Month.AUGUST);
-        mes.put(9, Month.SEPTEMBER);
-        mes.put(10, Month.OCTOBER);
-        mes.put(11, Month.NOVEMBER);
-        mes.put(12, Month.DECEMBER);
-    }
-
     private DataUtil() {
     }
 
@@ -44,32 +27,21 @@ public final class DataUtil {
         return dia + "/" + mes;
     }
 
-    public static List<PeriodoDTO> periodos(LocalDate periodoInicial, long totalDias) {
-        boolean executarCalculo = true;
+    public static List<PeriodoDTO> obterPeriodoPorMes(LocalDate dataInicial, LocalDate dataFinal) {
         List<PeriodoDTO> periodos = new ArrayList<>();
 
-        if (totalDias <= 30) {
-            periodos.add(new PeriodoDTO(periodoInicial, periodoInicial.plusDays(totalDias)));
-            executarCalculo = false;
+        LocalDate dataTemporaria = dataInicial;
+
+        while (!dataTemporaria.isAfter(dataFinal)) {
+            LocalDate dtPrimeiroDia = LocalDate.of(dataTemporaria.getYear(), dataTemporaria.getMonth(), 1);
+            LocalDate dtUltimoDiaMes = dtPrimeiroDia.withDayOfMonth(dtPrimeiroDia.lengthOfMonth());
+            periodos.add(new PeriodoDTO(dtPrimeiroDia, dtUltimoDiaMes));
+            dataTemporaria = dtPrimeiroDia.plusMonths(1);
         }
 
-        while (executarCalculo) {
-            LocalDate periodoFinal = periodoInicial.plusDays(30);
-
-            if (!periodos.isEmpty()) {
-                periodoInicial = periodos.get(periodos.size() - 1).getAte()
-                        .plusDays(1);
-
-                periodoFinal = periodoInicial.plusDays(totalDias < 30 ? totalDias : 30)
-                        .minusDays(1);
-            }
-
-            periodos.add(new PeriodoDTO(periodoInicial, periodoFinal));
-            totalDias -= 30;
-
-            if (totalDias <= 0) {
-                executarCalculo = false;
-            }
+        if (!periodos.isEmpty()) {
+            PeriodoDTO ultimoPeriodo = periodos.get(periodos.size() - 1);
+            periodos.set(periodos.size() - 1, new PeriodoDTO(ultimoPeriodo.getDe(), dataFinal));
         }
 
         return periodos;

@@ -3,8 +3,7 @@ package com.ctsousa.econcilia.service;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Venda;
-import com.ctsousa.econcilia.model.dto.RelatorioTaxaDTO;
-import com.ctsousa.econcilia.model.dto.RelatorioVendaDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioVendaDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

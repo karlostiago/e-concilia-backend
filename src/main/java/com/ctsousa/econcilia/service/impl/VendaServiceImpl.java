@@ -7,8 +7,9 @@ import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Venda;
-import com.ctsousa.econcilia.model.dto.RelatorioDTO;
-import com.ctsousa.econcilia.model.dto.RelatorioVendaDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioVendaDTO;
+import com.ctsousa.econcilia.report.Relatorio;
 import com.ctsousa.econcilia.repository.VendaRepository;
 import com.ctsousa.econcilia.service.*;
 import org.springframework.stereotype.Component;
@@ -25,11 +26,11 @@ public class VendaServiceImpl implements VendaService {
 
     private final IntegracaoService integracaoService;
 
-    private final RelatorioService relatorioService;
+    private final Relatorio relatorioService;
 
     private final EmpresaService empresaService;
 
-    public VendaServiceImpl(IntegracaoIfoodService integracaoIfoodService, VendaRepository vendaRepository, IntegracaoService integracaoService, RelatorioService relatorioService, EmpresaService empresaService) {
+    public VendaServiceImpl(IntegracaoIfoodService integracaoIfoodService, VendaRepository vendaRepository, IntegracaoService integracaoService, Relatorio relatorioService, EmpresaService empresaService) {
         this.integracaoIfoodService = integracaoIfoodService;
         this.vendaRepository = vendaRepository;
         this.integracaoService = integracaoService;

@@ -45,32 +45,33 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
     }
 
     @Override
-    @Scheduled(fixedRate = DOIS_MINUTOS)
+//    @Scheduled(fixedRate = DOIS_MINUTOS)
     public void processar() {
         Operadora operadora = operadoraService.buscarPorDescricao(IFOOD_OPERADORA);
         List<Contrato> contratos = contratoService.pesquisar(null, operadora.getId());
 
-//        List<Empresa> empresas = contratos.stream()
-//                .map(Contrato::getEmpresa)
-//                .toList();
-
-        List<Empresa> empresas = new ArrayList<>();
-        empresas.add(new Empresa(5L));
+        List<Empresa> empresas = contratos.stream()
+                .map(Contrato::getEmpresa)
+                .toList();
 
         for (Empresa empresa : empresas) {
-            prepararConsolidacaoVendas(empresa);
+            prepararConsolidacaoVendas(empresa, LocalDate.now());
         }
     }
 
-    private void prepararConsolidacaoVendas(final Empresa empresa) {
+    public void processar(final Empresa empresa, final LocalDate periodo) {
+        prepararConsolidacaoVendas(empresa, periodo);
+    }
+
+    private void prepararConsolidacaoVendas(final Empresa empresa, final LocalDate periodo) {
         List<Integracao> integracoes = integracaoRepository.findByEmpresa(empresa);
         for (Integracao integracao : integracoes) {
-            executarConsolidacaoVendas(integracao);
+            executarConsolidacaoVendas(integracao, periodo);
         }
     }
 
-    private void executarConsolidacaoVendas(Integracao integracao) {
-        List<LocalDate> periodos = gerarPeriodos(LocalDate.of(2023, 10, 31));
+    private void executarConsolidacaoVendas(Integracao integracao, LocalDate periodoInicial) {
+        List<LocalDate> periodos = gerarPeriodos(periodoInicial);
 
         for (LocalDate periodo : periodos) {
             if (temConsolidacao(integracao, periodo)) continue;

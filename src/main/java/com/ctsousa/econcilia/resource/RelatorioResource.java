@@ -2,9 +2,9 @@ package com.ctsousa.econcilia.resource;
 
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
-import com.ctsousa.econcilia.model.dto.RelatorioConsolidadoDTO;
-import com.ctsousa.econcilia.model.dto.RelatorioTaxaDTO;
-import com.ctsousa.econcilia.model.dto.RelatorioVendaDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioTaxaDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioVendaDTO;
 import com.ctsousa.econcilia.service.ConsolidacaoService;
 import com.ctsousa.econcilia.service.TaxaService;
 import com.ctsousa.econcilia.service.VendaService;
@@ -39,8 +39,7 @@ public class RelatorioResource {
     public ResponseEntity<byte[]> gerarCSVTaxas(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal,
                                         @RequestParam Long empresaId,
-                                        @RequestParam Long operadoraId,
-                                        @RequestParam String tipo) {
+                                        @RequestParam Long operadoraId) {
 
         Empresa empresa = new Empresa(empresaId);
         Operadora operadora = new Operadora(operadoraId);
