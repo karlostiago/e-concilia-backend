@@ -27,8 +27,6 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
 
     private static final String IFOOD_OPERADORA = "ifood";
 
-    private static final long DOIS_MINUTOS = 120000L;
-
     private final OperadoraService operadoraService;
 
     private final IntegracaoRepository integracaoRepository;
