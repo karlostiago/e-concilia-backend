@@ -44,8 +44,11 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
         this.consolidadoRepository = consolidadoRepository;
     }
 
+    /**
+     * Este processo sera executado todos os dias as 03h da madrugada
+     */
     @Override
-//    @Scheduled(fixedRate = DOIS_MINUTOS)
+    @Scheduled(cron = "0 0 3 * * *")
     public void processar() {
         Operadora operadora = operadoraService.buscarPorDescricao(IFOOD_OPERADORA);
         List<Contrato> contratos = contratoService.pesquisar(null, operadora.getId());
@@ -55,7 +58,7 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
                 .toList();
 
         for (Empresa empresa : empresas) {
-            prepararConsolidacaoVendas(empresa, LocalDate.now());
+            prepararConsolidacaoVendas(empresa, LocalDate.now().minusDays(1));
         }
     }
 
