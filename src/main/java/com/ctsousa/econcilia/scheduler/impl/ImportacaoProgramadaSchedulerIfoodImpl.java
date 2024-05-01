@@ -48,8 +48,7 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
      * Este processo sera executado a cada 15 minutos
      */
     @Override
-//    @Scheduled(cron = "0 */15 * * * *")
-    @Scheduled(fixedRate = 90000L)
+    @Scheduled(cron = "0 */15 * * * *")
     public void processar() {
         if (!habilitar) {
             log.info("O processo de importação não está habilitado.");
