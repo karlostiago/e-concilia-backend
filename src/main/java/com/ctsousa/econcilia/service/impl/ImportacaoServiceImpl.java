@@ -7,6 +7,7 @@ import com.ctsousa.econcilia.repository.ImportacaoRepository;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -20,15 +21,28 @@ public class ImportacaoServiceImpl implements ImportacaoService {
 
     @Override
     public Importacao agendar(final Importacao importacao) {
-        if (temImportacaoAgendada(importacao)) {
+        if (importacao.getDataInicial().isAfter(LocalDate.now().minusDays(1)) || importacao.getDataFinal().isAfter(LocalDate.now())) {
+            throw new NotificacaoException("Não pode ser realizado um agendamento com data futura.");
+        }
+
+        if (importacao.getOperadora() == null || importacao.getOperadora().getId() == null) {
+            throw new NotificacaoException("Selecione uma operadora para finalizar o agendamento.");
+        }
+
+        if (importacao.getEmpresa() == null || importacao.getEmpresa().getId() == null) {
+            throw new NotificacaoException("Selecione uma empresa para finalizar o agendamento.");
+        }
+
+        if (temImportacao(importacao)) {
             throw new NotificacaoException("Já existe uma empresa com operadora selecionada com agendamento programado. Aguarde a execução do agendamento para realizar um novo agendamento para está empresa e operadora.");
         }
+
         return this.importacaoRepository.save(importacao);
     }
 
     @Override
-    public List<Importacao> buscarPorSituacaoAgendada() {
-        return this.importacaoRepository.buscarPorSituacaoAgendada(ImportacaoSituacao.AGENDADO);
+    public List<Importacao> buscarImportacoes() {
+        return this.importacaoRepository.pesquisarImportacoes();
     }
 
     @Override
@@ -37,8 +51,10 @@ public class ImportacaoServiceImpl implements ImportacaoService {
         this.importacaoRepository.save(importacao);
     }
 
-    private boolean temImportacaoAgendada(final Importacao importacao) {
-        var importacoes = buscarPorSituacaoAgendada();
+    private boolean temImportacao(final Importacao importacao) {
+        var importacoes = buscarImportacoes()
+                .stream().filter(i -> i.getSituacao().equals(ImportacaoSituacao.AGENDADO))
+                .toList();
 
         for (Importacao imp : importacoes) {
             if (imp.getOperadora().getId().equals(importacao.getOperadora().getId())

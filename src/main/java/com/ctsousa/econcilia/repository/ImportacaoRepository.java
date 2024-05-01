@@ -12,4 +12,7 @@ public interface ImportacaoRepository extends JpaRepository<Importacao, Long> {
 
     @Query("SELECT i FROM Importacao i WHERE i.situacao = :situacao")
     List<Importacao> buscarPorSituacaoAgendada(@Param(value = "situacao") final ImportacaoSituacao situacao);
+
+    @Query("SELECT import FROM Importacao import ORDER BY import.situacao")
+    List<Importacao> pesquisarImportacoes();
 }

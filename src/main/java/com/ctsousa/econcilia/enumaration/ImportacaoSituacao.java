@@ -9,7 +9,9 @@ public enum ImportacaoSituacao {
 
     EM_PROCESSAMENTO("Em processamento"),
 
-    PROCESSADO("Processado");
+    PROCESSADO("Processado"),
+
+    ERRO_PROCESSAMENTO("Erro Processamento");
 
     private final String descricao;
 

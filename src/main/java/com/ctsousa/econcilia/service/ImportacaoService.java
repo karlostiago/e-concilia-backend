@@ -13,5 +13,5 @@ public interface ImportacaoService {
 
     void atualizaPara(final Importacao importacao, final ImportacaoSituacao situacao);
 
-    List<Importacao> buscarPorSituacaoAgendada();
+    List<Importacao> buscarImportacoes();
 }

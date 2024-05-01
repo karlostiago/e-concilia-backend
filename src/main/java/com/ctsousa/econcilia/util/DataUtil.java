@@ -27,7 +27,7 @@ public final class DataUtil {
         return dia + "/" + mes;
     }
 
-    public static List<PeriodoDTO> obterPeriodoPorMes(LocalDate dataInicial, LocalDate dataFinal) {
+    public static List<PeriodoDTO> obterPeriodoPorMesFechado(LocalDate dataInicial, LocalDate dataFinal) {
         List<PeriodoDTO> periodos = new ArrayList<>();
 
         LocalDate dataTemporaria = dataInicial;

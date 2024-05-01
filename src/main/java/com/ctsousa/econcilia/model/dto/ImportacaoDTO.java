@@ -28,5 +28,5 @@ public class ImportacaoDTO implements Serializable {
     @NotNull(message = "Campo operadora é obrigatório.")
     private Operadora operadora;
 
-    private ImportacaoSituacao situacao;
+    private String situacao;
 }

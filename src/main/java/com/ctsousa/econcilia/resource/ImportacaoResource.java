@@ -28,7 +28,7 @@ public class ImportacaoResource {
     @PostMapping
     @PreAuthorize(Autorizar.AGENDAR_IMPORTACAO)
     public ResponseEntity<ImportacaoDTO> agendar(@RequestBody @Valid ImportacaoDTO importacaoDTO) {
-        importacaoDTO.setSituacao(ImportacaoSituacao.AGENDADO);
+        importacaoDTO.setSituacao(ImportacaoSituacao.AGENDADO.getDescricao().toUpperCase());
         var importacao = importacaoService.agendar(importacaoMapper.paraEntidade(importacaoDTO));
         return ResponseEntity.ok(importacaoMapper.paraDTO(importacao));
     }
@@ -36,7 +36,7 @@ public class ImportacaoResource {
     @GetMapping
     @PreAuthorize(Autorizar.PESQUISAR_IMPORTACAO)
     public ResponseEntity<List<ImportacaoDTO>> importacoesAgendadas() {
-        var importacoes = importacaoMapper.paraLista(importacaoService.buscarPorSituacaoAgendada());
+        var importacoes = importacaoMapper.paraLista(importacaoService.buscarImportacoes());
 
         if (importacoes == null || importacoes.isEmpty())
             return ResponseEntity.noContent().build();

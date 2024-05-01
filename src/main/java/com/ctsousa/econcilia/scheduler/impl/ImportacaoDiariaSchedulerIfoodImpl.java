@@ -37,7 +37,7 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
     private boolean habilitar;
 
     public ImportacaoDiariaSchedulerIfoodImpl(OperadoraService operadoraService, ContratoService contratoService, IntegracaoRepository integracaoRepository, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidadoRepository consolidadoRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler) {
-        super(null, null, vendaRepository, ajusteVendaRepository, ocorrenciaRepository, cancelamentoRepository);
+        super(null, null, vendaRepository, ajusteVendaRepository, ocorrenciaRepository, cancelamentoRepository, consolidadoRepository);
         this.operadoraService = operadoraService;
         this.contratoService = contratoService;
         this.integracaoRepository = integracaoRepository;

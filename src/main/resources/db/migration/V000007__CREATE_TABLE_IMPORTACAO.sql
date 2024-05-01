@@ -1,7 +1,7 @@
 CREATE TABLE `importacao` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `data_final` date NOT NULL,
   `data_inicial` date NOT NULL,
+  `data_final` date NOT NULL,
   `situacao` varchar(255) NOT NULL,
   `empresa_id` bigint DEFAULT NULL,
   `operadora_id` bigint DEFAULT NULL,

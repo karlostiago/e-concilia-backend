@@ -6,10 +6,7 @@ import com.ctsousa.econcilia.model.Cancelamento;
 import com.ctsousa.econcilia.model.Ocorrencia;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
-import com.ctsousa.econcilia.repository.AjusteVendaRepository;
-import com.ctsousa.econcilia.repository.CancelamentoRepository;
-import com.ctsousa.econcilia.repository.OcorrenciaRepository;
-import com.ctsousa.econcilia.repository.VendaRepository;
+import com.ctsousa.econcilia.repository.*;
 import com.ctsousa.econcilia.scheduler.ImportacaoAbstract;
 import com.ctsousa.econcilia.scheduler.Scheduler;
 import com.ctsousa.econcilia.scheduler.TipoImportacao;
@@ -40,8 +37,8 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
     @Value("${importacao_habilitar}")
     private boolean habilitar;
 
-    public ImportacaoProgramadaSchedulerIfoodImpl(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler) {
-        super(importacaoService, integracaoService, vendaRepository, ajusteVendaRepository, ocorrenciaRepository, cancelamentoRepository);
+    public ImportacaoProgramadaSchedulerIfoodImpl(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler, ConsolidadoRepository consolidadoRepository) {
+        super(importacaoService, integracaoService, vendaRepository, ajusteVendaRepository, ocorrenciaRepository, cancelamentoRepository, consolidadoRepository);
         this.importacaoService = importacaoService;
         this.integracaoIfoodService = integracaoIfoodService;
         this.consolidacaoScheduler = consolidacaoScheduler;
@@ -51,7 +48,8 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
      * Este processo sera executado a cada 15 minutos
      */
     @Override
-    @Scheduled(cron = "0 */15 * * * *")
+//    @Scheduled(cron = "0 */15 * * * *")
+    @Scheduled(fixedRate = 90000L)
     public void processar() {
         if (!habilitar) {
             log.info("O processo de importação não está habilitado.");
@@ -78,15 +76,26 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
     }
 
     private void importar(final List<PeriodoDTO> periodos) {
-        for (PeriodoDTO periodo : periodos) {
-            importarVendas(periodo);
-            importarAjusteVendas(periodo);
-            importarOcorrencias(periodo);
-            importarCancelamentos(periodo);
-            consolidacaoScheduler.processar(importacao.getEmpresa(), periodo.getAte());
+        try {
+            for (PeriodoDTO periodo : periodos) {
+                boolean temVenda = temVenda(importacao.getEmpresa(), importacao.getOperadora(), periodo.getAte());
+
+                if (temVenda) {
+                    log.info("::: Removendo importação existente :::");
+                    deleteVendas(importacao.getEmpresa(), importacao.getOperadora(), periodo.getDe(), periodo.getAte());
+                }
+
+                importarVendas(periodo);
+                importarAjusteVendas(periodo);
+                importarOcorrencias(periodo);
+                importarCancelamentos(periodo);
+                consolidacaoScheduler.processar(importacao.getEmpresa(), periodo.getAte());
+            }
+            log.info("Atualizando situação da importação ...");
+            importacaoService.atualizaPara(importacao, ImportacaoSituacao.PROCESSADO);
+        } catch (Exception e) {
+            importacaoService.atualizaPara(importacao, ImportacaoSituacao.ERRO_PROCESSAMENTO);
         }
-        log.info("Atualizando situação da importação ...");
-        importacaoService.atualizaPara(importacao, ImportacaoSituacao.PROCESSADO);
     }
 
     private void importarVendas(final PeriodoDTO periodo) {

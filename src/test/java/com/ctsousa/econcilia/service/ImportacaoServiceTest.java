@@ -44,7 +44,7 @@ class ImportacaoServiceTest extends ApplicationIntegrationTest {
     @Test
     void deveBuscarImportacaoAgendadas() {
         importacaoRepository.save(criarImportacao());
-        Assertions.assertEquals(1, importacaoService.buscarPorSituacaoAgendada().size());
+        Assertions.assertEquals(1, importacaoService.buscarImportacoes().size());
     }
 
     @Test

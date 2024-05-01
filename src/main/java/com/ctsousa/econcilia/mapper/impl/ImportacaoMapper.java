@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.mapper.impl;
 
 import com.ctsousa.econcilia.annotation.ExcludedCoverage;
+import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
 import com.ctsousa.econcilia.mapper.ColecaoMapper;
 import com.ctsousa.econcilia.mapper.DtoMapper;
 import com.ctsousa.econcilia.mapper.EntidadeMapper;
@@ -28,7 +29,7 @@ public class ImportacaoMapper implements EntidadeMapper<Importacao, ImportacaoDT
         importacaoDTO.setDataFinal(importacao.getDataFinal());
         importacaoDTO.setEmpresa(importacao.getEmpresa());
         importacaoDTO.setOperadora(importacao.getOperadora());
-        importacaoDTO.setSituacao(importacao.getSituacao());
+        importacaoDTO.setSituacao(importacao.getSituacao().getDescricao().toUpperCase());
         return importacaoDTO;
     }
 
@@ -39,7 +40,7 @@ public class ImportacaoMapper implements EntidadeMapper<Importacao, ImportacaoDT
         importacao.setDataFinal(importacaoDTO.getDataFinal());
         importacao.setEmpresa(importacaoDTO.getEmpresa());
         importacao.setOperadora(importacaoDTO.getOperadora());
-        importacao.setSituacao(importacaoDTO.getSituacao());
+        importacao.setSituacao(ImportacaoSituacao.porDescricao(importacaoDTO.getSituacao()));
         return importacao;
     }
 }

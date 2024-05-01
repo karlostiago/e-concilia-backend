@@ -1,14 +1,11 @@
 package com.ctsousa.econcilia.scheduler;
 
+import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
-import com.ctsousa.econcilia.repository.AjusteVendaRepository;
-import com.ctsousa.econcilia.repository.CancelamentoRepository;
-import com.ctsousa.econcilia.repository.OcorrenciaRepository;
-import com.ctsousa.econcilia.repository.VendaRepository;
+import com.ctsousa.econcilia.repository.*;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoService;
-import com.ctsousa.econcilia.util.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
@@ -16,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.ctsousa.econcilia.util.DataUtil.obterPeriodoPorMesFechado;
 
 @Slf4j
 public abstract class ImportacaoAbstract {
@@ -32,17 +31,20 @@ public abstract class ImportacaoAbstract {
 
     private final CancelamentoRepository cancelamentoRepository;
 
+    private final ConsolidadoRepository consolidadoRepository;
+
     protected Importacao importacao;
 
     protected List<PeriodoDTO> periodos;
 
-    protected ImportacaoAbstract(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, CancelamentoRepository cancelamentoRepository) {
+    protected ImportacaoAbstract(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, CancelamentoRepository cancelamentoRepository, ConsolidadoRepository consolidadoRepository) {
         this.importacaoService = importacaoService;
         this.integracaoService = integracaoService;
         this.vendaRepository = vendaRepository;
         this.ajusteVendaRepository = ajusteVendaRepository;
         this.ocorrenciaRepository = ocorrenciaRepository;
         this.cancelamentoRepository = cancelamentoRepository;
+        this.consolidadoRepository = consolidadoRepository;
     }
 
     public void executar() {
@@ -52,7 +54,7 @@ public abstract class ImportacaoAbstract {
 
     private void buscarPeriodos() {
         if (importacao != null) {
-            periodos = DataUtil.obterPeriodoPorMes(importacao.getDataInicial(), importacao.getDataFinal());
+            periodos = obterPeriodoPorMesFechado(importacao.getDataInicial(), importacao.getDataFinal());
         }
     }
 
@@ -66,9 +68,10 @@ public abstract class ImportacaoAbstract {
     }
 
     private void buscarImportacao() {
-        importacao = importacaoService.buscarPorSituacaoAgendada()
+        importacao = importacaoService.buscarImportacoes()
                 .stream()
                 .filter(imp -> imp.getOperadora().getDescricao().equalsIgnoreCase(tipoImportacao().getDescricao()))
+                .filter(imp -> !imp.getSituacao().equals(ImportacaoSituacao.PROCESSADO))
                 .findFirst().orElse(null);
     }
 
@@ -138,6 +141,8 @@ public abstract class ImportacaoAbstract {
         vendaRepository.deleteVendas(empresa, operadora, periodoFinal);
         vendaRepository.deleteCobrancas(listCobrancaId);
         vendaRepository.deletePagamentos(listPagamentoId);
+
+        consolidadoRepository.deleteConsolidados(empresa, operadora, periodoFinal);
     }
 
     protected boolean temVenda(Empresa empresa, Operadora operadora, LocalDate periodo) {
