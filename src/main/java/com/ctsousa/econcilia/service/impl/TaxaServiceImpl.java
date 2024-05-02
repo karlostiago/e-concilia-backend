@@ -162,7 +162,13 @@ public class TaxaServiceImpl implements TaxaService {
     @Override
     public byte[] gerarDadosCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
         empresa = empresaService.pesquisarPorId(empresa.getId());
-        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.TAXA, taxaRepository, dataInicial, dataFinal, empresa, operadora);
+        RelatorioDTO relatorioDTO;
+
+        try {
+            relatorioDTO = relatorioService.gerarDados(TipoRelatorio.TAXA, taxaRepository, dataInicial, dataFinal, empresa, operadora);
+        } catch (NotificacaoException e) {
+            return new byte[0];
+        }
 
         StringBuilder csvBuilder = new StringBuilder();
         csvBuilder.append("Descrição;Valor;Data inicio;Data final;Tipo;Ativo\n");

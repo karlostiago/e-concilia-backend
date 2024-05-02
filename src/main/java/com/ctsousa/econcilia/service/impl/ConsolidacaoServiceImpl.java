@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.enumaration.TipoRelatorio;
+import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.mapper.impl.ConsolidadoMapper;
 import com.ctsousa.econcilia.model.Consolidado;
 import com.ctsousa.econcilia.model.Empresa;
@@ -80,7 +81,13 @@ public class ConsolidacaoServiceImpl implements ConsolidacaoService {
     @Override
     public byte[] gerarDadosCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
         empresa = empresaService.pesquisarPorId(empresa.getId());
-        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.CONSOLIDACAO, consolidadoRepository,dataInicial, dataFinal, empresa, operadora);
+        RelatorioDTO relatorioDTO;
+
+        try {
+            relatorioDTO = relatorioService.gerarDados(TipoRelatorio.CONSOLIDACAO, consolidadoRepository,dataInicial, dataFinal, empresa, operadora);
+        } catch (NotificacaoException e) {
+            return new byte[0];
+        }
 
         StringBuilder csvBuilder = new StringBuilder();
         csvBuilder.append("Período da venda;Nome cliente;Quantidade vendas;Total bruto;Ticket médio;Valor antecipado;Taxa entrega;Promoção;Transação pagamento;Comissão;Cancelamento;Taxa serviço;Taxa manutenção;Repasse\n");

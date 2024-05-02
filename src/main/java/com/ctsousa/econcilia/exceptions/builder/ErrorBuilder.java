@@ -1,6 +1,7 @@
 package com.ctsousa.econcilia.exceptions.builder;
 
-import com.ctsousa.econcilia.exceptions.handler.Error;
+import com.ctsousa.econcilia.exceptions.Severidade;
+import com.ctsousa.econcilia.exceptions.Error;
 import org.springframework.http.HttpStatus;
 
 public class ErrorBuilder {
@@ -28,6 +29,11 @@ public class ErrorBuilder {
 
     public ErrorBuilder comDetalhe(Throwable ex) {
         error.setDetalhe(ex);
+        return this;
+    }
+
+    public ErrorBuilder comSeveridade(Severidade severidade) {
+        error.setSeveridade(severidade.name());
         return this;
     }
 

@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.exceptions.handler;
 
+import com.ctsousa.econcilia.exceptions.Error;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.exceptions.builder.ErrorBuilder;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class NotificacaoExceptonHandler extends ResponseEntityExceptionHandler {
                 .comStatus(HttpStatus.BAD_REQUEST)
                 .comMensagem(ex.getMessage())
                 .comDetalhe(ex)
+                .comSeveridade(ex.getSeveridade())
                 .build()));
         return ResponseEntity.badRequest().body(erros);
     }

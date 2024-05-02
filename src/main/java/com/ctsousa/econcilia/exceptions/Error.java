@@ -1,4 +1,4 @@
-package com.ctsousa.econcilia.exceptions.handler;
+package com.ctsousa.econcilia.exceptions;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +21,9 @@ public class Error {
 
     @Setter
     private Integer codigo;
+
+    @Setter
+    private String severidade;
 
     private final LocalDate data = LocalDate.now();
 

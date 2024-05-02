@@ -79,7 +79,13 @@ public class VendaServiceImpl implements VendaService {
     @Override
     public byte[] gerarDadosCSV(LocalDate dataInicial, LocalDate dataFinal, Empresa empresa, Operadora operadora) {
         empresa = empresaService.pesquisarPorId(empresa.getId());
-        RelatorioDTO relatorioDTO = relatorioService.gerarDados(TipoRelatorio.VENDA, vendaRepository, dataInicial, dataFinal, empresa, operadora);
+        RelatorioDTO relatorioDTO;
+
+        try {
+            relatorioDTO = relatorioService.gerarDados(TipoRelatorio.VENDA, vendaRepository, dataInicial, dataFinal, empresa, operadora);
+        } catch (NotificacaoException e) {
+            return new byte[0];
+        }
 
         StringBuilder csvBuilder = new StringBuilder();
         csvBuilder.append("Data pedido;Número documento;Razão social;Forma pagamento;Responsável;Valor bruto;Valor parcial;Valor cancelado;Valor comissão;Valor taxa entrega;Valor taxa serviço;Taxa comissão;Taxa comissão pagamento\n");

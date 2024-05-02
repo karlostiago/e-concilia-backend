@@ -1,5 +1,7 @@
 package com.ctsousa.econcilia.enumaration;
 
+import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.exceptions.Severidade;
 import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Taxa;
@@ -29,7 +31,7 @@ public enum TipoRelatorio {
             VendaRepository vendaRepository = (VendaRepository) repository;
             List<Object[]> vendas = vendaRepository.por(dataInicial, dataFinal, empresa.getId(), operadora.getId());
 
-            if (vendas.isEmpty()) return null;
+            if (vendas.isEmpty()) throw new NotificacaoException("Nenhum registro encontrado, com os filtros informados.", Severidade.ATENCAO);
 
             List<RelatorioVendaDTO> documentos = new ArrayList<>();
             for (Object [] venda : vendas) {
@@ -71,7 +73,7 @@ public enum TipoRelatorio {
             TaxaRepository taxaRepository = (TaxaRepository) repository;
             List<Taxa> taxas = taxaRepository.por(dataInicial, dataFinal, empresa.getId(), operadora.getId());
 
-            if (taxas.isEmpty()) return null;
+            if (taxas.isEmpty()) throw new NotificacaoException("Nenhum registro encontrado, com os filtros informados.", Severidade.ATENCAO);
 
             List<RelatorioTaxaDTO> documentos = new ArrayList<>();
 
@@ -105,7 +107,7 @@ public enum TipoRelatorio {
             ConsolidadoRepository consolidadoRepository = (ConsolidadoRepository) repository;
             List<Object[]> consolidadosGerados = consolidadoRepository.por(dataInicial, dataFinal, empresa.getId(), operadora.getId());
 
-            if (consolidadosGerados.isEmpty()) return null;
+            if (consolidadosGerados.isEmpty()) throw new NotificacaoException("Nenhum registro encontrado, com os filtros informados.", Severidade.ATENCAO);
 
             List<RelatorioConsolidadoDTO> documentos = new ArrayList<>();
 
