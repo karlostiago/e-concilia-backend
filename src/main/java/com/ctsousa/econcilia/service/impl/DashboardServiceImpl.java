@@ -9,6 +9,7 @@ import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
+import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDTO;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 import com.ctsousa.econcilia.processor.Processador;
 import com.ctsousa.econcilia.processor.ProcessadorFiltro;
@@ -65,12 +66,13 @@ public class DashboardServiceImpl implements DashboadService {
         BigDecimal totalValorComissaoTransacao = BigDecimal.valueOf(0D);
         BigDecimal totalValorEmRepasse = BigDecimal.valueOf(0D);
 
+        RelatorioDTO relatorioDTO = null;
+
         for (Long idEmpresa : empresasId) {
             Empresa empresa = empresaService.pesquisarPorId(idEmpresa);
-            RelatorioDTO relatorioDTO;
 
             try {
-                relatorioDTO = tipoRelatorio.gerarDados(consolidadoRepository, LocalDate.of(2023,8,1), LocalDate.of(2023,8,31), empresa, new Operadora());
+                relatorioDTO = tipoRelatorio.gerarDados(consolidadoRepository, dtInicial, dtFinal, empresa, new Operadora());
             } catch (NotificacaoException e) {
                 continue;
             }
@@ -104,7 +106,15 @@ public class DashboardServiceImpl implements DashboadService {
         dashboardDTO.setValorComissaoTransacao(totalValorComissaoTransacao);
         dashboardDTO.setValorEmRepasse(totalValorEmRepasse);
 
+        carregarDadosParaAlimetarGraficos(relatorioDTO, dashboardDTO, dtFinal);
+
         return dashboardDTO;
+    }
+
+    private void carregarDadosParaAlimetarGraficos(RelatorioDTO relatorioDTO, DashboardDTO dashboardDTO, LocalDate periodo) {
+        if (relatorioDTO != null) {
+            dashboardDTO.setGraficoVendaUltimo7DiaDTO(new GraficoVendaUltimo7DiaServiceImpl().processar(periodo, relatorioDTO.getConsolidados()));
+        }
     }
 
     @Override

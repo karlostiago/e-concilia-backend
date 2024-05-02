@@ -34,6 +34,8 @@ public class DashboardDTO {
 
     private BigDecimal valorComissaoTransacao;
 
+    private GraficoVendaUltimo7DiaDTO graficoVendaUltimo7DiaDTO;
+
     private List<Venda> vendas;
 
     public DashboardDTO() {

@@ -3,6 +3,7 @@ package com.ctsousa.econcilia.service.impl;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.DataSetDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaAnualDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
 import com.ctsousa.econcilia.service.GraficoVendaService;
 import com.ctsousa.econcilia.util.DataUtil;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,11 @@ public class GraficoVendaAnualImpl implements GraficoVendaService<GraficoVendaAn
         graficoVendaAnualDTO.setDataSets(getDatasSet(vendasAgrupadas, graficoVendaAnualDTO.getLabels()));
 
         return graficoVendaAnualDTO;
+    }
+
+    @Override
+    public GraficoVendaAnualDTO processar(LocalDate periodo, List<RelatorioConsolidadoDTO> consolidados) {
+        return null;
     }
 
     private List<DataSetDTO> getDatasSet(Map<String, Map<YearMonth, BigDecimal>> vendasAgrupadas, List<String> labels) {

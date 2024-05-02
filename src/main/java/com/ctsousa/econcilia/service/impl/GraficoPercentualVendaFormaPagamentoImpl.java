@@ -2,6 +2,7 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.GraficoPercentualVendaFormaPagamentoDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
 import com.ctsousa.econcilia.service.AbstractGraficoVendaMeioPagamento;
 import com.ctsousa.econcilia.service.GraficoVendaService;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,11 @@ public class GraficoPercentualVendaFormaPagamentoImpl extends AbstractGraficoVen
         graficoDTO.setData(List.of(percentualCredito, percentualDebito, percentualDinheiro, percentualPix, percentualOutros));
 
         return graficoDTO;
+    }
+
+    @Override
+    public GraficoPercentualVendaFormaPagamentoDTO processar(LocalDate periodo, List<RelatorioConsolidadoDTO> consolidados) {
+        return null;
     }
 
     private BigDecimal calcular(Map<LocalDate, Map<String, BigDecimal>> totalizadorMap, String tipoPagamento) {

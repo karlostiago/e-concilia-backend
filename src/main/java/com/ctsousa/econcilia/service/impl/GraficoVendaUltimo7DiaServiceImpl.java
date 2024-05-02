@@ -1,8 +1,13 @@
 package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.model.dto.ConsolidadoDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
 import com.ctsousa.econcilia.service.GraficoVendaService;
+import com.ctsousa.econcilia.util.DataUtil;
+import com.ctsousa.econcilia.util.DecimalUtil;
+import com.ctsousa.econcilia.util.StringUtil;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -16,6 +21,8 @@ import java.util.stream.IntStream;
 
 import static com.ctsousa.econcilia.util.CalculadoraUtil.somar;
 import static com.ctsousa.econcilia.util.DataUtil.diaMes;
+import static com.ctsousa.econcilia.util.DataUtil.paraLocalDate;
+import static com.ctsousa.econcilia.util.DecimalUtil.paraDecimal;
 
 @Component
 public class GraficoVendaUltimo7DiaServiceImpl implements GraficoVendaService<GraficoVendaUltimo7DiaDTO> {
@@ -38,6 +45,31 @@ public class GraficoVendaUltimo7DiaServiceImpl implements GraficoVendaService<Gr
             var total = somarVendas(entry.getValue());
             if (entry.getKey().isBefore(LocalDate.now()) && ultimas7DiasMap.containsKey(entry.getKey())) {
                 ultimas7DiasMap.put(entry.getKey(), total);
+            }
+        }
+
+        for (Map.Entry<LocalDate, BigDecimal> entry : ultimas7DiasMap.entrySet()) {
+            dto.getLabels().add(formatarDataVenda(entry.getKey()));
+            dto.getData().add(entry.getValue());
+        }
+
+        return dto;
+    }
+
+    public GraficoVendaUltimo7DiaDTO processar(LocalDate periodo, List<RelatorioConsolidadoDTO> consolidados) {
+        GraficoVendaUltimo7DiaDTO dto = new GraficoVendaUltimo7DiaDTO();
+        dto.setData(new ArrayList<>());
+        dto.setLabels(new ArrayList<>());
+
+        Map<LocalDate, BigDecimal> ultimas7DiasMap = ultimos7Dias(periodo.minusDays(1));
+        ultimas7DiasMap = ordenacaoCrescente(ultimas7DiasMap);
+
+        for (RelatorioConsolidadoDTO consolidadoDTO : consolidados) {
+            if (StringUtil.naoTemValor(consolidadoDTO.getPeriodo())) continue;
+
+            LocalDate dataVenda = paraLocalDate(consolidadoDTO.getPeriodo());
+            if (ultimas7DiasMap.containsKey(dataVenda)) {
+                ultimas7DiasMap.put(dataVenda, paraDecimal(consolidadoDTO.getTotalBruto()));
             }
         }
 

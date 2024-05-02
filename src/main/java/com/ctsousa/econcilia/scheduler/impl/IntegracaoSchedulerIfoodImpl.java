@@ -25,8 +25,6 @@ public class IntegracaoSchedulerIfoodImpl implements Scheduler {
 
     private static final String IFOOD_OPERADORA = "ifood";
 
-    private static final long DOIS_MINUTOS = 120000L;
-
     private final IntegracaoBufferRepository integracaoBufferRepository;
 
     private final OperadoraService operadoraService;
@@ -46,7 +44,7 @@ public class IntegracaoSchedulerIfoodImpl implements Scheduler {
     }
 
     @Override
-    @Scheduled(fixedRate = DOIS_MINUTOS)
+    @Scheduled(cron = "0 */30 * * * *")
     public void processar() {
         List<IntegracaoBuffer> buffers = integracaoBufferRepository.findAll()
                 .stream().filter(b -> b.getNomeOperadora().equalsIgnoreCase(IFOOD_OPERADORA))

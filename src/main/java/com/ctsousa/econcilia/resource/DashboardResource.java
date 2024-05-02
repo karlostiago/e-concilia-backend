@@ -42,6 +42,8 @@ public class DashboardResource {
 
     private LocalDate dtFinal;
 
+    private DashboardDTO dashboardDTO;
+
     public DashboardResource(GraficoVendaUltimo7DiaServiceImpl graficoVendaUltimo7DiaService, GraficoVendaUltimo7DiaDinheiroPixServiceImpl graficoVendaUltimo7DiaDinheiroPixService,
                              GraficoVendaUltimo7DiaCreditoDebitoServiceImpl graficoVendaUltimo7DiaCreditoDebitoService, DashboadService dashboadService,
                              GraficoPercentualVendaFormaPagamentoImpl graficoPercentualVendaFormaPagamento,
@@ -62,17 +64,16 @@ public class DashboardResource {
                                                      @RequestParam(name = "dtInicial", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial,
                                                      @RequestParam(name = "dtFinal", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal) {
 
-        DashboardDTO dashboardDTO = dashboadService.carregaVendasConsolidadas(empresaId, dtInicial, dtFinal);
-        dashboardDTO = dashboadService.carregarInformacoes(empresaId, dtInicial, dtFinal);
+        dashboardDTO = dashboadService.carregaVendasConsolidadas(empresaId, dtInicial, dtFinal);
 
-        this.dtInicial = dtInicial;
-        this.dtFinal = dtFinal;
-
-        vendas = dashboardDTO.getVendas();
-
-        if (vendas != null && !vendas.isEmpty()) {
-            filtrarVendas();
-        }
+//        this.dtInicial = dtInicial;
+//        this.dtFinal = dtFinal;
+//
+//        vendas = dashboardDTO.getVendas();
+//
+//        if (vendas != null && !vendas.isEmpty()) {
+//            filtrarVendas();
+//        }
 
         return ResponseEntity.ok(dashboardDTO);
     }
@@ -80,9 +81,8 @@ public class DashboardResource {
     @GetMapping(value = "/buscar-venda-ultimos-7-dias")
     @PreAuthorize(Autorizar.PESQUISAR_DASHBOARD)
     public ResponseEntity<GraficoVendaUltimo7DiaDTO> buscarVendasUltimos7Dias() {
-        if (vendasFiltradas == null) return ResponseEntity.ok().build();
-
-        return ResponseEntity.ok(graficoVendaUltimo7DiaService.processar(vendasFiltradas));
+        if (dashboardDTO == null) return ResponseEntity.ok().build();
+        return ResponseEntity.ok(dashboardDTO.getGraficoVendaUltimo7DiaDTO());
     }
 
     @GetMapping(value = "/buscar-venda-ultimos-7-dias-credito-debito")

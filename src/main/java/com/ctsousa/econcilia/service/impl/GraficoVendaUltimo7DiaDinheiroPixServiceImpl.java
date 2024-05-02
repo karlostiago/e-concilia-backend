@@ -2,6 +2,7 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDinheiroPixDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
 import com.ctsousa.econcilia.service.AbstractGraficoVendaMeioPagamento;
 import com.ctsousa.econcilia.service.GraficoVendaService;
 import org.springframework.stereotype.Component;
@@ -41,5 +42,10 @@ public class GraficoVendaUltimo7DiaDinheiroPixServiceImpl extends AbstractGrafic
         }
 
         return graficoDTO;
+    }
+
+    @Override
+    public GraficoVendaUltimo7DiaDinheiroPixDTO processar(LocalDate periodo, List<RelatorioConsolidadoDTO> consolidados) {
+        return null;
     }
 }

@@ -4,6 +4,7 @@ import com.ctsousa.econcilia.model.Empresa;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.DataSetDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaMensalDTO;
+import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
 import com.ctsousa.econcilia.service.GraficoVendaService;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +63,11 @@ public class GraficoVendaMensalImpl implements GraficoVendaService<GraficoVendaM
         dto.setDataSets(datasSet);
 
         return dto;
+    }
+
+    @Override
+    public GraficoVendaMensalDTO processar(LocalDate periodo, List<RelatorioConsolidadoDTO> consolidados) {
+        return null;
     }
 
     private DataSetDTO getNovoDataSet(final Empresa empresa) {
