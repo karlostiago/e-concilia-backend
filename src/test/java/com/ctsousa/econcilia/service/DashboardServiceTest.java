@@ -5,6 +5,7 @@ import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
+import com.ctsousa.econcilia.repository.ConsolidadoRepository;
 import com.ctsousa.econcilia.service.impl.DashboardServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,9 +25,15 @@ class DashboardServiceTest extends ApplicationIntegrationTest {
     @Mock
     private IntegracaoService integracaoService;
 
+    @Mock
+    private ConsolidadoRepository consolidadoRepository;
+
+    @Mock
+    private EmpresaService empresaService;
+
     @BeforeEach
     void setup() {
-        dashboadService = new DashboardServiceImpl(integracaoService);
+        dashboadService = new DashboardServiceImpl(integracaoService, consolidadoRepository, empresaService);
     }
 
     /*

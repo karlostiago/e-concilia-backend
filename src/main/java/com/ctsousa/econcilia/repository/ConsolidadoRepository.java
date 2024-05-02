@@ -60,8 +60,7 @@ public interface ConsolidadoRepository extends JpaRepository<Consolidado, Long> 
             "FROM consolidado c " +
             "INNER JOIN empresa emp ON emp.id = c.empresa_id " +
             "WHERE c.periodo BETWEEN :dataInicial AND :dataFinal " +
-            "  AND c.empresa_id = :empresaId " +
-            "  AND c.operadora_id = :operadoraId " +
+            "  AND ((c.empresa_id = :empresaId AND c.operadora_id = :operadoraId) OR c.empresa_id = :empresaId)" +
             "GROUP BY emp.razao_social, c.periodo " +
             "UNION " +
             "SELECT " +
@@ -82,8 +81,7 @@ public interface ConsolidadoRepository extends JpaRepository<Consolidado, Long> 
             "FROM consolidado c " +
             "INNER JOIN empresa emp ON emp.id = c.empresa_id " +
             "WHERE c.periodo BETWEEN :dataInicial AND :dataFinal " +
-            "  AND c.empresa_id = :empresaId " +
-            "  AND c.operadora_id = :operadoraId " +
+            "  AND ((c.empresa_id = :empresaId AND c.operadora_id = :operadoraId) OR c.empresa_id = :empresaId)" +
             "GROUP BY emp.razao_social",
             nativeQuery = true)
     List<Object[]> por(@Param(value = "dataInicial") LocalDate dataInicial,

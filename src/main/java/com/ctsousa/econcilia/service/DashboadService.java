@@ -11,10 +11,6 @@ import java.util.List;
 public interface DashboadService {
 
     DashboardDTO carregarInformacoes(final String empresaId, final LocalDate dtInicial, final LocalDate dtFinal);
-//
-//    List<Venda> buscarVendasUltimos7Dias(final String empresaId);
-//
-//    List<Venda> buscarVendaMensal(final String empresaId, final LocalDate dtInicial, final LocalDate dtFinal);
-//
-//    List<Venda> buscarVendaAnual(final String empresaId, final LocalDate dtInicial);
+
+    DashboardDTO carregaVendasConsolidadas(final String empresaId, final LocalDate dtInicial, final LocalDate dtFinal);
 }

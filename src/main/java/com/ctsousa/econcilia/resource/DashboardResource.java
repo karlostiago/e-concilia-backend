@@ -62,7 +62,8 @@ public class DashboardResource {
                                                      @RequestParam(name = "dtInicial", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtInicial,
                                                      @RequestParam(name = "dtFinal", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate dtFinal) {
 
-        DashboardDTO dashboardDTO = dashboadService.carregarInformacoes(empresaId, dtInicial, dtFinal);
+        DashboardDTO dashboardDTO = dashboadService.carregaVendasConsolidadas(empresaId, dtInicial, dtFinal);
+        dashboardDTO = dashboadService.carregarInformacoes(empresaId, dtInicial, dtFinal);
 
         this.dtInicial = dtInicial;
         this.dtFinal = dtFinal;

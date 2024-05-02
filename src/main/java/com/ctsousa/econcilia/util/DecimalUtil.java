@@ -1,9 +1,9 @@
 package com.ctsousa.econcilia.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -19,6 +19,10 @@ public class DecimalUtil {
         }
 
         return false;
+    }
+
+    public static BigDecimal paraDecimal(final String str) {
+        return new BigDecimal(str.replace(".", "").replace(",", "."));
     }
 
     public static String monetarioPtBr(final BigDecimal valor) {
