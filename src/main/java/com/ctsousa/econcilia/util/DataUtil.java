@@ -53,6 +53,10 @@ public final class DataUtil {
         return calcularPeriodos(dtInicial, dtFinal, faixa);
     }
 
+    public static boolean isMesCorrente(LocalDate periodo) {
+        return YearMonth.from(periodo).equals(YearMonth.from(LocalDate.now()));
+    }
+
     public static YearMonth parseMesAno(String mesAno) {
         String [] periodo = mesAno.split("/");
 
@@ -77,19 +81,21 @@ public final class DataUtil {
         return data.format(formatter);
     }
 
-    public static boolean ultimoDiaMes(final LocalDate data) {
-        int diaAtual = data.getDayOfMonth();
-        int ultimoDiaMes = data.lengthOfMonth();
-        return diaAtual == ultimoDiaMes;
-    }
-
     public static LocalDate getUltimoDiaMes(final LocalDate data) {
-        LocalDate primeiroDiaProximoMes = data.plusMonths(1);
-        return primeiroDiaProximoMes.minusDays(1);
+        if (data.getDayOfMonth() == data.lengthOfMonth()) {
+            return data;
+        }
+        return data.withDayOfMonth(data.lengthOfMonth());
     }
 
     public static LocalDate getPrimeiroDiaMes(final LocalDate data) {
         return data.withDayOfMonth(1);
+    }
+
+    public static LocalDate parseMesAno(final String data, final String formato) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formato);
+        LocalDate periodo = LocalDate.parse(data, formatter);
+        return LocalDate.of(periodo.getYear(), periodo.getMonth(), 1);
     }
 
     private static List<PeriodoDTO> calcularPeriodos(LocalDate dtInicial, LocalDate dtFinal, Faixa faixa) {

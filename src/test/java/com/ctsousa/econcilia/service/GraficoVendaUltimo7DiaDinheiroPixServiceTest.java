@@ -2,7 +2,6 @@ package com.ctsousa.econcilia.service;
 
 import com.ctsousa.econcilia.ApplicationUnitTest;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDinheiroPixDTO;
-import com.ctsousa.econcilia.service.impl.GraficoVendaUltimo7DiaDinheiroPixServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

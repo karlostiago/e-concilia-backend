@@ -19,6 +19,9 @@ public interface VendaRepository extends JpaRepository<Venda, Long> {
     @Query(value = "SELECT v FROM Venda v INNER JOIN FETCH v.cobranca INNER JOIN FETCH v.empresa emp INNER JOIN FETCH v.operadora oper INNER JOIN FETCH v.pagamento WHERE v.empresa = :empresa AND v.operadora = :operadora AND v.dataPedido BETWEEN :dtInicial AND :dtFinal")
     List<Venda> buscarPor(Empresa empresa, Operadora operadora, LocalDate dtInicial, LocalDate dtFinal);
 
+    @Query(value = "SELECT v FROM Venda v INNER JOIN FETCH v.cobranca INNER JOIN FETCH v.empresa emp INNER JOIN FETCH v.operadora oper INNER JOIN FETCH v.pagamento WHERE v.empresa = :empresa AND v.dataPedido BETWEEN :dtInicial AND :dtFinal")
+    List<Venda> buscarPor(Empresa empresa, LocalDate dtInicial, LocalDate dtFinal);
+
     @Query("SELECT COUNT(v) > 0 FROM Venda v WHERE v.empresa = :empresa AND v.operadora = :operadora AND YEAR(v.dataPedido) = YEAR(:periodo) AND MONTH(v.dataPedido) = MONTH(:periodo)")
     Boolean existsVenda(@Param(value = "empresa") Empresa empresa,
                                @Param(value = "operadora") Operadora operadora,

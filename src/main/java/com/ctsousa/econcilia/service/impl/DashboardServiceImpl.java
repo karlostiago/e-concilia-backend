@@ -1,55 +1,66 @@
 package com.ctsousa.econcilia.service.impl;
 
-import com.ctsousa.econcilia.enumaration.Faixa;
-import com.ctsousa.econcilia.enumaration.TipoProcessador;
 import com.ctsousa.econcilia.enumaration.TipoRelatorio;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.graphic.GraficoPercentualVendaFormaPagamento;
+import com.ctsousa.econcilia.graphic.GraficoVendaAnual;
+import com.ctsousa.econcilia.graphic.GraficoVendaMensal;
+import com.ctsousa.econcilia.graphic.GraficoVendaSemanalAcumulada;
 import com.ctsousa.econcilia.model.Empresa;
-import com.ctsousa.econcilia.model.Integracao;
 import com.ctsousa.econcilia.model.Operadora;
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.DashboardDTO;
-import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDTO;
-import com.ctsousa.econcilia.model.dto.PeriodoDTO;
-import com.ctsousa.econcilia.processor.Processador;
-import com.ctsousa.econcilia.processor.ProcessadorFiltro;
+import com.ctsousa.econcilia.model.dto.GraficoDTO;
 import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
 import com.ctsousa.econcilia.report.dto.RelatorioDTO;
 import com.ctsousa.econcilia.repository.ConsolidadoRepository;
+import com.ctsousa.econcilia.repository.VendaRepository;
 import com.ctsousa.econcilia.service.DashboadService;
 import com.ctsousa.econcilia.service.EmpresaService;
 import com.ctsousa.econcilia.service.IntegracaoService;
 import com.ctsousa.econcilia.util.DataUtil;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.YearMonth;
+import java.util.*;
 
+import static com.ctsousa.econcilia.util.DataUtil.*;
 import static com.ctsousa.econcilia.util.DecimalUtil.paraDecimal;
 import static com.ctsousa.econcilia.util.StringUtil.naoTemValor;
+import static com.ctsousa.econcilia.util.StringUtil.temValor;
+import static java.time.YearMonth.from;
 
 @Component
 public class DashboardServiceImpl implements DashboadService {
-
-    private final IntegracaoService integracaoService;
 
     private final ConsolidadoRepository consolidadoRepository;
 
     private final EmpresaService empresaService;
 
-    public DashboardServiceImpl(IntegracaoService integracaoService, ConsolidadoRepository consolidadoRepository, EmpresaService empresaService) {
-        this.integracaoService = integracaoService;
+    private final VendaRepository vendaRepository;
+
+    private Map<String, Map<YearMonth, BigDecimal>> vendasAnuaisMap;
+
+    private Map<String, Map<LocalDate, BigDecimal>> vendasMensalMap;
+
+    private Map<String, Map<LocalDate, BigDecimal>> vendasSemanalAcumuladaMap;
+
+    public DashboardServiceImpl(ConsolidadoRepository consolidadoRepository, EmpresaService empresaService, VendaRepository vendaRepository) {
         this.consolidadoRepository = consolidadoRepository;
         this.empresaService = empresaService;
+        this.vendaRepository = vendaRepository;
     }
 
     @Override
     public DashboardDTO carregaVendasConsolidadas(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
+        List<Venda> vendas = new ArrayList<>();
+        vendasAnuaisMap = new HashMap<>();
+        vendasMensalMap = new HashMap<>();
+        vendasSemanalAcumuladaMap = new HashMap<>();
+
         List<Long> empresasId = getEmpresasId(empresaId);
         DashboardDTO dashboardDTO = new DashboardDTO();
 
@@ -66,10 +77,16 @@ public class DashboardServiceImpl implements DashboadService {
         BigDecimal totalValorComissaoTransacao = BigDecimal.valueOf(0D);
         BigDecimal totalValorEmRepasse = BigDecimal.valueOf(0D);
 
-        RelatorioDTO relatorioDTO = null;
+        RelatorioDTO relatorioDTO;
 
         for (Long idEmpresa : empresasId) {
             Empresa empresa = empresaService.pesquisarPorId(idEmpresa);
+
+            if (empresa == null) continue;
+
+            if (vendas.isEmpty()) {
+                vendas = vendaRepository.buscarPor(empresa, dtInicial, dtFinal);
+            }
 
             try {
                 relatorioDTO = tipoRelatorio.gerarDados(consolidadoRepository, dtInicial, dtFinal, empresa, new Operadora());
@@ -92,6 +109,8 @@ public class DashboardServiceImpl implements DashboadService {
                 totalValorPromocao = totalValorPromocao.add(paraDecimal(consolidadoDTO.getTotalPromocao()));
                 totalValorComissaoTransacao = totalValorComissaoTransacao.add(paraDecimal(consolidadoDTO.getTotalTransacaoPagamento()));
                 totalValorEmRepasse = totalValorEmRepasse.add(paraDecimal(consolidadoDTO.getTotalRepasse()));
+
+                carregarDadosAlimentarGraficos(empresa, tipoRelatorio, dtFinal);
             }
         }
 
@@ -106,67 +125,95 @@ public class DashboardServiceImpl implements DashboadService {
         dashboardDTO.setValorComissaoTransacao(totalValorComissaoTransacao);
         dashboardDTO.setValorEmRepasse(totalValorEmRepasse);
 
-        carregarDadosParaAlimetarGraficos(relatorioDTO, dashboardDTO, dtFinal);
+        GraficoDTO graficoDTO = GraficoDTO.builder()
+                .graficoVendaMensalDTO(new GraficoVendaMensal().construir(vendasMensalMap))
+                .graficoVendaAnualDTO(new GraficoVendaAnual().construir(vendasAnuaisMap))
+                .graficoVendaUltimo7DiaDTO(new GraficoVendaSemanalAcumulada().construir(vendasSemanalAcumuladaMap))
+                .graficoPercentualVendaFormaPagamentoDTO(new GraficoPercentualVendaFormaPagamento().construir(vendas))
+                .build();
+
+        dashboardDTO.setGraficoDTO(graficoDTO);
 
         return dashboardDTO;
     }
 
-    private void carregarDadosParaAlimetarGraficos(RelatorioDTO relatorioDTO, DashboardDTO dashboardDTO, LocalDate periodo) {
-        if (relatorioDTO != null) {
-            dashboardDTO.setGraficoVendaUltimo7DiaDTO(new GraficoVendaUltimo7DiaServiceImpl().processar(periodo, relatorioDTO.getConsolidados()));
+    private void carregarDadosAlimentarGraficos(final Empresa empresa, final TipoRelatorio tipoRelatorio, final LocalDate dtFinal) {
+        try {
+            LocalDate dtInicial = dtFinal.minusYears(1).withDayOfMonth(1);
+            RelatorioDTO relatorioDTO = tipoRelatorio.gerarDados(consolidadoRepository, dtInicial, dtFinal, empresa, new Operadora());
+            popularDadoGraficoSemanal(relatorioDTO, dtFinal);
+            popularDadoGraficoMensal(relatorioDTO, dtFinal);
+            popularDadoGraficoAnual(relatorioDTO);
+        } catch (NotificacaoException e) {
+            //
         }
     }
 
-    @Override
-    @Cacheable(value = "informacoesCache", key = "{#empresaId, #dtInicial, #dtFinal}")
-    public DashboardDTO carregarInformacoes(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
-        List<Long> empresasId = getEmpresasId(empresaId);
-        DashboardDTO dashboardDTO = new DashboardDTO();
+    private void popularDadoGraficoMensal(final RelatorioDTO relatorioDTO, final LocalDate dtFinal) {
+        LocalDate dtInicial = dtFinal.withDayOfMonth(1);
 
-        for (Long idEmpresa : empresasId) {
-            List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
-            for (Integracao integracao : integracoes) {
+        List<RelatorioConsolidadoDTO> consolidados = relatorioDTO.getConsolidados().stream()
+                .filter(c -> temValor(c.getPeriodo()))
+                .filter(c -> paraLocalDate(c.getPeriodo()).isAfter(dtInicial) && paraLocalDate(c.getPeriodo()).isBefore(dtFinal))
+                .toList();
 
-                ProcessadorFiltro processadorFiltro = new ProcessadorFiltro(integracao, dtInicial, dtFinal);
-                Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                processador.processar(processadorFiltro, true, false);
+        String nomeEmpresa = consolidados.get(0).getInfo().getNome();
+        Map<LocalDate, BigDecimal> mapConsolidados = new TreeMap<>();
 
-                dashboardDTO.setValorBrutoVendas(dashboardDTO.getValorBrutoVendas().add(processador.getValorTotalBruto()));
-                dashboardDTO.setQuantidadeVendas(dashboardDTO.getQuantidadeVendas().add(BigInteger.valueOf(processador.getQuantidade())));
-                dashboardDTO.setTicketMedio(dashboardDTO.getTicketMedio().add(processador.getValorTotalTicketMedio()));
-                dashboardDTO.setValorCancelamento(dashboardDTO.getValorCancelamento().add(processador.getValorTotalCancelado()));
-                dashboardDTO.setValorRecebidoLoja(dashboardDTO.getValorRecebidoLoja().add(processador.getValorTotalRecebido()));
-                dashboardDTO.setValorComissaoTransacao(dashboardDTO.getValorComissaoTransacao().add(processador.getValorTotalComissaoTransacaoPagamento()));
-                dashboardDTO.setValorTaxaEntrega(dashboardDTO.getValorTaxaEntrega().add(processador.getValorTotalTaxaEntrega()));
-                dashboardDTO.setValorEmRepasse(dashboardDTO.getValorEmRepasse().add(processador.getValorTotalRepasse()));
-                dashboardDTO.setValorComissao(dashboardDTO.getValorComissao().add(processador.getValorTotalComissao()));
-                dashboardDTO.setValorPromocao(dashboardDTO.getValorPromocao().add(processador.getValorTotalPromocao()));
-            }
+        for (RelatorioConsolidadoDTO consolidadoDTO : consolidados) {
+            LocalDate periodo = DataUtil.paraLocalDate(consolidadoDTO.getPeriodo());
+            mapConsolidados.put(periodo, paraDecimal(consolidadoDTO.getTotalBruto()));
         }
 
-        dashboardDTO.setVendas(buscarVendaAnual(empresaId, dtFinal));
-        return dashboardDTO;
+        vendasMensalMap.put(nomeEmpresa,  mapConsolidados);
     }
 
-    @Cacheable(value = "vendaAnualCache", key = "{#empresaId, #dtInicial}")
-    private List<Venda> buscarVendaAnual(String empresaId, LocalDate dtInicial) {
-        List<Long> empresasId = getEmpresasId(empresaId);
-        List<PeriodoDTO> periodos = DataUtil.periodoAnual(dtInicial, Faixa.FX_60);
-        List<Venda> vendas = new ArrayList<>();
+    private void popularDadoGraficoSemanal(final RelatorioDTO relatorioDTO, final LocalDate dtFinal) {
+        LocalDate dataInicial = dtFinal.minusWeeks(1);
+        LocalDate dataFinal = dataInicial.plusWeeks(1);
 
-        for (Long idEmpresa : empresasId) {
-            List<Integracao> integracoes = integracaoService.pesquisar(idEmpresa, null, null);
-            for (Integracao integracao : integracoes) {
-                for (PeriodoDTO periodoDTO : periodos) {
-                    ProcessadorFiltro processadorFiltro = new ProcessadorFiltro(integracao, periodoDTO.getDe(), periodoDTO.getAte());
-                    Processador processador = TipoProcessador.porOperadora(integracao.getOperadora());
-                    processador.processar(processadorFiltro, false, false);
-                    vendas.addAll(processador.getVendas());
-                }
-            }
+        if (isMesCorrente(dtFinal)) {
+            dataInicial = LocalDate.now().minusDays(1).minusWeeks(1);
+            dataFinal = dataInicial.plusWeeks(1);
         }
 
-        return vendas;
+        LocalDate finalDataInicial = dataInicial;
+        LocalDate finalDataFinal = dataFinal;
+
+        List<RelatorioConsolidadoDTO> consolidados = relatorioDTO.getConsolidados().stream()
+                .filter(c -> temValor(c.getPeriodo()))
+                .filter(c -> paraLocalDate(c.getPeriodo()).isAfter(finalDataInicial) && paraLocalDate(c.getPeriodo()).isBefore(finalDataFinal))
+                .toList();
+
+        String nomeEmpresa = consolidados.get(0).getInfo().getNome();
+        Map<LocalDate, BigDecimal> mapConsolidados = new TreeMap<>();
+
+        for (RelatorioConsolidadoDTO consolidadoDTO : consolidados) {
+            LocalDate periodo = paraLocalDate(consolidadoDTO.getPeriodo());
+            BigDecimal totalBruto = mapConsolidados.getOrDefault(periodo, BigDecimal.valueOf(0D));
+            totalBruto = totalBruto.add(paraDecimal(consolidadoDTO.getTotalBruto()));
+            mapConsolidados.put(periodo, totalBruto);
+        }
+
+        vendasSemanalAcumuladaMap.put(nomeEmpresa, mapConsolidados);
+    }
+
+    private void popularDadoGraficoAnual(final RelatorioDTO relatorioDTO) {
+        List<RelatorioConsolidadoDTO> consolidados = relatorioDTO.getConsolidados().stream()
+                .filter(c -> temValor(c.getPeriodo()))
+                .toList();
+
+        String nomeEmpresa = consolidados.get(0).getInfo().getNome();
+        Map<YearMonth, BigDecimal> mapConsolidados = new TreeMap<>();
+
+        for (RelatorioConsolidadoDTO consolidadoDTO : consolidados) {
+            LocalDate periodo = parseMesAno(consolidadoDTO.getPeriodo(), "yyyy-MM-dd");
+            BigDecimal totalBruto = mapConsolidados.getOrDefault(from(periodo), BigDecimal.valueOf(0D));
+            totalBruto = totalBruto.add(paraDecimal(consolidadoDTO.getTotalBruto()));
+            mapConsolidados.put(from(periodo), totalBruto);
+        }
+
+        vendasAnuaisMap.put(nomeEmpresa, mapConsolidados);
     }
 
     private List<Long> getEmpresasId(final String empresasId) {

@@ -4,6 +4,7 @@ import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.model.Importacao;
 import com.ctsousa.econcilia.repository.ImportacaoRepository;
+import com.ctsousa.econcilia.scheduler.impl.ImportacaoProgramadaSchedulerIfoodImpl;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import org.springframework.stereotype.Component;
 

@@ -34,7 +34,7 @@ public class DashboardDTO {
 
     private BigDecimal valorComissaoTransacao;
 
-    private GraficoVendaUltimo7DiaDTO graficoVendaUltimo7DiaDTO;
+    private GraficoDTO graficoDTO;
 
     private List<Venda> vendas;
 
@@ -49,5 +49,6 @@ public class DashboardDTO {
         this.setValorComissao(BigDecimal.valueOf(0D));
         this.setValorPromocao(BigDecimal.valueOf(0D));
         this.setValorComissaoTransacao(BigDecimal.valueOf(0D));
+        this.graficoDTO = new GraficoDTO();
     }
 }

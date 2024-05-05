@@ -1,4 +1,4 @@
-package com.ctsousa.econcilia.service;
+package com.ctsousa.econcilia.graphic;
 
 import com.ctsousa.econcilia.model.Venda;
 

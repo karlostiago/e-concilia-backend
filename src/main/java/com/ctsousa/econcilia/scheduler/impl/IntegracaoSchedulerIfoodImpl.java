@@ -1,14 +1,13 @@
 package com.ctsousa.econcilia.scheduler.impl;
 
+import com.ctsousa.econcilia.enumaration.TipoParametro;
 import com.ctsousa.econcilia.integration.ifood.entity.Merchant;
 import com.ctsousa.econcilia.integration.ifood.gateway.IfoodGateway;
-import com.ctsousa.econcilia.model.Empresa;
-import com.ctsousa.econcilia.model.Integracao;
-import com.ctsousa.econcilia.model.IntegracaoBuffer;
-import com.ctsousa.econcilia.model.Operadora;
+import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.repository.EmpresaRepository;
 import com.ctsousa.econcilia.repository.IntegracaoBufferRepository;
 import com.ctsousa.econcilia.repository.IntegracaoRepository;
+import com.ctsousa.econcilia.repository.ParametroRepository;
 import com.ctsousa.econcilia.scheduler.Scheduler;
 import com.ctsousa.econcilia.service.OperadoraService;
 import lombok.extern.slf4j.Slf4j;
@@ -35,17 +34,27 @@ public class IntegracaoSchedulerIfoodImpl implements Scheduler {
 
     private final IntegracaoRepository integracaoRepository;
 
-    public IntegracaoSchedulerIfoodImpl(IntegracaoBufferRepository integracaoBufferRepository, OperadoraService operadoraService, EmpresaRepository empresaRepository, IfoodGateway ifoodGateway, IntegracaoRepository integracaoRepository) {
+    private final ParametroRepository parametroRepository;
+
+    public IntegracaoSchedulerIfoodImpl(IntegracaoBufferRepository integracaoBufferRepository, OperadoraService operadoraService, EmpresaRepository empresaRepository, IfoodGateway ifoodGateway, IntegracaoRepository integracaoRepository, ParametroRepository parametroRepository) {
         this.integracaoBufferRepository = integracaoBufferRepository;
         this.operadoraService = operadoraService;
         this.empresaRepository = empresaRepository;
         this.ifoodGateway = ifoodGateway;
         this.integracaoRepository = integracaoRepository;
+        this.parametroRepository = parametroRepository;
     }
 
     @Override
     @Scheduled(cron = "0 */30 * * * *")
     public void processar() {
+        Parametro parametro = parametroRepository.findByTipoParametro(tipoParametro());
+
+        if (parametro == null || !parametro.isAtivo()) {
+            log.info("O processo de integração não está habilitado.");
+            return;
+        }
+
         List<IntegracaoBuffer> buffers = integracaoBufferRepository.findAll()
                 .stream().filter(b -> b.getNomeOperadora().equalsIgnoreCase(IFOOD_OPERADORA))
                 .toList();
@@ -65,6 +74,11 @@ public class IntegracaoSchedulerIfoodImpl implements Scheduler {
         }
 
         log.info("Processo de integração automática finalizado.:::");
+    }
+
+    @Override
+    public TipoParametro tipoParametro() {
+        return TipoParametro.INTEGRACAO_AUTOMATICA;
     }
 
     private void integrar(final Empresa empresa, final Operadora operadora) {

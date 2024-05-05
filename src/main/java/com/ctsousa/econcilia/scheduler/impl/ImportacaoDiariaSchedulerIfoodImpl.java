@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.scheduler.impl;
 
+import com.ctsousa.econcilia.enumaration.TipoParametro;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 import com.ctsousa.econcilia.repository.*;
@@ -32,17 +33,20 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
 
     private final ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler;
 
+    private final ParametroRepository parametroRepository;
+
     @Setter
     @Value("${importacao_habilitar}")
     private boolean habilitar;
 
-    public ImportacaoDiariaSchedulerIfoodImpl(OperadoraService operadoraService, ContratoService contratoService, IntegracaoRepository integracaoRepository, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidadoRepository consolidadoRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler) {
+    public ImportacaoDiariaSchedulerIfoodImpl(OperadoraService operadoraService, ContratoService contratoService, IntegracaoRepository integracaoRepository, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidadoRepository consolidadoRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler, ParametroRepository parametroRepository) {
         super(null, null, vendaRepository, ajusteVendaRepository, ocorrenciaRepository, cancelamentoRepository, consolidadoRepository);
         this.operadoraService = operadoraService;
         this.contratoService = contratoService;
         this.integracaoRepository = integracaoRepository;
         this.integracaoIfoodService = integracaoIfoodService;
         this.consolidacaoScheduler = consolidacaoScheduler;
+        this.parametroRepository = parametroRepository;
     }
 
     /**
@@ -51,7 +55,9 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
     @Override
     @Scheduled(cron = "59 59 23 * * *")
     public void processar() {
-        if (!habilitar) {
+        Parametro parametro = parametroRepository.findByTipoParametro(tipoParametro());
+
+        if (parametro == null || !parametro.isAtivo()) {
             log.info("O processo de importação não está habilitado.");
             return;
         }
@@ -70,6 +76,11 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
 
             prepararImportacaoVendas(empresa);
         }
+    }
+
+    @Override
+    public TipoParametro tipoParametro() {
+        return TipoParametro.IMPORTACAO_DIARIA;
     }
 
     private void prepararImportacaoVendas(Empresa empresa) {

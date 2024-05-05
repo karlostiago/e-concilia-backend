@@ -1,10 +1,7 @@
-package com.ctsousa.econcilia.service.impl;
+package com.ctsousa.econcilia.graphic;
 
 import com.ctsousa.econcilia.model.Venda;
 import com.ctsousa.econcilia.model.dto.GraficoPercentualVendaFormaPagamentoDTO;
-import com.ctsousa.econcilia.report.dto.RelatorioConsolidadoDTO;
-import com.ctsousa.econcilia.service.AbstractGraficoVendaMeioPagamento;
-import com.ctsousa.econcilia.service.GraficoVendaService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -16,9 +13,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component
-public class GraficoPercentualVendaFormaPagamentoImpl extends AbstractGraficoVendaMeioPagamento implements GraficoVendaService<GraficoPercentualVendaFormaPagamentoDTO>  {
-    @Override
-    public GraficoPercentualVendaFormaPagamentoDTO processar(List<Venda> vendas) {
+public class GraficoPercentualVendaFormaPagamento extends AbstractGraficoVendaMeioPagamento  {
+
+    public GraficoPercentualVendaFormaPagamentoDTO construir(List<Venda> vendas) {
 
         GraficoPercentualVendaFormaPagamentoDTO graficoDTO = new GraficoPercentualVendaFormaPagamentoDTO();
         graficoDTO.setLabels(List.of("Crédito", "Débito", "Dinheiro", "Pix", "Outros"));
@@ -37,11 +34,6 @@ public class GraficoPercentualVendaFormaPagamentoImpl extends AbstractGraficoVen
         graficoDTO.setData(List.of(percentualCredito, percentualDebito, percentualDinheiro, percentualPix, percentualOutros));
 
         return graficoDTO;
-    }
-
-    @Override
-    public GraficoPercentualVendaFormaPagamentoDTO processar(LocalDate periodo, List<RelatorioConsolidadoDTO> consolidados) {
-        return null;
     }
 
     private BigDecimal calcular(Map<LocalDate, Map<String, BigDecimal>> totalizadorMap, String tipoPagamento) {

@@ -51,14 +51,7 @@ public enum TipoRelatorio {
                         .multiply(BigDecimal.valueOf(100D))));
                 documento.setTaxaComissaoPagamento(monetarioPtBr(((BigDecimal)venda[12])
                         .multiply(BigDecimal.valueOf(100D))));
-
-                RelatorioDTO.Info docInfo = new RelatorioDTO.Info();
-                docInfo.setTitulo("Relatório de vendas para:");
-                docInfo.setNome(empresa.getRazaoSocial());
-                docInfo.setEndereco(empresa.getEndereco().getLogradouro() + ", " + empresa.getEndereco().getNumero() + ", " + empresa.getEndereco().getBairro());
-                docInfo.setTelefone(empresa.getContato().getCelular());
-                docInfo.setEmail(empresa.getContato().getEmail().toLowerCase());
-                documento.setInfo(docInfo);
+                documento.setInfo(getInfo("Relatório de vendas para:", empresa));
 
                 documentos.add(documento);
             }
@@ -85,14 +78,7 @@ public enum TipoRelatorio {
                 documento.setEntraEmVigor(paraPtBr(taxa.getEntraEmVigor()));
                 documento.setValidoAte(paraPtBr(taxa.getValidoAte()));
                 documento.setAtivo(Boolean.TRUE.equals(taxa.getAtivo()) ? "SIM" : "NÂO");
-
-                RelatorioDTO.Info docInfo = new RelatorioDTO.Info();
-                docInfo.setTitulo("Relatório de taxas para:");
-                docInfo.setNome(empresa.getRazaoSocial());
-                docInfo.setEndereco(empresa.getEndereco().getLogradouro() + ", " + empresa.getEndereco().getNumero() + ", " + empresa.getEndereco().getBairro());
-                docInfo.setTelefone(empresa.getContato().getCelular());
-                docInfo.setEmail(empresa.getContato().getEmail().toLowerCase());
-                documento.setInfo(docInfo);
+                documento.setInfo(getInfo("Relatório de taxas para:", empresa));
 
                 documentos.add(documento);
             }
@@ -126,14 +112,7 @@ public enum TipoRelatorio {
                 documento.setTotalTaxaServico(monetarioPtBr((BigDecimal) consolidado[11]));
                 documento.setTotalTaxaManutencao(monetarioPtBr((BigDecimal) consolidado[12]));
                 documento.setTotalRepasse(monetarioPtBr((BigDecimal) consolidado[13]));
-
-                RelatorioDTO.Info docInfo = new RelatorioDTO.Info();
-                docInfo.setTitulo("Relatório de vendas consolidadas para:");
-                docInfo.setNome(empresa.getRazaoSocial());
-                docInfo.setEndereco(empresa.getEndereco().getLogradouro() + ", " + empresa.getEndereco().getNumero() + ", " + empresa.getEndereco().getBairro());
-                docInfo.setTelefone(empresa.getContato().getCelular());
-                docInfo.setEmail(empresa.getContato().getEmail().toLowerCase());
-                documento.setInfo(docInfo);
+                documento.setInfo(getInfo("Relatório de vendas consolidadas para:", empresa));
 
                 documentos.add(documento);
             }
@@ -151,5 +130,16 @@ public enum TipoRelatorio {
             }
         }
         return null;
+    }
+
+    private static RelatorioDTO.Info getInfo(String titulo, Empresa empresa) {
+        RelatorioDTO.Info docInfo = new RelatorioDTO.Info();
+        docInfo.setTitulo(titulo);
+        docInfo.setCnpj(empresa.getCnpj());
+        docInfo.setNome(empresa.getRazaoSocial());
+        docInfo.setEndereco(empresa.getEndereco().getLogradouro() + ", " + empresa.getEndereco().getNumero() + ", " + empresa.getEndereco().getBairro());
+        docInfo.setTelefone(empresa.getContato().getCelular());
+        docInfo.setEmail(empresa.getContato().getEmail().toLowerCase());
+        return docInfo;
     }
 }

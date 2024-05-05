@@ -21,6 +21,7 @@ public class RelatorioDTO {
     @Getter
     @Setter
     public static class Info {
+        private String cnpj;
         private String titulo;
         private String nome;
         private String endereco;

@@ -1,14 +1,13 @@
 package com.ctsousa.econcilia.scheduler.impl;
 
+import com.ctsousa.econcilia.enumaration.TipoParametro;
 import com.ctsousa.econcilia.enumaration.TipoProcessador;
-import com.ctsousa.econcilia.model.Contrato;
-import com.ctsousa.econcilia.model.Empresa;
-import com.ctsousa.econcilia.model.Integracao;
-import com.ctsousa.econcilia.model.Operadora;
+import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.processor.Processador;
 import com.ctsousa.econcilia.processor.ProcessadorFiltro;
 import com.ctsousa.econcilia.repository.ConsolidadoRepository;
 import com.ctsousa.econcilia.repository.IntegracaoRepository;
+import com.ctsousa.econcilia.repository.ParametroRepository;
 import com.ctsousa.econcilia.scheduler.Scheduler;
 import com.ctsousa.econcilia.service.ContratoService;
 import com.ctsousa.econcilia.service.OperadoraService;
@@ -35,11 +34,14 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
 
     private final ConsolidadoRepository consolidadoRepository;
 
-    public ConsolidacaoSchedulerIfoodImpl(OperadoraService operadoraService, IntegracaoRepository integracaoRepository, ContratoService contratoService, ConsolidadoRepository consolidadoRepository) {
+    private final ParametroRepository parametroRepository;
+
+    public ConsolidacaoSchedulerIfoodImpl(OperadoraService operadoraService, IntegracaoRepository integracaoRepository, ContratoService contratoService, ConsolidadoRepository consolidadoRepository, ParametroRepository parametroRepository) {
         this.operadoraService = operadoraService;
         this.integracaoRepository = integracaoRepository;
         this.contratoService = contratoService;
         this.consolidadoRepository = consolidadoRepository;
+        this.parametroRepository = parametroRepository;
     }
 
     /**
@@ -48,6 +50,13 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
     @Override
     @Scheduled(cron = "0 0 3 * * *")
     public void processar() {
+        Parametro parametro = parametroRepository.findByTipoParametro(tipoParametro());
+
+        if (parametro == null || !parametro.isAtivo()) {
+            log.info("O processo de consolidação não está habilitado.");
+            return;
+        }
+
         Operadora operadora = operadoraService.buscarPorDescricao(IFOOD_OPERADORA);
         List<Contrato> contratos = contratoService.pesquisar(null, operadora.getId());
 
@@ -62,6 +71,11 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
 
     public void processar(final Empresa empresa, final LocalDate periodo) {
         prepararConsolidacaoVendas(empresa, periodo);
+    }
+
+    @Override
+    public TipoParametro tipoParametro() {
+        return TipoParametro.CONSOLIDACAO;
     }
 
     private void prepararConsolidacaoVendas(final Empresa empresa, final LocalDate periodo) {

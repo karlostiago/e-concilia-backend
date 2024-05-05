@@ -1,10 +1,8 @@
 package com.ctsousa.econcilia.scheduler.impl;
 
 import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
-import com.ctsousa.econcilia.model.AjusteVenda;
-import com.ctsousa.econcilia.model.Cancelamento;
-import com.ctsousa.econcilia.model.Ocorrencia;
-import com.ctsousa.econcilia.model.Venda;
+import com.ctsousa.econcilia.enumaration.TipoParametro;
+import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
 import com.ctsousa.econcilia.repository.*;
 import com.ctsousa.econcilia.scheduler.ImportacaoAbstract;
@@ -31,17 +29,20 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
 
     private final ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler;
 
+    private final ParametroRepository parametroRepository;
+
     private String codigoIntegracao;
 
     @Setter
     @Value("${importacao_habilitar}")
     private boolean habilitar;
 
-    public ImportacaoProgramadaSchedulerIfoodImpl(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler, ConsolidadoRepository consolidadoRepository) {
+    public ImportacaoProgramadaSchedulerIfoodImpl(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler, ConsolidadoRepository consolidadoRepository, ParametroRepository parametroRepository) {
         super(importacaoService, integracaoService, vendaRepository, ajusteVendaRepository, ocorrenciaRepository, cancelamentoRepository, consolidadoRepository);
         this.importacaoService = importacaoService;
         this.integracaoIfoodService = integracaoIfoodService;
         this.consolidacaoScheduler = consolidacaoScheduler;
+        this.parametroRepository = parametroRepository;
     }
 
     /**
@@ -50,7 +51,9 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
     @Override
     @Scheduled(cron = "0 */15 * * * *")
     public void processar() {
-        if (!habilitar) {
+        Parametro parametro = parametroRepository.findByTipoParametro(tipoParametro());
+
+        if (parametro == null || !parametro.isAtivo()) {
             log.info("O processo de importação não está habilitado.");
             return;
         }
@@ -72,6 +75,11 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
 
         periodos = null;
         importacao = null;
+    }
+
+    @Override
+    public TipoParametro tipoParametro() {
+        return TipoParametro.IMPORTACAO_PROGRAMADA;
     }
 
     private void importar(final List<PeriodoDTO> periodos) {
