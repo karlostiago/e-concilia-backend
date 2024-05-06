@@ -63,7 +63,8 @@ public enum Funcionalidade {
     ROLE_PESQUISAR_RELATORIO(11, TipoFuncionalidade.PESQUISAR),
 
     ROLE_MENU_PARAMETRO(12, TipoFuncionalidade.MENU),
-    ROLE_PESQUISAR_PARAMETRO(12, TipoFuncionalidade.PESQUISAR);
+    ROLE_PESQUISAR_PARAMETRO(12, TipoFuncionalidade.PESQUISAR),
+    ROLE_ATIVAR_PARAMETRO(12, TipoFuncionalidade.ATIVAR);
 
     private final Integer codigo;
 

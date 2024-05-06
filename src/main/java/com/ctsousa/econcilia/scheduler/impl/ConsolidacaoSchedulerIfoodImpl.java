@@ -50,13 +50,6 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
     @Override
     @Scheduled(cron = "0 0 3 * * *")
     public void processar() {
-        Parametro parametro = parametroRepository.findByTipoParametro(tipoParametro());
-
-        if (parametro == null || !parametro.isAtivo()) {
-            log.info("O processo de consolidação não está habilitado.");
-            return;
-        }
-
         Operadora operadora = operadoraService.buscarPorDescricao(IFOOD_OPERADORA);
         List<Contrato> contratos = contratoService.pesquisar(null, operadora.getId());
 
@@ -64,8 +57,18 @@ public class ConsolidacaoSchedulerIfoodImpl implements Scheduler {
                 .map(Contrato::getEmpresa)
                 .toList();
 
+        if (empresas.isEmpty()) return;
+
+        log.info("Iniciando processo de consolidação de vendas.");
+
         for (Empresa empresa : empresas) {
-            prepararConsolidacaoVendas(empresa, LocalDate.now().minusDays(1));
+            Parametro parametro = parametroRepository.buscaParametroTipoEmpresaOperadora(tipoParametro(), empresa, operadora);
+            if (parametro != null && parametro.isAtivo()) {
+                prepararConsolidacaoVendas(empresa, LocalDate.now().minusDays(1));
+                log.info("Processo de consolidação concluída com sucesso.");
+            } else {
+                log.info("O processo de consolidação não está habilitado.");
+            }
         }
     }
 

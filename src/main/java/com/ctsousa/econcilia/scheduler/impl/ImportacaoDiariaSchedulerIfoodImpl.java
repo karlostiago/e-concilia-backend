@@ -55,13 +55,6 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
     @Override
     @Scheduled(cron = "59 59 23 * * *")
     public void processar() {
-        Parametro parametro = parametroRepository.findByTipoParametro(tipoParametro());
-
-        if (parametro == null || !parametro.isAtivo()) {
-            log.info("O processo de importação não está habilitado.");
-            return;
-        }
-
         Operadora operadora = operadoraService.buscarPorDescricao(tipoImportacao().getDescricao());
         List<Contrato> contratos = contratoService.pesquisar(null, operadora.getId());
 
@@ -69,12 +62,22 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
                 .map(Contrato::getEmpresa)
                 .toList();
 
+        if (empresas.isEmpty()) return;
+
+        log.info("Iniciando processo de importação diária concluída com sucesso.");
+
         for (Empresa empresa : empresas) {
             importacao = new Importacao();
             importacao.setEmpresa(empresa);
             importacao.setOperadora(operadora);
 
-            prepararImportacaoVendas(empresa);
+            Parametro parametro = parametroRepository.buscaParametroTipoEmpresaOperadora(tipoParametro(), empresa, operadora);
+            if (parametro != null && parametro.isAtivo()) {
+                prepararImportacaoVendas(empresa);
+                log.info("Processo de importação diária concluída com sucesso.");
+            } else {
+                log.info("O processo de importação não está habilitado.");
+            }
         }
     }
 

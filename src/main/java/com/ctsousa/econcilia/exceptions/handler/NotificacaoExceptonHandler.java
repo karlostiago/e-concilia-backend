@@ -5,6 +5,7 @@ import com.ctsousa.econcilia.exceptions.NotificacaoException;
 import com.ctsousa.econcilia.exceptions.builder.ErrorBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -16,12 +17,12 @@ public class NotificacaoExceptonHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({NotificacaoException.class})
     public ResponseEntity<List<Error>> handleNotificacaoException(NotificacaoException ex) {
-        List<Error> erros = List.of((ErrorBuilder.builder()
+        List<Error> errors = List.of((ErrorBuilder.builder()
                 .comStatus(HttpStatus.BAD_REQUEST)
                 .comMensagem(ex.getMessage())
                 .comDetalhe(ex)
                 .comSeveridade(ex.getSeveridade())
                 .build()));
-        return ResponseEntity.badRequest().body(erros);
+        return ResponseEntity.badRequest().body(errors);
     }
 }

@@ -75,6 +75,12 @@ public abstract class Autorizar {
     public static final String AGENDAR_IMPORTACAO = "hasAuthority('ROLE_AGENDAR_IMPORTACAO')";
     public static final String PESQUISAR_IMPORTACAO = "hasAuthority('ROLE_PESQUISAR_IMPORTACAO')";
 
+    /**
+     * Regras de permissao para tela de parametro
+     */
+    public static final String PESQUISAR_PARAMETRO = "hasAuthority('ROLE_PESQUISAR_PARAMETRO')";
+    public static final String ATIVAR_PARAMETRO = "hasAuthority('ROLE_ATIVAR_PARAMETRO')";
+
     private Autorizar() {
     }
 }

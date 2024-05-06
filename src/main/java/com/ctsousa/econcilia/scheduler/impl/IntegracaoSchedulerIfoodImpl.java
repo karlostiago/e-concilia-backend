@@ -48,13 +48,6 @@ public class IntegracaoSchedulerIfoodImpl implements Scheduler {
     @Override
     @Scheduled(cron = "0 */30 * * * *")
     public void processar() {
-        Parametro parametro = parametroRepository.findByTipoParametro(tipoParametro());
-
-        if (parametro == null || !parametro.isAtivo()) {
-            log.info("O processo de integração não está habilitado.");
-            return;
-        }
-
         List<IntegracaoBuffer> buffers = integracaoBufferRepository.findAll()
                 .stream().filter(b -> b.getNomeOperadora().equalsIgnoreCase(IFOOD_OPERADORA))
                 .toList();
@@ -66,14 +59,17 @@ public class IntegracaoSchedulerIfoodImpl implements Scheduler {
         for (IntegracaoBuffer buffer : buffers) {
             Empresa empresa = empresaRepository.porCnpj(buffer.getCnpj());
             Operadora operadora = operadoraService.buscarPorDescricao(IFOOD_OPERADORA);
-
             if (empresa != null) {
-                integrar(empresa, operadora);
-                integracaoBufferRepository.deleteById(buffer.getId());
+                Parametro parametro = parametroRepository.buscaParametroTipoEmpresaOperadora(tipoParametro(), empresa, operadora);
+                if (parametro != null && parametro.isAtivo()) {
+                    integrar(empresa, operadora);
+                    integracaoBufferRepository.deleteById(buffer.getId());
+                    log.info("Processo de integração automática finalizado.:::");
+                } else {
+                    log.info("O processo de integração não está habilitado.");
+                }
             }
         }
-
-        log.info("Processo de integração automática finalizado.:::");
     }
 
     @Override

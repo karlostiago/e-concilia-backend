@@ -51,13 +51,6 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
     @Override
     @Scheduled(cron = "0 */15 * * * *")
     public void processar() {
-        Parametro parametro = parametroRepository.findByTipoParametro(tipoParametro());
-
-        if (parametro == null || !parametro.isAtivo()) {
-            log.info("O processo de importação não está habilitado.");
-            return;
-        }
-
         executar();
 
         if (periodos == null || periodos.isEmpty()) {
@@ -65,16 +58,21 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
             return;
         }
 
-        log.info("Iniciando processamento para empresa {}, operadora {}, periodo inicial {}, periodo final {} ", importacao.getEmpresa().getRazaoSocial(), importacao.getOperadora().getDescricao(), importacao.getDataInicial(), importacao.getDataFinal());
+        Parametro parametro = parametroRepository.buscaParametroTipoEmpresaOperadora(tipoParametro(), importacao.getEmpresa(), importacao.getOperadora());
+        if (parametro != null && parametro.isAtivo()) {
+            log.info("Iniciando processamento para empresa {}, operadora {}, periodo inicial {}, periodo final {} ", importacao.getEmpresa().getRazaoSocial(), importacao.getOperadora().getDescricao(), importacao.getDataInicial(), importacao.getDataFinal());
 
-        codigoIntegracao = getCodigoIntegracao();
-        importacaoService.atualizaPara(importacao, ImportacaoSituacao.EM_PROCESSAMENTO);
-        importar(periodos);
+            codigoIntegracao = getCodigoIntegracao();
+            importacaoService.atualizaPara(importacao, ImportacaoSituacao.EM_PROCESSAMENTO);
+            importar(periodos);
 
-        log.info("Importação concluída com sucesso.");
+            log.info("Importação programda concluída com sucesso.");
 
-        periodos = null;
-        importacao = null;
+            periodos = null;
+            importacao = null;
+        } else {
+            log.info("O processo de importação não está habilitado.");
+        }
     }
 
     @Override
