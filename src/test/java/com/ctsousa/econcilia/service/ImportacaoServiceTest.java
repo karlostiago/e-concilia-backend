@@ -26,6 +26,8 @@ class ImportacaoServiceTest extends ApplicationIntegrationTest {
     @Test
     void deveAgendar() {
         Importacao importacao = criarImportacao();
+        importacao.setDataInicial(LocalDate.now().minusDays(30));
+        importacao.setDataFinal(LocalDate.now().minusDays(1));
 
         Assertions.assertNotNull(importacaoService.agendar(importacao).getId());
     }
@@ -35,6 +37,8 @@ class ImportacaoServiceTest extends ApplicationIntegrationTest {
         importacaoRepository.save(criarImportacao());
 
         Importacao importacao = criarImportacao();
+        importacao.setDataInicial(LocalDate.now().minusDays(30));
+        importacao.setDataFinal(LocalDate.now().minusDays(1));
 
         var thrown = Assertions.assertThrows(NotificacaoException.class, () -> importacaoService.agendar(importacao));
 

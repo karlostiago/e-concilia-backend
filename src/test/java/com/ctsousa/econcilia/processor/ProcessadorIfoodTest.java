@@ -5,6 +5,7 @@ import com.ctsousa.econcilia.enumaration.FormaRecebimento;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.processor.ifood.ProcessadorIfood;
 import com.ctsousa.econcilia.service.*;
+import com.ctsousa.econcilia.util.DataUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,8 +13,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ctsousa.econcilia.util.DataUtil.getPrimeiroDiaMes;
+import static com.ctsousa.econcilia.util.DataUtil.getUltimoDiaMes;
 
 class ProcessadorIfoodTest extends ApplicationIntegrationTest {
 
@@ -85,11 +90,23 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         filtro.setIntegracao(integracao);
         filtro.setFormaRecebimento(FormaRecebimento.LOJA);
 
+        List<Venda> vendas = getVendas();
+        vendas.get(0).setEmpresa(empresa);
+        vendas.get(0).setOperadora(operadora);
+
+        LocalDate periodo = LocalDate.now().minusDays(1);
+
         Mockito.when(ajusteVendaService.buscar("123456",  null, null))
                         .thenReturn(getAjusteVendas());
 
         Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
-                .thenReturn(getVendas());
+                .thenReturn(vendas);
+
+        Mockito.when(consolidacaoService.temMensalidade(empresa, operadora, getPrimeiroDiaMes(periodo), getUltimoDiaMes(periodo)))
+                .thenReturn(true);
+
+        Mockito.when(consolidacaoService.buscarValorBruto(empresa, operadora, getPrimeiroDiaMes(periodo), getUltimoDiaMes(periodo)))
+                .thenReturn(BigDecimal.valueOf(0D));
 
         processador.processar(filtro, true, false);
 
@@ -113,11 +130,23 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         cancelamento.setValor(BigDecimal.valueOf(500D));
         cancelamentos.add(cancelamento);
 
+        LocalDate periodo = LocalDate.now().minusDays(1);
+
+        List<Venda> vendas = getVendas();
+        vendas.get(0).setEmpresa(empresa);
+        vendas.get(0).setOperadora(operadora);
+
         Mockito.when(cancelamentoService.buscar("123456", "123456"))
                 .thenReturn(cancelamentos);
 
         Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
-                .thenReturn(getVendas());
+                .thenReturn(vendas);
+
+        Mockito.when(consolidacaoService.temMensalidade(empresa, operadora, getPrimeiroDiaMes(periodo), getUltimoDiaMes(periodo)))
+                .thenReturn(true);
+
+        Mockito.when(consolidacaoService.buscarValorBruto(empresa, operadora, getPrimeiroDiaMes(periodo), getUltimoDiaMes(periodo)))
+                .thenReturn(BigDecimal.valueOf(0D));
 
         processador.processar(filtro, true, false);
 
@@ -138,8 +167,20 @@ class ProcessadorIfoodTest extends ApplicationIntegrationTest {
         filtro.setIntegracao(integracao);
         filtro.setFormaRecebimento(FormaRecebimento.LOJA);
 
+        LocalDate periodo = LocalDate.now().minusDays(1);
+
+        List<Venda> vendas = getVendas();
+        vendas.get(0).setEmpresa(empresa);
+        vendas.get(0).setOperadora(operadora);
+
         Mockito.when(vendaService.buscar(empresa, operadora, filtro.getDtInicial(), filtro.getDtFinal(), filtro.getFormaPagamento(), filtro.getCartaoBandeira(), "Loja"))
-                .thenReturn(getVendas());
+                .thenReturn(vendas);
+
+        Mockito.when(consolidacaoService.temMensalidade(empresa, operadora, getPrimeiroDiaMes(periodo), getUltimoDiaMes(periodo)))
+                .thenReturn(true);
+
+        Mockito.when(consolidacaoService.buscarValorBruto(empresa, operadora, getPrimeiroDiaMes(periodo), getUltimoDiaMes(periodo)))
+                        .thenReturn(BigDecimal.valueOf(0D));
 
         processador.processar(filtro, true, false);
 

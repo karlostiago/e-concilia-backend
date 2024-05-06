@@ -11,9 +11,7 @@ import com.ctsousa.econcilia.scheduler.TipoImportacao;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -32,10 +30,6 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
     private final ParametroRepository parametroRepository;
 
     private String codigoIntegracao;
-
-    @Setter
-    @Value("${importacao_habilitar}")
-    private boolean habilitar;
 
     public ImportacaoProgramadaSchedulerIfoodImpl(ImportacaoService importacaoService, IntegracaoService integracaoService, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler, ConsolidadoRepository consolidadoRepository, ParametroRepository parametroRepository) {
         super(importacaoService, integracaoService, vendaRepository, ajusteVendaRepository, ocorrenciaRepository, cancelamentoRepository, consolidadoRepository);
