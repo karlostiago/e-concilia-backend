@@ -2,10 +2,13 @@ package com.ctsousa.econcilia.service.impl;
 
 import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
 import com.ctsousa.econcilia.exceptions.NotificacaoException;
+import com.ctsousa.econcilia.exceptions.Severidade;
 import com.ctsousa.econcilia.model.Importacao;
 import com.ctsousa.econcilia.repository.ImportacaoRepository;
+import com.ctsousa.econcilia.scheduler.Scheduler;
 import com.ctsousa.econcilia.scheduler.impl.ImportacaoProgramadaSchedulerIfoodImpl;
 import com.ctsousa.econcilia.service.ImportacaoService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -44,6 +47,14 @@ public class ImportacaoServiceImpl implements ImportacaoService {
     @Override
     public List<Importacao> buscarImportacoes() {
         return this.importacaoRepository.pesquisarImportacoes();
+    }
+
+    @Override
+    public void temImportacaoProgramada() {
+        Boolean temImportacaoProgramada = importacaoRepository.existsPorSituacao(List.of(ImportacaoSituacao.ERRO_PROCESSAMENTO, ImportacaoSituacao.AGENDADO));
+        if (!temImportacaoProgramada) {
+            throw new NotificacaoException("Não existe importação para ser processada.", Severidade.ATENCAO);
+        }
     }
 
     @Override

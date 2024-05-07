@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.scheduler.impl;
 
+import com.ctsousa.econcilia.enumaration.ImportacaoSituacao;
 import com.ctsousa.econcilia.enumaration.TipoParametro;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -35,11 +37,13 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
 
     private final ParametroRepository parametroRepository;
 
+    private final ImportacaoRepository importacaoRepository;
+
     @Setter
     @Value("${importacao_habilitar}")
     private boolean habilitar;
 
-    public ImportacaoDiariaSchedulerIfoodImpl(OperadoraService operadoraService, ContratoService contratoService, IntegracaoRepository integracaoRepository, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidadoRepository consolidadoRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler, ParametroRepository parametroRepository) {
+    public ImportacaoDiariaSchedulerIfoodImpl(OperadoraService operadoraService, ContratoService contratoService, IntegracaoRepository integracaoRepository, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, CancelamentoRepository cancelamentoRepository, AjusteVendaRepository ajusteVendaRepository, OcorrenciaRepository ocorrenciaRepository, ConsolidadoRepository consolidadoRepository, ConsolidacaoSchedulerIfoodImpl consolidacaoScheduler, ParametroRepository parametroRepository, ImportacaoRepository importacaoRepository) {
         super(null, null, vendaRepository, ajusteVendaRepository, ocorrenciaRepository, cancelamentoRepository, consolidadoRepository);
         this.operadoraService = operadoraService;
         this.contratoService = contratoService;
@@ -47,13 +51,14 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
         this.integracaoIfoodService = integracaoIfoodService;
         this.consolidacaoScheduler = consolidacaoScheduler;
         this.parametroRepository = parametroRepository;
+        this.importacaoRepository = importacaoRepository;
     }
 
     /**
      * Este processo sera executado todos os dias as 23h59m59s
      */
     @Override
-    @Scheduled(cron = "59 59 23 * * *")
+    @Scheduled(cron = "5 0 * * * *")
     public void processar() {
         Operadora operadora = operadoraService.buscarPorDescricao(tipoImportacao().getDescricao());
         List<Contrato> contratos = contratoService.pesquisar(null, operadora.getId());
@@ -94,7 +99,7 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
     }
 
     private void executarImportacao(Integracao integracao) {
-        LocalDate periodo = LocalDate.now();
+        LocalDate periodo = LocalDate.now().minusDays(1);
         LocalDate periodoInicial = periodo.withDayOfMonth(1);
         LocalDate periodoFinal = periodo;
 
@@ -117,7 +122,16 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
             importarAjusteVendas(integracao, new PeriodoDTO(periodoInicial, periodoFinal));
             importarOcorrencias(integracao, new PeriodoDTO(periodoInicial, periodoFinal));
             consolidacaoScheduler.processar(integracao.getEmpresa(), periodoFinal);
+            atualizarStatusImportacao(periodoInicial, periodoFinal);
         }
+    }
+
+    private void atualizarStatusImportacao(LocalDate periodoInicial, LocalDate periodoFinal) {
+        this.importacao.setDataInicial(periodoInicial);
+        this.importacao.setDataFinal(periodoFinal);
+        this.importacao.setSituacao(ImportacaoSituacao.PROCESSADO);
+        this.importacao.setExecutado(LocalDateTime.now());
+        this.importacaoRepository.save(importacao);
     }
 
     private List<Venda> importarVendas(Integracao integracao, PeriodoDTO periodo) {

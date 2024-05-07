@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -30,6 +31,9 @@ public class Importacao extends Entidade {
     @ManyToOne
     @JoinColumn(name = "operadora_id")
     private Operadora operadora;
+
+    @Column(name = "executado")
+    private LocalDateTime executado;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "situacao", nullable = false)

@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -27,6 +28,8 @@ public class ImportacaoDTO implements Serializable {
 
     @NotNull(message = "Campo operadora é obrigatório.")
     private Operadora operadora;
+
+    private LocalDateTime executadoAs;
 
     private String situacao;
 }

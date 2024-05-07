@@ -23,11 +23,11 @@ public class OcorrenciaMapper implements DtoMapper<Occurrence, Ocorrencia>, Cole
     @Override
     public Ocorrencia paraDTO(Occurrence occurrence) {
         Ocorrencia ocorrencia = new Ocorrencia();
+        ocorrencia.setPeriodoId(occurrence.getPeriodId() != null ? occurrence.getPeriodId() : "");
         ocorrencia.setValor(occurrence.getAmount());
         ocorrencia.setTransacaoId(occurrence.getTransactionId());
         ocorrencia.setDataTransacao(occurrence.getTransactionDate());
         ocorrencia.setExpectativaDataPagamento(occurrence.getExpectedPaymentDate());
-        ocorrencia.setPeriodoId(occurrence.getPeriodId());
         return ocorrencia;
     }
 }

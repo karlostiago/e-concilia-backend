@@ -30,6 +30,7 @@ public class ImportacaoMapper implements EntidadeMapper<Importacao, ImportacaoDT
         importacaoDTO.setEmpresa(importacao.getEmpresa());
         importacaoDTO.setOperadora(importacao.getOperadora());
         importacaoDTO.setSituacao(importacao.getSituacao().getDescricao().toUpperCase());
+        importacaoDTO.setExecutadoAs(importacao.getExecutado());
         return importacaoDTO;
     }
 
@@ -41,6 +42,7 @@ public class ImportacaoMapper implements EntidadeMapper<Importacao, ImportacaoDT
         importacao.setEmpresa(importacaoDTO.getEmpresa());
         importacao.setOperadora(importacaoDTO.getOperadora());
         importacao.setSituacao(ImportacaoSituacao.porDescricao(importacaoDTO.getSituacao()));
+        importacao.setExecutado(importacaoDTO.getExecutadoAs());
         return importacao;
     }
 }

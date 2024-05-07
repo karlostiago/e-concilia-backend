@@ -11,14 +11,17 @@ import com.ctsousa.econcilia.scheduler.TipoImportacao;
 import com.ctsousa.econcilia.service.ImportacaoService;
 import com.ctsousa.econcilia.service.IntegracaoIfoodService;
 import com.ctsousa.econcilia.service.IntegracaoService;
+import com.ctsousa.econcilia.util.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
-@Component
+@Component("importacaoProgramadaScheduler")
 public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract implements Scheduler {
 
     private final ImportacaoService importacaoService;
@@ -91,8 +94,11 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
                 consolidacaoScheduler.processar(importacao.getEmpresa(), periodo.getAte());
             }
             log.info("Atualizando situação da importação ...");
+            this.importacao.setExecutado(LocalDateTime.now());
             importacaoService.atualizaPara(importacao, ImportacaoSituacao.PROCESSADO);
         } catch (Exception e) {
+            System.out.println(LocalTime.now());
+            this.importacao.setExecutado(LocalDateTime.now());
             importacaoService.atualizaPara(importacao, ImportacaoSituacao.ERRO_PROCESSAMENTO);
         }
     }
