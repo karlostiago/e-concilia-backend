@@ -14,6 +14,9 @@ import java.util.List;
 @Repository
 public interface OcorrenciaRepository extends JpaRepository<Ocorrencia, Long> {
 
+    @Query(value = "SELECT o FROM Ocorrencia o WHERE o.periodoId IS NULL OR o.periodoId = ''")
+    List<Ocorrencia> buscarOcorrenciaSemPeriodoId();
+
     @Modifying
     @Transactional
     @Query("DELETE FROM Ocorrencia o WHERE YEAR(o.dataTransacao) = YEAR(:dataTransacao) AND MONTH(o.dataTransacao) = MONTH(:dataTransacao)")

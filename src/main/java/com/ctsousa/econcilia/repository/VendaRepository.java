@@ -16,6 +16,9 @@ import java.util.List;
 @Repository
 public interface VendaRepository extends JpaRepository<Venda, Long> {
 
+    @Query(value = "SELECT v FROM Venda v INNER JOIN FETCH v.cobranca INNER JOIN FETCH v.empresa emp INNER JOIN FETCH v.operadora oper INNER JOIN FETCH v.pagamento WHERE v.empresa = :empresa AND v.operadora = :operadora AND (v.periodoId IS NULL OR v.periodoId = '') ORDER BY v.dataPedido")
+    List<Venda> buscarVendasSemPeriodoId(Empresa empresa, Operadora operadora);
+
     @Query(value = "SELECT v FROM Venda v INNER JOIN FETCH v.cobranca INNER JOIN FETCH v.empresa emp INNER JOIN FETCH v.operadora oper INNER JOIN FETCH v.pagamento WHERE v.empresa = :empresa AND v.operadora = :operadora AND v.dataPedido BETWEEN :dtInicial AND :dtFinal")
     List<Venda> buscarPor(Empresa empresa, Operadora operadora, LocalDate dtInicial, LocalDate dtFinal);
 
