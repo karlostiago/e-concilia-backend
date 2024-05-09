@@ -17,7 +17,6 @@ import com.ctsousa.econcilia.repository.ConsolidadoRepository;
 import com.ctsousa.econcilia.repository.VendaRepository;
 import com.ctsousa.econcilia.service.DashboadService;
 import com.ctsousa.econcilia.service.EmpresaService;
-import com.ctsousa.econcilia.service.IntegracaoService;
 import com.ctsousa.econcilia.util.DataUtil;
 import org.springframework.stereotype.Component;
 
@@ -49,6 +48,17 @@ public class DashboardServiceImpl implements DashboadService {
 
     private Map<String, Map<LocalDate, BigDecimal>> vendasSemanalAcumuladaMap;
 
+    private BigDecimal totalValorBrutoVendas = BigDecimal.valueOf(0D);
+    private BigInteger totalQuantidadeVendas = BigInteger.ZERO;
+    private BigDecimal totalTicketMedio = BigDecimal.valueOf(0D);
+    private BigDecimal totalValorCancelamento = BigDecimal.valueOf(0D);
+    private BigDecimal totalValorRecebidoLoja = BigDecimal.valueOf(0D);
+    private BigDecimal totalValorTaxaEntrega = BigDecimal.valueOf(0D);
+    private BigDecimal totalValorComissao = BigDecimal.valueOf(0D);
+    private BigDecimal totalValorPromocao = BigDecimal.valueOf(0D);
+    private BigDecimal totalValorComissaoTransacao = BigDecimal.valueOf(0D);
+    private BigDecimal totalValorEmRepasse = BigDecimal.valueOf(0D);
+
     public DashboardServiceImpl(ConsolidadoRepository consolidadoRepository, EmpresaService empresaService, VendaRepository vendaRepository) {
         this.consolidadoRepository = consolidadoRepository;
         this.empresaService = empresaService;
@@ -58,27 +68,11 @@ public class DashboardServiceImpl implements DashboadService {
     @Override
     public DashboardDTO carregaVendasConsolidadas(String empresaId, LocalDate dtInicial, LocalDate dtFinal) {
         List<Venda> vendas = new ArrayList<>();
-        vendasAnuaisMap = new HashMap<>();
-        vendasMensalMap = new HashMap<>();
-        vendasSemanalAcumuladaMap = new HashMap<>();
+
+        limparCamposCalculados();
 
         List<Long> empresasId = getEmpresasId(empresaId);
         DashboardDTO dashboardDTO = new DashboardDTO();
-
-        TipoRelatorio tipoRelatorio = TipoRelatorio.CONSOLIDACAO;
-
-        BigDecimal totalValorBrutoVendas = BigDecimal.valueOf(0D);
-        BigInteger totalQuantidadeVendas = BigInteger.ZERO;
-        BigDecimal totalTicketMedio = BigDecimal.valueOf(0D);
-        BigDecimal totalValorCancelamento = BigDecimal.valueOf(0D);
-        BigDecimal totalValorRecebidoLoja = BigDecimal.valueOf(0D);
-        BigDecimal totalValorTaxaEntrega = BigDecimal.valueOf(0D);
-        BigDecimal totalValorComissao = BigDecimal.valueOf(0D);
-        BigDecimal totalValorPromocao = BigDecimal.valueOf(0D);
-        BigDecimal totalValorComissaoTransacao = BigDecimal.valueOf(0D);
-        BigDecimal totalValorEmRepasse = BigDecimal.valueOf(0D);
-
-        RelatorioDTO relatorioDTO;
 
         for (Long idEmpresa : empresasId) {
             Empresa empresa = empresaService.pesquisarPorId(idEmpresa);
@@ -89,32 +83,15 @@ public class DashboardServiceImpl implements DashboadService {
                 vendas = vendaRepository.buscarPor(empresa, dtInicial, dtFinal);
             }
 
-            try {
-                relatorioDTO = tipoRelatorio.gerarDados(consolidadoRepository, dtInicial, dtFinal, empresa, new Operadora());
-            } catch (NotificacaoException e) {
-                continue;
-            }
-
-            RelatorioConsolidadoDTO consolidadoDTO = relatorioDTO.getConsolidados().stream()
-                            .filter(relatorioConsolidadoDTO -> naoTemValor(relatorioConsolidadoDTO.getPeriodo()))
-                            .findFirst().orElse(null);
-
-            if (consolidadoDTO != null) {
-                totalValorBrutoVendas = totalValorBrutoVendas.add(paraDecimal(consolidadoDTO.getTotalBruto()));
-                totalQuantidadeVendas = totalQuantidadeVendas.add(paraDecimal(consolidadoDTO.getQuantidadeVenda()).toBigInteger());
-                totalTicketMedio = totalTicketMedio.add(paraDecimal(consolidadoDTO.getTicketMedio()));
-                totalValorCancelamento = totalValorCancelamento.add(paraDecimal(consolidadoDTO.getTotalCancelado()));
-                totalValorRecebidoLoja = totalValorRecebidoLoja.add(paraDecimal(consolidadoDTO.getValorAntecipado()));
-                totalValorTaxaEntrega = totalValorTaxaEntrega.add(paraDecimal(consolidadoDTO.getTotalTaxaEntrega()));
-                totalValorComissao = totalValorComissao.add(paraDecimal(consolidadoDTO.getTotalComissao()));
-                totalValorPromocao = totalValorPromocao.add(paraDecimal(consolidadoDTO.getTotalPromocao()));
-                totalValorComissaoTransacao = totalValorComissaoTransacao.add(paraDecimal(consolidadoDTO.getTotalTransacaoPagamento()));
-                totalValorEmRepasse = totalValorEmRepasse.add(paraDecimal(consolidadoDTO.getTotalRepasse()));
-
-                carregarDadosAlimentarGraficos(empresa, tipoRelatorio, dtFinal);
-            }
+            processarCalculoVendas(empresa, dtInicial, dtFinal, TipoRelatorio.CONSOLIDACAO);
         }
 
+        popularDadosDashboard(dashboardDTO, vendas);
+
+        return dashboardDTO;
+    }
+
+    private void popularDadosDashboard(DashboardDTO dashboardDTO, List<Venda> vendas) {
         dashboardDTO.setValorBrutoVendas(totalValorBrutoVendas);
         dashboardDTO.setQuantidadeVendas(totalQuantidadeVendas);
         dashboardDTO.setTicketMedio(totalTicketMedio);
@@ -135,8 +112,52 @@ public class DashboardServiceImpl implements DashboadService {
                 .build();
 
         dashboardDTO.setGraficoDTO(graficoDTO);
+    }
 
-        return dashboardDTO;
+    private void processarCalculoVendas(Empresa empresa, LocalDate dtInicial, LocalDate dtFinal, TipoRelatorio tipoRelatorio) {
+        RelatorioDTO relatorioDTO;
+
+        try {
+            relatorioDTO = tipoRelatorio.gerarDados(consolidadoRepository, dtInicial, dtFinal, empresa, new Operadora());
+        } catch (NotificacaoException e) {
+            return;
+        }
+
+        RelatorioConsolidadoDTO consolidadoDTO = relatorioDTO.getConsolidados().stream()
+                .filter(relatorioConsolidadoDTO -> naoTemValor(relatorioConsolidadoDTO.getPeriodo()))
+                .findFirst().orElse(null);
+
+        if (consolidadoDTO != null) {
+            totalValorBrutoVendas = totalValorBrutoVendas.add(paraDecimal(consolidadoDTO.getTotalBruto()));
+            totalQuantidadeVendas = totalQuantidadeVendas.add(paraDecimal(consolidadoDTO.getQuantidadeVenda()).toBigInteger());
+            totalTicketMedio = totalTicketMedio.add(paraDecimal(consolidadoDTO.getTicketMedio()));
+            totalValorCancelamento = totalValorCancelamento.add(paraDecimal(consolidadoDTO.getTotalCancelado()));
+            totalValorRecebidoLoja = totalValorRecebidoLoja.add(paraDecimal(consolidadoDTO.getValorAntecipado()));
+            totalValorTaxaEntrega = totalValorTaxaEntrega.add(paraDecimal(consolidadoDTO.getTotalTaxaEntrega()));
+            totalValorComissao = totalValorComissao.add(paraDecimal(consolidadoDTO.getTotalComissao()));
+            totalValorPromocao = totalValorPromocao.add(paraDecimal(consolidadoDTO.getTotalPromocao()));
+            totalValorComissaoTransacao = totalValorComissaoTransacao.add(paraDecimal(consolidadoDTO.getTotalTransacaoPagamento()));
+            totalValorEmRepasse = totalValorEmRepasse.add(paraDecimal(consolidadoDTO.getTotalRepasse()));
+
+            carregarDadosAlimentarGraficos(empresa, tipoRelatorio, dtFinal);
+        }
+    }
+
+    private void limparCamposCalculados() {
+        vendasAnuaisMap = new HashMap<>();
+        vendasMensalMap = new HashMap<>();
+        vendasSemanalAcumuladaMap = new HashMap<>();
+
+        totalValorBrutoVendas = BigDecimal.valueOf(0D);
+        totalQuantidadeVendas = BigInteger.ZERO;
+        totalTicketMedio = BigDecimal.valueOf(0D);
+        totalValorCancelamento = BigDecimal.valueOf(0D);
+        totalValorRecebidoLoja = BigDecimal.valueOf(0D);
+        totalValorTaxaEntrega = BigDecimal.valueOf(0D);
+        totalValorComissao = BigDecimal.valueOf(0D);
+        totalValorPromocao = BigDecimal.valueOf(0D);
+        totalValorComissaoTransacao = BigDecimal.valueOf(0D);
+        totalValorEmRepasse = BigDecimal.valueOf(0D);
     }
 
     private BigDecimal calcularPercentualCrescimento() {
