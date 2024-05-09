@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
@@ -124,6 +125,7 @@ public class DashboardServiceImpl implements DashboadService {
         dashboardDTO.setValorPromocao(totalValorPromocao);
         dashboardDTO.setValorComissaoTransacao(totalValorComissaoTransacao);
         dashboardDTO.setValorEmRepasse(totalValorEmRepasse);
+        dashboardDTO.setPercentualCrescimento(calcularPercentualCrescimento());
 
         GraficoDTO graficoDTO = GraficoDTO.builder()
                 .graficoVendaMensalDTO(new GraficoVendaMensal().construir(vendasMensalMap))
@@ -135,6 +137,29 @@ public class DashboardServiceImpl implements DashboadService {
         dashboardDTO.setGraficoDTO(graficoDTO);
 
         return dashboardDTO;
+    }
+
+    private BigDecimal calcularPercentualCrescimento() {
+        BigDecimal valorMesAnterior = BigDecimal.valueOf(0D);
+        BigDecimal valorMesCorrente = BigDecimal.valueOf(0D);
+        BigDecimal totalCalculado;
+
+        for (Map.Entry<String, Map<YearMonth, BigDecimal>> entry : vendasAnuaisMap.entrySet()) {
+            NavigableMap<YearMonth, BigDecimal> navigableMap = (NavigableMap<YearMonth, BigDecimal>) entry.getValue();
+
+            if (navigableMap != null) {
+                Map.Entry<YearMonth, BigDecimal> ultimoRegistro = navigableMap.lastEntry();
+                Map.Entry<YearMonth, BigDecimal> penultimoRegistro = navigableMap.lowerEntry(ultimoRegistro.getKey());
+                valorMesCorrente = valorMesCorrente.add(ultimoRegistro.getValue());
+                valorMesAnterior = valorMesAnterior.add(penultimoRegistro.getValue());
+            }
+        }
+
+        totalCalculado = valorMesCorrente.subtract(valorMesAnterior)
+                .divide(valorMesAnterior, 3, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100D));
+
+        return totalCalculado;
     }
 
     private void carregarDadosAlimentarGraficos(final Empresa empresa, final TipoRelatorio tipoRelatorio, final LocalDate dtFinal) {

@@ -15,6 +15,4 @@ public class GraficoDTO {
     private GraficoVendaMensalDTO graficoVendaMensalDTO;
     private GraficoVendaAnualDTO graficoVendaAnualDTO;
     private GraficoPercentualVendaFormaPagamentoDTO graficoPercentualVendaFormaPagamentoDTO;
-    private GraficoVendaUltimo7DiaCreditoDebitoDTO graficoVendaUltimo7DiaCreditoDebitoDTO;
-    private GraficoVendaUltimo7DiaDinheiroPixDTO graficoVendaUltimo7DiaDinheiroPixDTO;
 }
