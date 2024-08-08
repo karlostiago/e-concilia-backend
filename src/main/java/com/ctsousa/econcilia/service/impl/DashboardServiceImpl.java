@@ -161,9 +161,11 @@ public class DashboardServiceImpl implements DashboadService {
     }
 
     private BigDecimal calcularPercentualCrescimento() {
-        BigDecimal valorMesAnterior = BigDecimal.valueOf(0D);
-        BigDecimal valorMesCorrente = BigDecimal.valueOf(0D);
-        BigDecimal totalCalculado;
+        BigDecimal valorAnterior = BigDecimal.valueOf(0D);
+        BigDecimal valorCorrente = BigDecimal.valueOf(0D);
+        BigDecimal totalCalculado = BigDecimal.valueOf(0D);
+
+        boolean executarCalculoPercentualCrescimento = false;
 
         for (Map.Entry<String, Map<YearMonth, BigDecimal>> entry : vendasAnuaisMap.entrySet()) {
             NavigableMap<YearMonth, BigDecimal> navigableMap = (NavigableMap<YearMonth, BigDecimal>) entry.getValue();
@@ -171,14 +173,20 @@ public class DashboardServiceImpl implements DashboadService {
             if (navigableMap != null) {
                 Map.Entry<YearMonth, BigDecimal> ultimoRegistro = navigableMap.lastEntry();
                 Map.Entry<YearMonth, BigDecimal> penultimoRegistro = navigableMap.lowerEntry(ultimoRegistro.getKey());
-                valorMesCorrente = valorMesCorrente.add(ultimoRegistro.getValue());
-                valorMesAnterior = valorMesAnterior.add(penultimoRegistro.getValue());
+                valorCorrente = valorCorrente.add(ultimoRegistro.getValue());
+
+                if (penultimoRegistro != null) {
+                    valorAnterior = valorAnterior.add(penultimoRegistro.getValue());
+                    executarCalculoPercentualCrescimento = true;
+                }
             }
         }
 
-        totalCalculado = valorMesCorrente.subtract(valorMesAnterior)
-                .divide(valorMesAnterior, 3, RoundingMode.HALF_UP)
-                .multiply(BigDecimal.valueOf(100D));
+        if (executarCalculoPercentualCrescimento) {
+            totalCalculado = valorCorrente.subtract(valorAnterior)
+                    .divide(valorAnterior, 3, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100D));
+        }
 
         return totalCalculado;
     }

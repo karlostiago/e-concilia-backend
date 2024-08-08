@@ -5,6 +5,7 @@ CREATE TABLE `importacao` (
   `situacao` varchar(255) NOT NULL,
   `empresa_id` bigint DEFAULT NULL,
   `operadora_id` bigint DEFAULT NULL,
+  `executado` datetime,
   PRIMARY KEY (`id`),
   KEY `fk_importacao_empresa_id` (`empresa_id`),
   KEY `fk_importacao_operadora_id` (`operadora_id`),
