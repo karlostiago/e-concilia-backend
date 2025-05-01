@@ -16,6 +16,8 @@ public class GraficoVendaAnual {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM/yyyy", Locale.forLanguageTag("pt-BR"));
 
     public GraficoVendaAnualDTO construir(Map<String, Map<YearMonth, BigDecimal>> mapVendas) {
+        if (mapVendas.isEmpty()) return new GraficoVendaAnualDTO();
+
         String chave = mapVendas.keySet().iterator().next();
         YearMonth periodo = (YearMonth) ((TreeMap<?, ?>)mapVendas.get(chave)).lastKey();
 

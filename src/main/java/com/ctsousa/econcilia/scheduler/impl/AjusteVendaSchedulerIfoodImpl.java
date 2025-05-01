@@ -3,6 +3,7 @@ package com.ctsousa.econcilia.scheduler.impl;
 import com.ctsousa.econcilia.enumaration.TipoParametro;
 import com.ctsousa.econcilia.model.*;
 import com.ctsousa.econcilia.model.dto.PeriodoDTO;
+import com.ctsousa.econcilia.repository.AjusteVendaRepository;
 import com.ctsousa.econcilia.repository.OcorrenciaRepository;
 import com.ctsousa.econcilia.repository.ParametroRepository;
 import com.ctsousa.econcilia.repository.VendaRepository;
@@ -17,12 +18,15 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.ctsousa.econcilia.util.DataUtil.obterPeriodoPorMesFechado;
 
 @Slf4j
 @Component
-public class AjusteVendaSchedulerIfood implements Scheduler {
+public class AjusteVendaSchedulerIfoodImpl implements Scheduler {
 
     private static final String IFOOD_OPERADORA = "ifood";
 
@@ -40,7 +44,9 @@ public class AjusteVendaSchedulerIfood implements Scheduler {
 
     private final OcorrenciaRepository ocorrenciaRepository;
 
-    public AjusteVendaSchedulerIfood(OperadoraService operadoraService, ContratoService contratoService, ParametroRepository parametroRepository, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, IntegracaoService integracaoService, OcorrenciaRepository ocorrenciaRepository) {
+    private final AjusteVendaRepository ajusteVendaRepository;
+
+    public AjusteVendaSchedulerIfoodImpl(OperadoraService operadoraService, ContratoService contratoService, ParametroRepository parametroRepository, VendaRepository vendaRepository, IntegracaoIfoodService integracaoIfoodService, IntegracaoService integracaoService, OcorrenciaRepository ocorrenciaRepository, AjusteVendaRepository ajusteVendaRepository) {
         this.operadoraService = operadoraService;
         this.contratoService = contratoService;
         this.parametroRepository = parametroRepository;
@@ -48,6 +54,7 @@ public class AjusteVendaSchedulerIfood implements Scheduler {
         this.integracaoIfoodService = integracaoIfoodService;
         this.integracaoService = integracaoService;
         this.ocorrenciaRepository = ocorrenciaRepository;
+        this.ajusteVendaRepository = ajusteVendaRepository;
     }
 
     /**
@@ -79,10 +86,52 @@ public class AjusteVendaSchedulerIfood implements Scheduler {
     }
 
     private void prepararAtualizacao(Empresa empresa, Operadora operadora) {
-        List<Integracao> integracaoes = integracaoService.pesquisar(empresa.getId(), operadora.getId(), null);
-        for (Integracao integracao : integracaoes) {
+        List<Integracao> integracoes = integracaoService.pesquisar(empresa.getId(), operadora.getId(), null);
+        for (Integracao integracao : integracoes) {
             executarAtualizacaoVendas(integracao);
             executarAtualizacaoOcorrencias(integracao);
+            executarAtualizacaoAjusteVendas(integracao);
+        }
+    }
+
+    private void executarAtualizacaoAjusteVendas(Integracao integracao) {
+        List<AjusteVenda> ajusteVendas = ajusteVendaRepository.buscarPorPeriodoId("SEM_PERIODO_ID");
+
+        if (ajusteVendas.isEmpty()) {
+            log.info("::: Não foi encontrado ajuste de vendas para empresaId {}, operadoraId {} :::", integracao.getEmpresa().getId(), integracao.getOperadora().getId());
+            return;
+        }
+
+        LocalDate dtInicial = ajusteVendas.get(0).getDataPedido();
+        LocalDate dtFinal = ajusteVendas.get(ajusteVendas.size() - 1).getDataPedido();
+
+        List<PeriodoDTO> periodos = obterPeriodoPorMesFechado(dtInicial, dtFinal);
+
+        for (PeriodoDTO periodoDTO : periodos) {
+            List<AjusteVenda> ajustes = integracaoIfoodService.pesquisarAjusteVendas(integracao.getCodigoIntegracao(), periodoDTO.getDe(), periodoDTO.getAte());
+
+            if (ajustes.isEmpty()) continue;
+
+            Map<String, AjusteVenda> ajusteVendasMap = ajustes.stream().collect(Collectors.toMap(
+                AjusteVenda::getPedidoId,
+                Function.identity(),
+                (ajusteVenda1, ajusteVenda2) -> ajusteVenda1
+            ));
+
+            atualizarAjusteVenda(ajusteVendasMap, ajusteVendas);
+        }
+    }
+
+    private void atualizarAjusteVenda(Map<String, AjusteVenda> ajusteVendasMap, List<AjusteVenda> ajusteVendas) {
+        for (AjusteVenda ajusteVenda : ajusteVendas) {
+            if (!"SEM_PERIODO_ID".equalsIgnoreCase(ajusteVenda.getPeriodoId())) continue;
+
+            AjusteVenda ajusteVendaEncontrada = ajusteVendasMap.get(ajusteVenda.getPedidoId());
+
+            if (ajusteVendaEncontrada.getPeriodoId() != null) {
+                ajusteVenda.setPeriodoId(ajusteVendaEncontrada.getPeriodoId());
+                ajusteVendaRepository.save(ajusteVenda);
+            }
         }
     }
 

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component("importacaoProgramadaScheduler")
@@ -112,6 +113,10 @@ public class ImportacaoProgramadaSchedulerIfoodImpl extends ImportacaoAbstract i
     private void importarAjusteVendas(final PeriodoDTO periodo) {
         log.info("Pesquisando ajuste de vendas para empresa {}, operadora {}, no periodo de {} ate {}", importacao.getEmpresa().getRazaoSocial(), importacao.getOperadora().getDescricao(), periodo.getDe(), periodo.getAte());
         List<AjusteVenda> ajusteVendas = integracaoIfoodService.pesquisarAjusteVendas(codigoIntegracao, periodo.getDe(), periodo.getAte());
+
+        ajusteVendas.stream().filter(ajusteVenda -> ajusteVenda.getPeriodoId() == null)
+                .forEach(ajusteVenda -> ajusteVenda.setPeriodoId("SEM_PERIODO_ID"));
+
         salvarAjusteVendas(ajusteVendas);
     }
 

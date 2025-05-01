@@ -1,5 +1,6 @@
 package com.ctsousa.econcilia.graphic;
 
+import com.ctsousa.econcilia.model.dto.GraficoVendaAnualDTO;
 import com.ctsousa.econcilia.model.dto.GraficoVendaUltimo7DiaDTO;
 import com.ctsousa.econcilia.util.DataUtil;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,8 @@ import static com.ctsousa.econcilia.util.DataUtil.getUltimoDiaMes;
 public class GraficoVendaSemanalAcumulada {
 
     public GraficoVendaUltimo7DiaDTO construir(Map<String, Map<LocalDate, BigDecimal>> vendasMap) {
+        if (vendasMap.isEmpty()) return new GraficoVendaUltimo7DiaDTO();
+
         String chave = vendasMap.keySet().iterator().next();
         LocalDate periodo = (LocalDate) ((TreeMap<?, ?>)vendasMap.get(chave)).lastKey();
 

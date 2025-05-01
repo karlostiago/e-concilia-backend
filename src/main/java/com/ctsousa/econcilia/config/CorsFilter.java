@@ -14,7 +14,7 @@ import java.io.IOException;
 public class CorsFilter implements Filter {
 
     private static final String ORIGIN = "Origin";
-    private final String origensPermitida = "http://localhost:4200, https://localhost:4200, http://e-concilia.net.br, https://e-concilia.net.br";
+    private final String origensPermitida = "http://localhost:4200, https://localhost:4200, http://e-concilia.net.br, https://e-concilia.net.br, https://econcilia.netlify.app, http://econcilia.netlify.app";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

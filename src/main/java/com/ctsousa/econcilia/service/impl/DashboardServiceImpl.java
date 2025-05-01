@@ -239,6 +239,8 @@ public class DashboardServiceImpl implements DashboadService {
                 .filter(c -> paraLocalDate(c.getPeriodo()).isAfter(finalDataInicial) && paraLocalDate(c.getPeriodo()).isBefore(finalDataFinal))
                 .toList();
 
+        if (consolidados.isEmpty()) return;
+
         String nomeEmpresa = consolidados.get(0).getInfo().getNome();
         Map<LocalDate, BigDecimal> mapConsolidados = new TreeMap<>();
 

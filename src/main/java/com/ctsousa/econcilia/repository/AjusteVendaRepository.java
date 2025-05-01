@@ -27,6 +27,9 @@ public interface AjusteVendaRepository extends JpaRepository<AjusteVenda, Long> 
     @Query("DELETE FROM AjusteVenda a WHERE YEAR(a.dataPedido) = YEAR(:dataPedido) AND MONTH(a.dataPedido) = MONTH(:dataPedido)")
     void deleteAjusteVendas(@Param(value = "dataPedido") LocalDate dataPedido);
 
+    @Query("SELECT a FROM AjusteVenda a JOIN FETCH a.cobranca WHERE a.periodoId = :periodoId")
+    List<AjusteVenda> buscarPorPeriodoId(@Param(value = "periodoId") final String periodoId);
+
     @Query(value = "SELECT DISTINCT " +
             "   av.id AS ajuste_id, " +
             "   av.data_pagamento_esperada, " +
@@ -40,7 +43,7 @@ public interface AjusteVendaRepository extends JpaRepository<AjusteVenda, Long> 
             "   av.valor_ajuste, " +
             "   cob.* " +
             "   FROM ajuste_venda av " +
-            "INNER JOIN venda v ON v.periodo_id = av.periodo_id " +
+            "INNER JOIN venda v ON v.pedido_id = av.pedido_id " +
             "INNER JOIN cobranca cob ON cob.id = av.cobranca_id  " +
             "INNER JOIN integracao i ON i.empresa_id = v.empresa_id AND i.operadora_id = v.operadora_id " +
             "WHERE av.data_pedido BETWEEN :dataInicial AND :dataFinal " +

@@ -24,6 +24,8 @@ public class GraficoVendaMensal {
     private int mes = LocalDate.now().getMonthValue();
 
     public GraficoVendaMensalDTO construir(Map<String, Map<LocalDate, BigDecimal>> mapVendas) {
+        if (mapVendas.isEmpty()) return new GraficoVendaMensalDTO();
+
         String chave = mapVendas.keySet().iterator().next();
         ano = mapVendas.get(chave).keySet().iterator().next().getYear();
         mes = mapVendas.get(chave).keySet().iterator().next().getMonthValue();
