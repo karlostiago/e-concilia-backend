@@ -150,6 +150,10 @@ public class ImportacaoDiariaSchedulerIfoodImpl extends ImportacaoAbstract imple
     private void importarAjusteVendas(Integracao integracao, PeriodoDTO periodo) {
         log.info("Pesquisando ajuste de vendas para empresa {}, operadora {}, no periodo de {} ate {}", integracao.getEmpresa().getRazaoSocial(), integracao.getOperadora().getDescricao(), periodo.getDe().withDayOfMonth(1), periodo.getAte());
         List<AjusteVenda> ajusteVendas = integracaoIfoodService.pesquisarAjusteVendas(integracao.getCodigoIntegracao(), periodo.getDe().withDayOfMonth(1), periodo.getAte());
+
+        ajusteVendas.stream().filter(ajusteVenda -> ajusteVenda.getPeriodoId() == null)
+                .forEach(ajusteVenda -> ajusteVenda.setPeriodoId("SEM_PERIODO_ID"));
+
         salvarAjusteVendas(ajusteVendas);
     }
 
