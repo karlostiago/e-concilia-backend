@@ -79,8 +79,10 @@ public class DashboardServiceImpl implements DashboadService {
 
             if (empresa == null) continue;
 
-            if (vendas.isEmpty()) {
-                vendas = vendaRepository.buscarPor(empresa, dtInicial, dtFinal);
+            List<Venda> vendasEncontradas = vendaRepository.buscarPor(empresa, dtInicial, dtFinal);
+
+            if (!vendasEncontradas.isEmpty()) {
+                vendas.addAll(vendasEncontradas);
             }
 
             processarCalculoVendas(empresa, dtInicial, dtFinal, TipoRelatorio.CONSOLIDACAO);
@@ -205,11 +207,9 @@ public class DashboardServiceImpl implements DashboadService {
 
     private void popularDadoGraficoMensal(final RelatorioDTO relatorioDTO, final LocalDate dtFinal) {
         LocalDate dtInicial = dtFinal.withDayOfMonth(1);
+        List<RelatorioConsolidadoDTO> consolidados = getConsolidados(relatorioDTO, dtInicial, dtFinal);
 
-        List<RelatorioConsolidadoDTO> consolidados = relatorioDTO.getConsolidados().stream()
-                .filter(c -> temValor(c.getPeriodo()))
-                .filter(c -> paraLocalDate(c.getPeriodo()).isAfter(dtInicial) && paraLocalDate(c.getPeriodo()).isBefore(dtFinal))
-                .toList();
+        if (consolidados.isEmpty()) return;
 
         String nomeEmpresa = consolidados.get(0).getInfo().getNome();
         Map<LocalDate, BigDecimal> mapConsolidados = new TreeMap<>();
@@ -234,10 +234,7 @@ public class DashboardServiceImpl implements DashboadService {
         LocalDate finalDataInicial = dataInicial;
         LocalDate finalDataFinal = dataFinal;
 
-        List<RelatorioConsolidadoDTO> consolidados = relatorioDTO.getConsolidados().stream()
-                .filter(c -> temValor(c.getPeriodo()))
-                .filter(c -> paraLocalDate(c.getPeriodo()).isAfter(finalDataInicial) && paraLocalDate(c.getPeriodo()).isBefore(finalDataFinal))
-                .toList();
+        List<RelatorioConsolidadoDTO> consolidados = getConsolidados(relatorioDTO, finalDataInicial, finalDataFinal);
 
         if (consolidados.isEmpty()) return;
 
@@ -277,5 +274,18 @@ public class DashboardServiceImpl implements DashboadService {
         return Arrays.stream(empresasIdSplit)
                 .map(s -> Long.valueOf(s.trim()))
                 .toList();
+    }
+
+    private List<RelatorioConsolidadoDTO> getConsolidados(final RelatorioDTO relatorioDTO, LocalDate dtInicial, LocalDate dtFinal) {
+        List<RelatorioConsolidadoDTO> consolidados = new ArrayList<>();
+        for (RelatorioConsolidadoDTO consolidadoDTO : relatorioDTO.getConsolidados()) {
+            if (temValor(consolidadoDTO.getPeriodo())) {
+                LocalDate periodo = paraLocalDate(consolidadoDTO.getPeriodo());
+                if (!periodo.isBefore(dtInicial) && !periodo.isAfter(dtFinal)) {
+                    consolidados.add(consolidadoDTO);
+                }
+            }
+        }
+        return consolidados;
     }
 }
